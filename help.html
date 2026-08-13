@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Help & User Guide
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+
+    .help-layout {
+      display: grid;
+      grid-template-columns: 285px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+
+    .help-index {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+    }
+
+
+    .help-index h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+
+    .help-index a {
+      display: block;
+      padding: 6px 0;
+      color: #2d7df6;
+      text-decoration: none;
+      line-height: 1.3;
+      font-size: 14px;
+    }
+
+
+    .help-index a:hover {
+      text-decoration: underline;
+    }
+
+
+    .help-content section {
+      background: white;
+      border-radius: 12px;
+      padding: 26px;
+      margin-bottom: 22px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+    }
+
+
+    .help-content h2 {
+      margin-top: 0;
+
+      border-bottom:
+        1px solid #e2e7ec;
+
+      padding-bottom: 10px;
+    }
+
+
+    .help-content h3 {
+      margin-top: 24px;
+    }
+
+
+    .help-content p,
+    .help-content li {
+      line-height: 1.65;
+    }
+
+
+    .quick-box {
+      background: #f3f8ff;
+
+      border-left:
+        5px solid #2d7df6;
+
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+
+    .warning-box {
+      background: #fff8e8;
+
+      border-left:
+        5px solid #e0a620;
+
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+
+    .danger-box {
+      background: #fff2f2;
+
+      border-left:
+        5px solid #c94646;
+
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+
+    .success-box {
+      background: #f0faf3;
+
+      border-left:
+        5px solid #2e9d55;
+
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+
+    .test-box {
+      background: #f7f3ff;
+
+      border-left:
+        5px solid #7c3aed;
+
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+
+    .training-card {
+      background: #f8f9fb;
+      border-radius: 10px;
+      padding: 18px;
+      margin: 15px 0;
+    }
+
+
+    .step-number {
+      display: inline-block;
+      min-width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      border-radius: 50%;
+      background: #2d7df6;
+      color: white;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+
+    .help-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+
+
+    .help-table th,
+    .help-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 11px;
+
+      border-bottom:
+        1px solid #e1e6eb;
+    }
+
+
+    .help-table th {
+      background: #f5f7f9;
+    }
+
+
+    .top-link {
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #2d7df6;
+      text-decoration: none;
+    }
+
+
+    .weekly-checklist {
+      padding-left: 22px;
+    }
+
+
+    .weekly-checklist li {
+      margin-bottom: 9px;
+    }
+
+
+    .scenario {
+      background: #fafbfc;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin: 14px 0;
+    }
+
+
+    .scenario h3 {
+      margin-top: 0;
+    }
+
+
+    @media (max-width: 900px) {
+
+      .help-layout {
+        grid-template-columns: 1fr;
+      }
+
+
+      .help-index {
+        position: static;
+      }
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      .help-content section {
+        padding: 18px;
+      }
+
+
+      .help-table {
+        display: block;
+        overflow-x: auto;
+      }
+
+    }
+
+
+    @media print {
+
+      .topbar,
+      .help-index,
+      .top-link {
+        display: none !important;
+      }
+
+
+      body {
+        background: white;
+      }
+
+
+      .help-layout {
+        display: block;
+      }
+
+
+      .help-content section {
+        box-shadow: none;
+
+        border:
+          1px solid #ddd;
+
+        break-inside: avoid;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body id="top">
+
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Help & User Guide
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Home Finance Management User Guide
+        </h2>
+
+        <p>
+          How to operate the system, understand its recommendations,
+          and use it during the household test period.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <div class="help-layout">
+
+
+      <!-- INDEX -->
+
+      <aside class="help-index">
+
+        <h2>
+          Guide Index
+        </h2>
+
+        <a href="#purpose">
+          1. What This System Is For
+        </a>
+
+        <a href="#getting-started">
+          2. The Simple Operating Method
+        </a>
+
+        <a href="#accounts">
+          3. Bills, Spending & Savings
+        </a>
+
+        <a href="#dashboard">
+          4. Dashboard
+        </a>
+
+        <a href="#record-spending">
+          5. Record Spending
+        </a>
+
+        <a href="#checkin">
+          6. Check-In
+        </a>
+
+        <a href="#forecast">
+          7. Forecast
+        </a>
+
+        <a href="#transfers">
+          8. Transfers
+        </a>
+
+        <a href="#activity">
+          9. Activity Log
+        </a>
+
+        <a href="#income">
+          10. Regular vs Extra Income
+        </a>
+
+        <a href="#manage">
+          11. Manage & Setup
+        </a>
+
+        <a href="#bills">
+          12. Adding & Editing Bills
+        </a>
+
+        <a href="#debts">
+          13. Adding & Editing Debts
+        </a>
+
+        <a href="#routine">
+          14. Weekly Routine
+        </a>
+
+        <a href="#what-do-i-do">
+          15. What Do I Do When...?
+        </a>
+
+        <a href="#test-notes">
+          16. Log Bug / Test Note
+        </a>
+
+        <a href="#testing">
+          17. Four-Week Test Period
+        </a>
+
+        <a href="#mobile">
+          18. Phone Use
+        </a>
+
+        <a href="#rules">
+          19. Important Rules
+        </a>
+
+        <a href="#troubleshooting">
+          20. Troubleshooting
+        </a>
+
+        <a href="#glossary">
+          21. Glossary
+        </a>
+
+      </aside>
+
+
+
+      <div class="help-content">
+
+
+        <!-- PURPOSE -->
+
+        <section id="purpose">
+
+          <h2>
+            1. What This System Is For
+          </h2>
+
+          <p>
+            Home Finance Management is not intended to be full
+            accounting software.
+          </p>
+
+          <p>
+            Its purpose is to help the household answer a much
+            more practical question:
+          </p>
+
+
+          <div class="quick-box">
+
+            <strong>
+              How much money is genuinely safe to use after allowing
+              for the bills and income that are coming?
+            </strong>
+
+          </div>
+
+
+          <p>
+            A bank account can look healthy today while much of the
+            money sitting there is already needed for bills that will
+            clear next week.
+          </p>
+
+          <p>
+            The system therefore combines:
+          </p>
+
+          <ul>
+
+            <li>
+              actual account balances;
+            </li>
+
+            <li>
+              upcoming bills;
+            </li>
+
+            <li>
+              scheduled income;
+            </li>
+
+            <li>
+              planned transfers;
+            </li>
+
+            <li>
+              the Bills Account safety floor;
+            </li>
+
+            <li>
+              and the amount currently available for everyday spending.
+            </li>
+
+          </ul>
+
+
+          <div class="success-box">
+
+            <strong>
+              The goal is not perfect bookkeeping.
+            </strong>
+
+            <p>
+              The goal is fewer financial surprises and less need to
+              rely on borrowed money to finish an ordinary month.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- SIMPLE METHOD -->
+
+        <section id="getting-started">
+
+          <h2>
+            2. The Simple Operating Method
+          </h2>
+
+
+          <div class="training-card">
+
+            <h3>
+              <span class="step-number">1</span>
+              Look at Dashboard
+            </h3>
+
+            <p>
+              See what is in the accounts, what is coming soon
+              and whether a transfer is currently recommended.
+            </p>
+
+          </div>
+
+
+          <div class="training-card">
+
+            <h3>
+              <span class="step-number">2</span>
+              Spend From Spending
+            </h3>
+
+            <p>
+              Normal household purchases should generally come from
+              the Spending Account rather than the protected Bills Account.
+            </p>
+
+          </div>
+
+
+          <div class="training-card">
+
+            <h3>
+              <span class="step-number">3</span>
+              Record Large Spending When Useful
+            </h3>
+
+            <p>
+              If a large purchase would materially change what the
+              Dashboard thinks is available, use
+              <strong>Record Spending</strong>.
+            </p>
+
+          </div>
+
+
+          <div class="training-card">
+
+            <h3>
+              <span class="step-number">4</span>
+              Check-In
+            </h3>
+
+            <p>
+              Once or twice per week, synchronize the application
+              with the real bank balances.
+            </p>
+
+          </div>
+
+
+          <div class="training-card">
+
+            <h3>
+              <span class="step-number">5</span>
+              Transfer Carefully
+            </h3>
+
+            <p>
+              Move money only when the real bank transfer is appropriate
+              and the forecast supports it.
+            </p>
+
+          </div>
+
+
+          <div class="success-box">
+
+            <strong>
+              Most weeks:
+            </strong>
+
+            <p>
+              Dashboard → spend normally → record only significant
+              spending → Check-In → transfer if appropriate.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- ACCOUNTS -->
+
+        <section id="accounts">
+
+          <h2>
+            3. Bills, Spending & Savings
+          </h2>
+
+
+          <h3>
+            Bills Account
+          </h3>
+
+          <p>
+            The Bills Account is protected household money.
+            Regular income generally enters here and recurring
+            obligations are paid from here.
+          </p>
+
+          <p>
+            A large Bills Account balance does not automatically
+            mean that the money is available to spend.
+          </p>
+
+
+          <h3>
+            Spending Account
+          </h3>
+
+          <p>
+            This is the normal everyday-money account.
+          </p>
+
+          <p>
+            Groceries, gas, restaurants, household purchases and
+            similar spending normally come from this account.
+          </p>
+
+
+          <h3>
+            Savings
+          </h3>
+
+          <p>
+            Savings is separate money for reserves, emergencies
+            and future goals.
+          </p>
+
+
+          <div class="success-box">
+
+            <strong>
+              Basic rule:
+            </strong>
+
+            <p>
+              Protect Bills first. Spend from Spending second.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboard">
+
+          <h2>
+            4. Dashboard
+          </h2>
+
+          <p>
+            Dashboard is the main decision screen.
+          </p>
+
+
+          <h3>
+            Recommended Transfer Today
+          </h3>
+
+          <p>
+            This is the amount the system currently believes can
+            safely be moved while respecting the upcoming forecast
+            and preferred Bills Account safety buffer.
+          </p>
+
+          <p>
+            A recommendation of <strong>$0</strong> may be exactly
+            the correct recommendation.
+          </p>
+
+
+          <h3>
+            Spending Account
+          </h3>
+
+          <p>
+            Shows the money currently recorded as available for
+            normal household spending.
+          </p>
+
+
+          <h3>
+            Bills Account
+          </h3>
+
+          <p>
+            Shows the latest recorded Bills Account balance.
+          </p>
+
+
+          <h3>
+            Forecast Low Point
+          </h3>
+
+          <p>
+            Shows the lowest projected Bills Account balance during
+            the forecast period.
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              This is one of the most important numbers in the system.
+            </strong>
+
+            <p>
+              It helps answer whether today's apparently available
+              money is actually needed later.
+            </p>
+
+          </div>
+
+
+          <h3>
+            Next Scheduled Income
+          </h3>
+
+          <p>
+            Shows the next known baseline income expected by the system.
+          </p>
+
+
+          <h3>
+            Bills Due Next 7 Days
+          </h3>
+
+          <p>
+            Shows the known obligations coming soon.
+          </p>
+
+
+          <h3>
+            Items Needing Attention
+          </h3>
+
+          <p>
+            Indicates overdue income or bills that have not yet
+            been confirmed.
+          </p>
+
+
+          <h3>
+            Last Check-In
+          </h3>
+
+          <p>
+            Shows how recently the system was synchronized with
+            the real bank.
+          </p>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- RECORD SPENDING -->
+
+        <section id="record-spending">
+
+          <h2>
+            5. Record Spending
+          </h2>
+
+          <p>
+            <strong>Record Spending is optional.</strong>
+          </p>
+
+          <p>
+            It exists so that a large purchase can immediately update
+            the application's account balance rather than waiting for
+            the next Check-In.
+          </p>
+
+
+          <h3>
+            When to Use It
+          </h3>
+
+          <p>
+            Use Record Spending when a purchase is significant enough
+            that leaving it unrecorded could make the Dashboard temporarily
+            misleading.
+          </p>
+
+
+          <div class="scenario">
+
+            <h3>
+              Example: Large Grocery Trip
+            </h3>
+
+            <p>
+              Suppose the Spending Account contains $1,300 and you
+              purchase $875 of groceries.
+            </p>
+
+            <p>
+              Choose:
+            </p>
+
+            <p>
+              <strong>
+                Record Spending → Spending Account → $875 →
+                Description: Groceries → Category: Groceries
+              </strong>
+            </p>
+
+            <p>
+              The application immediately changes the recorded Spending
+              balance from $1,300 to $425.
+            </p>
+
+          </div>
+
+
+          <h3>
+            When NOT to Use It
+          </h3>
+
+          <p>
+            You do not need to enter every small purchase.
+          </p>
+
+          <p>
+            Examples that normally do not need individual entry:
+          </p>
+
+          <ul>
+
+            <li>
+              a $12 lunch;
+            </li>
+
+            <li>
+              a small convenience-store purchase;
+            </li>
+
+            <li>
+              routine minor debit-card activity.
+            </li>
+
+          </ul>
+
+
+          <h3>
+            What Record Spending Does
+          </h3>
+
+          <ul>
+
+            <li>
+              reduces the selected account balance immediately;
+            </li>
+
+            <li>
+              records the purchase in the spending history;
+            </li>
+
+            <li>
+              writes the transaction to the Activity Log;
+            </li>
+
+            <li>
+              makes Dashboard calculations use the new balance.
+            </li>
+
+          </ul>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Do not record the same purchase twice.
+            </strong>
+
+            <p>
+              Check-In will later confirm the actual bank balance,
+              but Record Spending has already reduced the application's
+              balance.
+            </p>
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Practical rule:
+            </strong>
+
+            <p>
+              Record significant spending. Let Check-In absorb the
+              ordinary small stuff.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- CHECKIN -->
+
+        <section id="checkin">
+
+          <h2>
+            6. Check-In
+          </h2>
+
+          <p>
+            Check-In keeps Home Finance synchronized with the real bank.
+          </p>
+
+
+          <h3>
+            Step 1 — Look at the Bank
+          </h3>
+
+          <p>
+            Find the actual current balances for Bills, Spending
+            and Savings.
+          </p>
+
+
+          <h3>
+            Step 2 — Enter Actual Balances
+          </h3>
+
+          <p>
+            Enter those balances exactly as shown by the bank.
+          </p>
+
+
+          <h3>
+            Step 3 — Confirm Income
+          </h3>
+
+          <p>
+            Mark income <strong>Received</strong> only when the money
+            really appears.
+          </p>
+
+
+          <h3>
+            Step 4 — Confirm Bills
+          </h3>
+
+          <p>
+            Mark bills <strong>Paid / Cleared</strong> only when the
+            payment really clears.
+          </p>
+
+
+          <h3>
+            Step 5 — Save Check-In
+          </h3>
+
+          <p>
+            The confirmed balances become the new starting point for
+            Dashboard and Forecast.
+          </p>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Source-of-truth rule:
+            </strong>
+
+            <p>
+              If the bank and Home Finance disagree, believe the bank
+              and perform a Check-In.
+            </p>
+
+          </div>
+
+
+          <p>
+            Check-Ins, cleared bills and received income are also
+            retained in the Activity Log.
+          </p>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- FORECAST -->
+
+        <section id="forecast">
+
+          <h2>
+            7. Forecast
+          </h2>
+
+          <p>
+            Forecast projects the Bills Account forward using known
+            bills, income and planned transfers.
+          </p>
+
+
+          <h3>
+            30 / 60 / 90 Days
+          </h3>
+
+          <p>
+            Use the period selector to decide how far ahead you
+            want to examine cash flow.
+          </p>
+
+          <ul>
+
+            <li>
+              <strong>30 days</strong> — immediate cash flow.
+            </li>
+
+            <li>
+              <strong>60 days</strong> — medium-term pressure.
+            </li>
+
+            <li>
+              <strong>90 days</strong> — broader recurring patterns.
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Protected Floor
+          </h3>
+
+          <p>
+            This is the preferred minimum safety cushion for the
+            Bills Account.
+          </p>
+
+
+          <table class="help-table">
+
+            <thead>
+
+              <tr>
+                <th>Colour</th>
+                <th>Meaning</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+                <td>Green</td>
+                <td>
+                  Forecast remains above the desired safety level.
+                </td>
+              </tr>
+
+              <tr>
+                <td>Yellow</td>
+                <td>
+                  Account remains positive but the safety cushion
+                  is being used.
+                </td>
+              </tr>
+
+              <tr>
+                <td>Red</td>
+                <td>
+                  Forecast reaches zero or below and action is required.
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Forecast is only as good as the information entered.
+            </strong>
+
+            <p>
+              Wrong balances, dates or missing bills will produce
+              a less useful forecast.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- TRANSFERS -->
+
+        <section id="transfers">
+
+          <h2>
+            8. Transfers
+          </h2>
+
+          <p>
+            Money can be moved between any two active accounts.
+          </p>
+
+          <p>
+            Examples:
+          </p>
+
+          <ul>
+
+            <li>
+              Bills → Spending
+            </li>
+
+            <li>
+              Bills → Savings
+            </li>
+
+            <li>
+              Savings → Bills
+            </li>
+
+            <li>
+              Spending → Bills
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Planned Transfer
+          </h3>
+
+          <p>
+            A planned transfer records an intention to move money.
+          </p>
+
+
+          <h3>
+            Completed Transfer
+          </h3>
+
+          <p>
+            After the real bank transfer has occurred, open the
+            transfer and choose <strong>Complete Transfer</strong>.
+          </p>
+
+
+          <p>
+            Completing the transfer:
+          </p>
+
+          <ul>
+
+            <li>
+              reduces the From Account;
+            </li>
+
+            <li>
+              increases the To Account;
+            </li>
+
+            <li>
+              marks the transfer Completed;
+            </li>
+
+            <li>
+              records both sides in the Activity Log.
+            </li>
+
+          </ul>
+
+
+          <div class="danger-box">
+
+            <strong>
+              Never complete a transfer in Home Finance before the
+              actual bank transfer has occurred.
+            </strong>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- ACTIVITY -->
+
+        <section id="activity">
+
+          <h2>
+            9. Activity Log
+          </h2>
+
+          <p>
+            The Activity Log is the chronological history of important
+            financial actions recorded by Home Finance.
+          </p>
+
+
+          <p>
+            It may contain:
+          </p>
+
+          <ul>
+
+            <li>
+              completed transfers;
+            </li>
+
+            <li>
+              Check-Ins;
+            </li>
+
+            <li>
+              income marked Received;
+            </li>
+
+            <li>
+              bills marked Paid/Cleared;
+            </li>
+
+            <li>
+              significant spending entered using Record Spending.
+            </li>
+
+          </ul>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Think of this as the system audit trail.
+            </strong>
+
+            <p>
+              If you wonder why an account balance changed, look here.
+            </p>
+
+          </div>
+
+
+          <p>
+            The Activity Log is not intended to duplicate your bank
+            statement transaction by transaction.
+          </p>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- INCOME -->
+
+        <section id="income">
+
+          <h2>
+            10. Regular vs Extra Income
+          </h2>
+
+
+          <h3>
+            Regular Income
+          </h3>
+
+          <p>
+            Regular Income is dependable household income used for
+            normal planning.
+          </p>
+
+          <p>
+            Examples:
+          </p>
+
+          <ul>
+
+            <li>
+              employment pay;
+            </li>
+
+            <li>
+              CPP;
+            </li>
+
+            <li>
+              dependable recurring household contributions.
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Extra Income
+          </h3>
+
+          <p>
+            Extra Income is outside the dependable baseline.
+          </p>
+
+          <p>
+            Examples:
+          </p>
+
+          <ul>
+
+            <li>
+              overtime;
+            </li>
+
+            <li>
+              music income;
+            </li>
+
+            <li>
+              refunds;
+            </li>
+
+            <li>
+              one-time payments;
+            </li>
+
+            <li>
+              unexpected income.
+            </li>
+
+          </ul>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Conservative planning rule:
+            </strong>
+
+            <p>
+              Avoid depending on uncertain extra income before
+              it actually arrives.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- MANAGE -->
+
+        <section id="manage">
+
+          <h2>
+            11. Manage & Setup
+          </h2>
+
+          <p>
+            Manage is for occasional maintenance rather than normal
+            daily operation.
+          </p>
+
+          <p>
+            Use it when something changes.
+          </p>
+
+
+          <p>
+            Manage includes:
+          </p>
+
+          <ul>
+
+            <li>
+              Accounts;
+            </li>
+
+            <li>
+              Bills;
+            </li>
+
+            <li>
+              Regular Income;
+            </li>
+
+            <li>
+              Extra Income;
+            </li>
+
+            <li>
+              Debts.
+            </li>
+
+          </ul>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Most days you should not need Manage.
+            </strong>
+
+            <p>
+              Dashboard and Check-In are the normal operating screens.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- BILLS -->
+
+        <section id="bills">
+
+          <h2>
+            12. Adding & Editing Bills
+          </h2>
+
+
+          <h3>
+            Add a New Bill
+          </h3>
+
+          <p>
+            Go to:
+          </p>
+
+          <p>
+            <strong>
+              Manage → + Add New Bill
+            </strong>
+          </p>
+
+          <p>
+            You can also open Manage Bills and choose
+            <strong>+ Add New Bill</strong>.
+          </p>
+
+
+          <p>
+            Important fields include:
+          </p>
+
+          <ul>
+
+            <li>
+              Bill Name;
+            </li>
+
+            <li>
+              Category;
+            </li>
+
+            <li>
+              normal payment amount;
+            </li>
+
+            <li>
+              frequency;
+            </li>
+
+            <li>
+              next due date;
+            </li>
+
+            <li>
+              optional end date;
+            </li>
+
+            <li>
+              optional final payment amount;
+            </li>
+
+            <li>
+              Essential / Protected;
+            </li>
+
+            <li>
+              Autopay;
+            </li>
+
+            <li>
+              Active.
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Next Due Date
+          </h3>
+
+          <p>
+            Enter the next date on which the payment is expected.
+          </p>
+
+          <p>
+            This date matters because Forecast uses it to determine
+            when the money will leave the Bills Account.
+          </p>
+
+
+          <h3>
+            Essential / Protected
+          </h3>
+
+          <p>
+            Use this for bills that belong in the protected household
+            baseline rather than optional recurring spending.
+          </p>
+
+
+          <h3>
+            When a Bill Ends
+          </h3>
+
+          <p>
+            Do not normally delete the bill.
+          </p>
+
+          <p>
+            Mark it inactive so historical information remains available.
+          </p>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- DEBTS -->
+
+        <section id="debts">
+
+          <h2>
+            13. Adding & Editing Debts
+          </h2>
+
+
+          <h3>
+            Add a New Debt
+          </h3>
+
+          <p>
+            Go to:
+          </p>
+
+          <p>
+            <strong>
+              Manage → + Add New Debt
+            </strong>
+          </p>
+
+          <p>
+            You can also choose <strong>+ Add New Debt</strong>
+            from Manage Debts.
+          </p>
+
+
+          <p>
+            Debt information can include:
+          </p>
+
+          <ul>
+
+            <li>
+              debt name;
+            </li>
+
+            <li>
+              debt type;
+            </li>
+
+            <li>
+              current balance;
+            </li>
+
+            <li>
+              credit limit;
+            </li>
+
+            <li>
+              interest rate;
+            </li>
+
+            <li>
+              minimum or regular payment;
+            </li>
+
+            <li>
+              payment frequency;
+            </li>
+
+            <li>
+              next payment date;
+            </li>
+
+            <li>
+              expected payoff/end date;
+            </li>
+
+            <li>
+              final payment amount;
+            </li>
+
+            <li>
+              payoff priority.
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Credit Limit
+          </h3>
+
+          <p>
+            This is mainly useful for credit cards and lines of credit.
+            It allows the system to calculate available credit.
+          </p>
+
+
+          <h3>
+            Payoff Priority
+          </h3>
+
+          <p>
+            Priority can eventually help identify which debt should
+            receive extra money first.
+          </p>
+
+
+          <h3>
+            When a Debt Is Paid Off
+          </h3>
+
+          <p>
+            Set the balance appropriately and mark the debt inactive
+            rather than deleting the record.
+          </p>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- WEEKLY ROUTINE -->
+
+        <section id="routine">
+
+          <h2>
+            14. Recommended Weekly Routine
+          </h2>
+
+          <p>
+            This system should not become a daily bookkeeping job.
+          </p>
+
+
+          <ol class="weekly-checklist">
+
+            <li>
+              Open Dashboard.
+            </li>
+
+            <li>
+              Review Recommended Transfer Today.
+            </li>
+
+            <li>
+              Look at the Forecast Low Point.
+            </li>
+
+            <li>
+              Spend normal household money from Spending.
+            </li>
+
+            <li>
+              Use Record Spending for a significant purchase if
+              the Dashboard should know about it immediately.
+            </li>
+
+            <li>
+              Once or twice each week, perform a Check-In.
+            </li>
+
+            <li>
+              Mark income Received only when it actually arrives.
+            </li>
+
+            <li>
+              Mark bills Paid/Cleared only when they actually clear.
+            </li>
+
+            <li>
+              If a transfer is appropriate, perform it at the bank.
+            </li>
+
+            <li>
+              Complete the transfer in Home Finance.
+            </li>
+
+            <li>
+              If something looks wrong or confusing, use
+              Log Bug / Test Note immediately.
+            </li>
+
+          </ol>
+
+
+          <div class="success-box">
+
+            <strong>
+              The regular process should take minutes, not hours.
+            </strong>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- WHAT DO I DO -->
+
+        <section id="what-do-i-do">
+
+          <h2>
+            15. What Do I Do When...?
+          </h2>
+
+
+          <div class="scenario">
+
+            <h3>
+              We buy $850 of groceries
+            </h3>
+
+            <p>
+              Pay from the Spending Account.
+            </p>
+
+            <p>
+              Because $850 is a significant purchase, use
+              <strong>Record Spending</strong> so Dashboard knows
+              immediately.
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              We spend $20 on lunch
+            </h3>
+
+            <p>
+              Do nothing in Home Finance.
+            </p>
+
+            <p>
+              Let the next Check-In reconcile the Spending balance.
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              A new recurring bill starts
+            </h3>
+
+            <p>
+              Go to:
+            </p>
+
+            <p>
+              <strong>
+                Manage → + Add New Bill
+              </strong>
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              We take on a new loan or credit card
+            </h3>
+
+            <p>
+              Go to:
+            </p>
+
+            <p>
+              <strong>
+                Manage → + Add New Debt
+              </strong>
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              A bill permanently ends
+            </h3>
+
+            <p>
+              Edit the bill and make it inactive instead of deleting it.
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              A debt is paid off
+            </h3>
+
+            <p>
+              Update the balance and mark it inactive.
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              The bank balance differs from Home Finance
+            </h3>
+
+            <p>
+              Perform a Check-In using the real bank balance.
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              Spending is getting low
+            </h3>
+
+            <p>
+              Do not automatically refill it.
+            </p>
+
+            <p>
+              Return to Dashboard and see whether the forecast
+              supports another transfer.
+            </p>
+
+          </div>
+
+
+          <div class="scenario">
+
+            <h3>
+              Something in the application doesn't make sense
+            </h3>
+
+            <p>
+              Use <strong>Log Bug / Test Note</strong> immediately.
+            </p>
+
+            <p>
+              Do not redesign the system on the spot unless the
+              problem prevents normal use.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- TEST NOTES -->
+
+        <section id="test-notes">
+
+          <h2>
+            16. Log Bug / Test Note
+          </h2>
+
+          <p>
+            During the test period, Dashboard includes:
+          </p>
+
+          <p>
+            <strong>
+              Log Bug / Test Note
+            </strong>
+          </p>
+
+          <p>
+            Use this whenever you notice something worth remembering.
+          </p>
+
+
+          <h3>
+            Note Types
+          </h3>
+
+
+          <table class="help-table">
+
+            <thead>
+
+              <tr>
+                <th>Type</th>
+                <th>Use It For</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+                <td>Bug</td>
+                <td>
+                  Something appears technically wrong or does not work.
+                </td>
+              </tr>
+
+              <tr>
+                <td>Confusing</td>
+                <td>
+                  The system may be working, but you do not understand
+                  what it is telling you.
+                </td>
+              </tr>
+
+              <tr>
+                <td>Improvement Idea</td>
+                <td>
+                  Something that may make the system easier or more useful.
+                </td>
+              </tr>
+
+              <tr>
+                <td>Worked Well</td>
+                <td>
+                  Something the system handled particularly well.
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+
+          <h3>
+            What to Write
+          </h3>
+
+          <p>
+            Give the shortest useful description you can.
+          </p>
+
+          <p>
+            Example:
+          </p>
+
+          <div class="test-box">
+
+            <strong>
+              Type:
+            </strong>
+            Confusing
+
+            <br><br>
+
+            <strong>
+              Page:
+            </strong>
+            Dashboard
+
+            <br><br>
+
+            <strong>
+              Description:
+            </strong>
+            Spending is low but recommended transfer is $0.
+
+            <br><br>
+
+            <strong>
+              Details:
+            </strong>
+            Had a large grocery trip yesterday. Need to understand
+            why Bills cannot refill Spending yet.
+
+          </div>
+
+
+          <div class="success-box">
+
+            <strong>
+              This is extremely useful during testing.
+            </strong>
+
+            <p>
+              It allows us to improve the system based on actual use
+              instead of trying to imagine every possible problem in advance.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- TEST PERIOD -->
+
+        <section id="testing">
+
+          <h2>
+            17. Four-Week Test Period
+          </h2>
+
+          <p>
+            The application is now far enough along that the most
+            valuable next step is real-world use.
+          </p>
+
+
+          <div class="test-box">
+
+            <strong>
+              Test-period rule:
+            </strong>
+
+            <p>
+              Do not add a new feature every time you encounter one
+              unusual situation.
+            </p>
+
+            <p>
+              Log it first. See whether it happens again.
+            </p>
+
+          </div>
+
+
+          <h3>
+            Week 1 — Accuracy
+          </h3>
+
+          <ul>
+
+            <li>
+              Are actual balances correct?
+            </li>
+
+            <li>
+              Are bill dates correct?
+            </li>
+
+            <li>
+              Are expected income dates correct?
+            </li>
+
+            <li>
+              Does Check-In behave properly?
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Week 2 — Spending
+          </h3>
+
+          <ul>
+
+            <li>
+              Is the Spending Account useful?
+            </li>
+
+            <li>
+              Is the weekly target realistic?
+            </li>
+
+            <li>
+              Does Record Spending help with large purchases?
+            </li>
+
+            <li>
+              Are we tempted to refill Spending too quickly?
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Week 3 — Forecast
+          </h3>
+
+          <ul>
+
+            <li>
+              Does Forecast predict real low points?
+            </li>
+
+            <li>
+              Are any recurring bills missing?
+            </li>
+
+            <li>
+              Is the protected floor sensible?
+            </li>
+
+            <li>
+              Are 30 / 60 / 90-day views useful?
+            </li>
+
+          </ul>
+
+
+          <h3>
+            Week 4 — Results
+          </h3>
+
+          <ul>
+
+            <li>
+              Do we understand our money better?
+            </li>
+
+            <li>
+              Are there fewer surprises?
+            </li>
+
+            <li>
+              Are spending decisions more deliberate?
+            </li>
+
+            <li>
+              Are we relying less on borrowed money?
+            </li>
+
+            <li>
+              Which logged bugs or ideas actually deserve changes?
+            </li>
+
+          </ul>
+
+
+          <div class="success-box">
+
+            <strong>
+              The key question after four weeks:
+            </strong>
+
+            <p>
+              Has this system made it easier to protect bills,
+              control everyday spending and see trouble before
+              we need the line of credit?
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- MOBILE -->
+
+        <section id="mobile">
+
+          <h2>
+            18. Using It on a Phone
+          </h2>
+
+          <p>
+            Home Finance is designed to be used primarily from a phone
+            if that is most convenient.
+          </p>
+
+          <p>
+            Important mobile-friendly functions include:
+          </p>
+
+          <ul>
+
+            <li>
+              Dashboard;
+            </li>
+
+            <li>
+              Record Spending;
+            </li>
+
+            <li>
+              Log Bug / Test Note;
+            </li>
+
+            <li>
+              Check-In;
+            </li>
+
+            <li>
+              Forecast;
+            </li>
+
+            <li>
+              Transfers;
+            </li>
+
+            <li>
+              Manage;
+            </li>
+
+            <li>
+              Help.
+            </li>
+
+          </ul>
+
+
+          <p>
+            The Home Finance icon can remain on the phone Home Screen
+            for app-like access.
+          </p>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Useful phone workflow:
+            </strong>
+
+            <p>
+              Open Home Finance → Dashboard → Record Spending if needed →
+              Check-In when appropriate.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- RULES -->
+
+        <section id="rules">
+
+          <h2>
+            19. Important Rules
+          </h2>
+
+
+          <div class="danger-box">
+
+            <strong>
+              Rule 1:
+            </strong>
+
+            Never mark income Received before the money actually arrives.
+
+          </div>
+
+
+          <div class="danger-box">
+
+            <strong>
+              Rule 2:
+            </strong>
+
+            Never mark a bill Paid/Cleared before it actually clears.
+
+          </div>
+
+
+          <div class="danger-box">
+
+            <strong>
+              Rule 3:
+            </strong>
+
+            Never complete a transfer in Home Finance before the real
+            bank transfer occurs.
+
+          </div>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Rule 4:
+            </strong>
+
+            Never assume all of the Bills Account balance is available
+            spending money.
+
+          </div>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Rule 5:
+            </strong>
+
+            When Home Finance and the bank disagree, the bank wins.
+            Perform a Check-In.
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 6:
+            </strong>
+
+            Do not record every tiny purchase.
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 7:
+            </strong>
+
+            Use Record Spending for significant purchases that should
+            affect the Dashboard immediately.
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 8:
+            </strong>
+
+            Do not delete historical bills or debts simply because
+            they end. Make them inactive.
+
+          </div>
+
+
+          <div class="test-box">
+
+            <strong>
+              Rule 9:
+            </strong>
+
+            During the test period, log problems and ideas before
+            changing the system.
+
+          </div>
+
+
+          <div class="success-box">
+
+            <strong>
+              Rule 10:
+            </strong>
+
+            Keep this simple enough that you will actually continue using it.
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- TROUBLESHOOTING -->
+
+        <section id="troubleshooting">
+
+          <h2>
+            20. Troubleshooting
+          </h2>
+
+
+          <h3>
+            Dashboard balance doesn't match the bank
+          </h3>
+
+          <p>
+            Perform a Check-In.
+          </p>
+
+
+          <h3>
+            A large purchase happened but Dashboard still shows
+            the old Spending balance
+          </h3>
+
+          <p>
+            Use Record Spending if it has not already been recorded,
+            or perform a Check-In.
+          </p>
+
+
+          <h3>
+            I accidentally entered the same large purchase twice
+          </h3>
+
+          <p>
+            Do not enter another correction blindly.
+            Log a Bug / Test Note and reconcile the balance through Check-In.
+          </p>
+
+
+          <h3>
+            A bill still appears after it cleared
+          </h3>
+
+          <p>
+            Open Check-In and mark the bill Paid/Cleared.
+          </p>
+
+
+          <h3>
+            Income still appears after it arrived
+          </h3>
+
+          <p>
+            Open Check-In and mark the income Received.
+          </p>
+
+
+          <h3>
+            Forecast looks wrong
+          </h3>
+
+          <p>
+            Check:
+          </p>
+
+          <ul>
+
+            <li>
+              actual balances;
+            </li>
+
+            <li>
+              bill dates;
+            </li>
+
+            <li>
+              income dates;
+            </li>
+
+            <li>
+              inactive bills;
+            </li>
+
+            <li>
+              unconfirmed bills;
+            </li>
+
+            <li>
+              unconfirmed income;
+            </li>
+
+            <li>
+              old planned transfers;
+            </li>
+
+            <li>
+              missing end dates.
+            </li>
+
+          </ul>
+
+
+          <h3>
+            A completed transfer appears twice in Activity Log
+          </h3>
+
+          <p>
+            This is expected. One entry shows money leaving one account;
+            the second shows money entering the other.
+          </p>
+
+
+          <h3>
+            Something is technically broken
+          </h3>
+
+          <p>
+            Use:
+          </p>
+
+          <p>
+            <strong>
+              Dashboard → Log Bug / Test Note → Bug
+            </strong>
+          </p>
+
+          <p>
+            Include what happened and what you expected.
+          </p>
+
+
+          <h3>
+            Something works but I don't understand it
+          </h3>
+
+          <p>
+            Log it as:
+          </p>
+
+          <p>
+            <strong>
+              Confusing
+            </strong>
+          </p>
+
+          <p>
+            That may indicate that the explanation needs improvement
+            rather than the calculation.
+          </p>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+
+        <!-- GLOSSARY -->
+
+        <section id="glossary">
+
+          <h2>
+            21. Glossary
+          </h2>
+
+
+          <table class="help-table">
+
+            <thead>
+
+              <tr>
+                <th>Term</th>
+                <th>Meaning</th>
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              <tr>
+
+                <td>
+                  Baseline Income
+                </td>
+
+                <td>
+                  Dependable normal household income used for planning.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Bills Account
+                </td>
+
+                <td>
+                  Protected account used for household income and obligations.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Spending Account
+                </td>
+
+                <td>
+                  Account used for normal everyday household spending.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Protected Floor
+                </td>
+
+                <td>
+                  Preferred minimum safety balance in the Bills Account.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Forecast Low Point
+                </td>
+
+                <td>
+                  Lowest projected Bills Account balance during the selected period.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Recommended Transfer
+                </td>
+
+                <td>
+                  Amount currently considered safe to move toward spending.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Planned Transfer
+                </td>
+
+                <td>
+                  Transfer recorded in the system but not yet completed at the bank.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Completed Transfer
+                </td>
+
+                <td>
+                  Transfer that has actually occurred and updated both balances.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Check-In
+                </td>
+
+                <td>
+                  Synchronizing Home Finance with actual bank balances.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Record Spending
+                </td>
+
+                <td>
+                  Optional function for immediately recording a significant
+                  purchase and reducing an account balance.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Activity Log
+                </td>
+
+                <td>
+                  Historical record of important Home Finance account activity.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Essential Bill
+                </td>
+
+                <td>
+                  Recurring obligation treated as protected household spending.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Active
+                </td>
+
+                <td>
+                  Indicates that a bill, debt or account is currently in use.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Extra Income
+                </td>
+
+                <td>
+                  Income outside the dependable baseline, such as overtime,
+                  music income or refunds.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Bug
+                </td>
+
+                <td>
+                  Something that appears technically incorrect or broken.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Confusing
+                </td>
+
+                <td>
+                  Something that may work correctly but is difficult to understand.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Improvement Idea
+                </td>
+
+                <td>
+                  Possible future change identified during real-world use.
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Worked Well
+                </td>
+
+                <td>
+                  Something worth remembering because the system handled it well.
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+
+
+          <div class="success-box">
+
+            <strong>
+              The simplest way to remember the entire system:
+            </strong>
+
+            <p>
+              Keep the balances real. Keep bills and income accurate.
+              Protect Bills. Spend from Spending. Record large purchases
+              when useful. Check-In regularly. Let Forecast tell you what
+              is actually safe.
+            </p>
+
+          </div>
+
+
+          <div class="test-box">
+
+            <strong>
+              During the test period:
+            </strong>
+
+            <p>
+              If something surprises you, log it instead of immediately
+              changing the system.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    async function start() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return;
+
+      }
+
+    }
+
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+    start();
+
+  </script>
+
+
+</body>
+
+</html>
