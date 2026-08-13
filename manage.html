@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Manage
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .manage-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(240px, 1fr)
+        );
+
+      gap: 18px;
+
+      margin-top: 25px;
+
+    }
+
+
+    .manage-card {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 22px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+
+      display: flex;
+
+      flex-direction: column;
+
+    }
+
+
+    .manage-card h2 {
+
+      margin-top: 0;
+
+      margin-bottom: 8px;
+
+    }
+
+
+    .manage-card p {
+
+      color: #66737f;
+
+      line-height: 1.5;
+
+      flex-grow: 1;
+
+      margin-bottom: 18px;
+
+    }
+
+
+    .manage-actions {
+
+      display: flex;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+      margin-top: auto;
+
+    }
+
+
+    .add-btn {
+
+      display: inline-block;
+
+      background: #2e9d55;
+
+      color: white;
+
+      text-decoration: none;
+
+      padding: 10px 15px;
+
+      border-radius: 7px;
+
+      font-weight: 600;
+
+    }
+
+
+    .add-btn:hover {
+
+      opacity: 0.9;
+
+    }
+
+
+    .important-card {
+
+      border-left:
+        5px solid #2d7df6;
+
+    }
+
+
+    .manage-intro {
+
+      background: #f3f8ff;
+
+      border-left:
+        5px solid #2d7df6;
+
+      border-radius: 8px;
+
+      padding: 16px 18px;
+
+      margin-top: 20px;
+
+      line-height: 1.5;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      .manage-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .manage-actions {
+
+        flex-direction: column;
+
+      }
+
+
+      .manage-actions a {
+
+        text-align: center;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Manage & Setup
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- MAIN -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+
+      <div>
+
+        <h2>
+          Manage Household Finances
+        </h2>
+
+
+        <p>
+          Add new items or maintain the accounts, bills,
+          income and debts already in the system.
+        </p>
+
+      </div>
+
+
+    </section>
+
+
+
+    <div class="manage-intro">
+
+      <strong>
+        Most day-to-day use happens on the Dashboard and Check-In.
+      </strong>
+
+      <br><br>
+
+      Use this Manage area when something changes — for example,
+      when you get a new bill, take on a new debt, pay something off,
+      change an income source or open another account.
+
+    </div>
+
+
+
+    <section class="manage-grid">
+
+
+      <!-- ACCOUNTS -->
+
+      <div class="manage-card">
+
+
+        <h2>
+          Accounts
+        </h2>
+
+
+        <p>
+          Maintain Bills, Spending, Savings and other household
+          accounts, including balances and protected floors.
+        </p>
+
+
+        <div class="manage-actions">
+
+
+          <a
+            href="accounts.html"
+            class="nav-btn"
+          >
+            Manage Accounts
+          </a>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- BILLS -->
+
+      <div class="manage-card important-card">
+
+
+        <h2>
+          Bills
+        </h2>
+
+
+        <p>
+          Add new recurring bills or maintain existing bills,
+          amounts, due dates, frequencies and payment end dates.
+        </p>
+
+
+        <div class="manage-actions">
+
+
+          <a
+            href="bills.html"
+            class="nav-btn"
+          >
+            Manage Bills
+          </a>
+
+
+          <a
+            href="bills.html?new=1"
+            class="add-btn"
+          >
+            + Add New Bill
+          </a>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- REGULAR INCOME -->
+
+      <div class="manage-card">
+
+
+        <h2>
+          Regular Income
+        </h2>
+
+
+        <p>
+          Maintain normal household income such as employment,
+          CPP and regular household contributions.
+        </p>
+
+
+        <div class="manage-actions">
+
+
+          <a
+            href="income.html"
+            class="nav-btn"
+          >
+            Manage Income
+          </a>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- EXTRA INCOME -->
+
+      <div class="manage-card">
+
+
+        <h2>
+          Extra Income
+        </h2>
+
+
+        <p>
+          Record overtime, music income, refunds and other
+          money outside the normal household baseline.
+        </p>
+
+
+        <div class="manage-actions">
+
+
+          <a
+            href="extra-income.html"
+            class="nav-btn"
+          >
+            Extra Income
+          </a>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- DEBTS -->
+
+      <div class="manage-card important-card">
+
+
+        <h2>
+          Debts
+        </h2>
+
+
+        <p>
+          Add new credit cards, lines of credit, loans,
+          mortgages or other debts and maintain their balances.
+        </p>
+
+
+        <div class="manage-actions">
+
+
+          <a
+            href="debts.html"
+            class="nav-btn"
+          >
+            Manage Debts
+          </a>
+
+
+          <a
+            href="debts.html?new=1"
+            class="add-btn"
+          >
+            + Add New Debt
+          </a>
+
+
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // LOGIN CHECK
+    // =====================================================
+
+    async function start() {
+
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+
+        window.location.href =
+          "login.html";
+
+
+        return;
+
+
+      }
+
+
+    }
+
+
+
+    // =====================================================
+    // SIGN OUT
+    // =====================================================
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
