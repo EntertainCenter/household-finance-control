@@ -4,6 +4,7 @@
 
 body {
   margin: 0;
+
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -17,9 +18,7 @@ body {
 }
 
 
-/* =========================================================
-   HEADER
-========================================================= */
+/* HEADER */
 
 .topbar {
   background: #ffffff;
@@ -30,11 +29,537 @@ body {
   justify-content: space-between;
   align-items: center;
 
+  gap: 20px;
+
   border-bottom: 1px solid #d9dee3;
 }
 
 .topbar h1 {
   margin: 0;
+  font-size: 26px;
+}
+
+.topbar p {
+  margin: 4px 0 0;
+  color: #66737f;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* MAIN */
+
+.container {
+  width: min(1200px, 94%);
+  margin: 28px auto 60px;
+}
+
+.loading {
+  padding: 30px;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.page-heading {
+  margin-bottom: 20px;
+}
+
+.page-heading h2 {
+  margin-bottom: 5px;
+}
+
+.page-heading p {
+  margin: 0;
+  color: #66737f;
+}
+
+
+/* STATUS */
+
+.status-panel {
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  margin-bottom: 24px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.status-panel h2 {
+  margin: 0 0 5px;
+}
+
+.status-panel p {
+  margin: 0;
+  color: #56616b;
+}
+
+.status-indicator {
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+.status-good {
+  background: #2e9d55;
+}
+
+.status-tight {
+  background: #e0a620;
+}
+
+.status-danger {
+  background: #c94646;
+}
+
+
+/* CARDS */
+
+.dashboard-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(220px, 1fr)
+    );
+
+  gap: 18px;
+
+  margin-bottom: 30px;
+}
+
+.card {
+  background: white;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+
+  font-size: 16px;
+  color: #56616b;
+}
+
+.card p {
+  color: #697681;
+  line-height: 1.4;
+}
+
+.highlight {
+  border: 2px solid #2d7df6;
+}
+
+.big-number {
+  font-size: 30px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+
+/* SECTION */
+
+.section {
+  margin-top: 34px;
+}
+
+.section-heading {
+  margin-bottom: 12px;
+}
+
+.section-heading h2 {
+  margin: 0;
+}
+
+
+/* TABLE */
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.finance-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.finance-table th,
+.finance-table td {
+  text-align: left;
+
+  padding: 12px 10px;
+
+  border-bottom:
+    1px solid #e7ebef;
+
+  vertical-align: middle;
+}
+
+.finance-table th {
+  font-size: 13px;
+
+  color: #5f6b76;
+
+  text-transform: uppercase;
+}
+
+.small-text {
+  font-size: 12px;
+
+  margin-top: 3px;
+
+  color: #84909b;
+}
+
+.inactive-row {
+  opacity: 0.55;
+}
+
+
+/* STATUS CHIPS */
+
+.status-chip {
+  display: inline-block;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.active-chip {
+  background: #e9f7ee;
+  color: #287a46;
+}
+
+.inactive-chip {
+  background: #eceff2;
+  color: #697681;
+}
+
+
+/* ENDING PAYMENTS */
+
+.ending-item {
+  padding: 12px 0;
+
+  border-bottom:
+    1px solid #e7ebef;
+
+  display: flex;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.ending-item:last-child {
+  border-bottom: none;
+}
+
+
+/* BUTTONS */
+
+button,
+.nav-btn {
+  cursor: pointer;
+
+  border: none;
+
+  border-radius: 7px;
+
+  padding: 11px 16px;
+
+  font-size: 15px;
+
+  background: #2d7df6;
+  color: white;
+
+  text-decoration: none;
+
+  display: inline-block;
+}
+
+button:hover,
+.nav-btn:hover {
+  opacity: 0.9;
+}
+
+.secondary-btn {
+  background: #5f6b76;
+}
+
+.small-btn {
+  padding: 7px 12px;
+  font-size: 13px;
+}
+
+.icon-btn {
+  background: transparent;
+
+  color: #495661;
+
+  font-size: 30px;
+
+  padding: 0 5px;
+}
+
+
+/* FORMS */
+
+label {
+  display: block;
+
+  margin-top: 16px;
+  margin-bottom: 6px;
+
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+
+  padding: 12px;
+
+  border-radius: 7px;
+
+  border:
+    1px solid #cbd2d9;
+
+  font-size: 16px;
+
+  background: white;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.field-note {
+  font-weight: 400;
+
+  color: #84909b;
+
+  font-size: 13px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  font-weight: 500;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+
+/* MODAL */
+
+.modal {
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 30px 15px;
+
+  overflow-y: auto;
+
+  z-index: 1000;
+}
+
+.modal-card {
+  background: white;
+
+  width: min(600px, 100%);
+
+  padding: 24px;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 10px 35px
+    rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+
+/* MESSAGES */
+
+.message-box {
+  padding: 12px 15px;
+
+  border-radius: 8px;
+
+  margin-bottom: 18px;
+}
+
+.success-message {
+  background: #e9f7ee;
+  color: #287a46;
+}
+
+.error-message {
+  background: #fdecec;
+  color: #a53737;
+}
+
+
+/* LOGIN */
+
+.login-page {
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+
+  width: 100%;
+  max-width: 420px;
+
+  padding: 30px;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 22px
+    rgba(0, 0, 0, 0.08);
+}
+
+.login-card h1 {
+  margin-top: 0;
+}
+
+.login-card button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.muted {
+  color: #6c7782;
+}
+
+.message {
+  margin-top: 15px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+  .topbar {
+    padding: 16px;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .topbar-actions {
+    width: 100%;
+  }
+
+  .nav-btn,
+  .topbar-actions button {
+    flex: 1;
+    text-align: center;
+  }
+
+  .big-number {
+    font-size: 26px;
+  }
+
+  .finance-table {
+    min-width: 750px;
+    font-size: 13px;
+  }
+
+  .ending-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+
+}  margin: 0;
   font-size: 26px;
 }
 
