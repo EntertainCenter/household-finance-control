@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Home Finance Management - Debts</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <div>
+      <h1>Home Finance Management</h1>
+      <p>Manage Debts</p>
+    </div>
+
+    <div class="topbar-actions">
+
+      <a href="index.html" class="nav-btn">
+        Dashboard
+      </a>
+
+      <a href="extra-income.html" class="nav-btn">
+        Extra Income
+      </a>
+
+      <a href="income.html" class="nav-btn">
+        Income
+      </a>
+
+      <a href="accounts.html" class="nav-btn">
+        Accounts
+      </a>
+
+      <a href="bills.html" class="nav-btn">
+        Bills
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <section class="page-heading">
+
+      <div>
+        <h2>Debt Management</h2>
+
+        <p>
+          Keep balances, rates, payments, and payoff dates current.
+        </p>
+      </div>
+
+    </section>
+
+
+    <div
+      id="debtMessage"
+      class="message-box hidden"
+    ></div>
+
+
+    <section class="card table-scroll">
+
+      <table class="finance-table">
+
+        <thead>
+          <tr>
+            <th>Debt</th>
+            <th>Balance</th>
+            <th>Available</th>
+            <th>Rate</th>
+            <th>Payment</th>
+            <th>Ends</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody id="debtTableBody">
+        </tbody>
+
+      </table>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================================================= -->
+  <!-- EDIT MODAL -->
+  <!-- ================================================= -->
+
+  <div
+    id="debtModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card">
+
+      <div class="modal-header">
+
+        <h2>Edit Debt</h2>
+
+        <button
+          id="closeModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <input
+        type="hidden"
+        id="debtId"
+      />
+
+
+      <label for="debtName">
+        Debt Name
+      </label>
+
+      <input
+        id="debtName"
+        type="text"
+      />
+
+
+      <label for="debtType">
+        Debt Type
+      </label>
+
+      <input
+        id="debtType"
+        type="text"
+      />
+
+
+      <label for="debtBalance">
+        Current Balance
+      </label>
+
+      <input
+        id="debtBalance"
+        type="number"
+        min="0"
+        step="0.01"
+      />
+
+
+      <label for="creditLimit">
+        Credit Limit
+        <span class="field-note">
+          optional
+        </span>
+      </label>
+
+      <input
+        id="creditLimit"
+        type="number"
+        min="0"
+        step="0.01"
+      />
+
+
+      <label for="interestRate">
+        Interest Rate %
+        <span class="field-note">
+          optional
+        </span>
+      </label>
+
+      <input
+        id="interestRate"
+        type="number"
+        min="0"
+        step="0.01"
+      />
+
+
+      <label for="minimumPayment">
+        Minimum / Regular Payment
+      </label>
+
+      <input
+        id="minimumPayment"
+        type="number"
+        min="0"
+        step="0.01"
+      />
+
+
+      <label for="paymentFrequency">
+        Payment Frequency
+      </label>
+
+      <select id="paymentFrequency">
+        <option value="weekly">Weekly</option>
+        <option value="biweekly">Biweekly</option>
+        <option value="semi-monthly">Semi-monthly</option>
+        <option value="monthly">Monthly</option>
+        <option value="quarterly">Quarterly</option>
+        <option value="annual">Annual</option>
+      </select>
+
+
+      <label for="nextPaymentDate">
+        Next Payment Date
+      </label>
+
+      <input
+        id="nextPaymentDate"
+        type="date"
+      />
+
+
+      <label for="debtEndDate">
+        End Date
+        <span class="field-note">
+          optional
+        </span>
+      </label>
+
+      <input
+        id="debtEndDate"
+        type="date"
+      />
+
+
+      <label for="finalPaymentAmount">
+        Final Payment Amount
+        <span class="field-note">
+          optional
+        </span>
+      </label>
+
+      <input
+        id="finalPaymentAmount"
+        type="number"
+        min="0"
+        step="0.01"
+      />
+
+
+      <label for="priorityOrder">
+        Payoff Priority
+      </label>
+
+      <input
+        id="priorityOrder"
+        type="number"
+        min="1"
+        step="1"
+      />
+
+
+      <label class="checkbox-row">
+
+        <input
+          id="debtActive"
+          type="checkbox"
+        />
+
+        Active
+
+      </label>
+
+
+      <label for="debtNotes">
+        Notes
+      </label>
+
+      <textarea
+        id="debtNotes"
+        rows="4"
+      ></textarea>
+
+
+      <div class="modal-actions">
+
+        <button
+          id="cancelDebtBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="saveDebtBtn"
+          type="button"
+        >
+          Save Changes
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    function money(value) {
+
+      return Number(value || 0)
+        .toLocaleString(
+          "en-CA",
+          {
+            style: "currency",
+            currency: "CAD"
+          }
+        );
+
+    }
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+      const date =
+        new Date(value + "T00:00:00");
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    async function loadDebts() {
+
+      const { data, error } =
+        await supabaseClient
+          .from("debts")
+          .select(`
+            id,
+            debt_name,
+            debt_type,
+            current_balance,
+            credit_limit,
+            interest_rate,
+            minimum_payment,
+            payment_frequency,
+            next_payment_date,
+            priority_order,
+            active,
+            notes,
+            end_date,
+            final_payment_amount,
+            last_confirmed_date
+          `)
+          .order(
+            "active",
+            { ascending: false }
+          )
+          .order(
+            "priority_order",
+            { ascending: true }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "debtTableBody"
+        );
+
+
+      tbody.innerHTML = "";
+
+
+      data.forEach(debt => {
+
+        const tr =
+          document.createElement("tr");
+
+
+        if (!debt.active) {
+          tr.classList.add("inactive-row");
+        }
+
+
+        let available = "—";
+
+
+        if (debt.credit_limit !== null) {
+
+          available =
+            money(
+              Number(debt.credit_limit || 0)
+              -
+              Number(debt.current_balance || 0)
+            );
+
+        }
+
+
+        const rate =
+          debt.interest_rate !== null
+            ? `${Number(debt.interest_rate).toFixed(2)}%`
+            : "—";
+
+
+        const payment =
+          debt.minimum_payment !== null
+            ? `${money(debt.minimum_payment)} ${debt.payment_frequency || ""}`
+            : "—";
+
+
+        tr.innerHTML = `
+
+          <td>
+            <strong>
+              ${debt.debt_name}
+            </strong>
+
+            <div class="small-text">
+              ${debt.debt_type || ""}
+            </div>
+          </td>
+
+          <td>
+            ${money(debt.current_balance)}
+          </td>
+
+          <td>
+            ${available}
+          </td>
+
+          <td>
+            ${rate}
+          </td>
+
+          <td>
+            ${payment}
+          </td>
+
+          <td>
+            ${prettyDate(debt.end_date)}
+          </td>
+
+          <td>
+            ${
+              debt.active
+                ? '<span class="status-chip active-chip">Active</span>'
+                : '<span class="status-chip inactive-chip">Inactive</span>'
+            }
+          </td>
+
+          <td>
+            <button
+              class="small-btn"
+              onclick='editDebt(${JSON.stringify(debt)})'
+            >
+              Edit
+            </button>
+          </td>
+
+        `;
+
+
+        tbody.appendChild(tr);
+
+      });
+
+    }
+
+
+    function editDebt(debt) {
+
+      document.getElementById(
+        "debtId"
+      ).value =
+        debt.id;
+
+
+      document.getElementById(
+        "debtName"
+      ).value =
+        debt.debt_name || "";
+
+
+      document.getElementById(
+        "debtType"
+      ).value =
+        debt.debt_type || "";
+
+
+      document.getElementById(
+        "debtBalance"
+      ).value =
+        debt.current_balance ?? "";
+
+
+      document.getElementById(
+        "creditLimit"
+      ).value =
+        debt.credit_limit ?? "";
+
+
+      document.getElementById(
+        "interestRate"
+      ).value =
+        debt.interest_rate ?? "";
+
+
+      document.getElementById(
+        "minimumPayment"
+      ).value =
+        debt.minimum_payment ?? "";
+
+
+      document.getElementById(
+        "paymentFrequency"
+      ).value =
+        debt.payment_frequency || "monthly";
+
+
+      document.getElementById(
+        "nextPaymentDate"
+      ).value =
+        debt.next_payment_date || "";
+
+
+      document.getElementById(
+        "debtEndDate"
+      ).value =
+        debt.end_date || "";
+
+
+      document.getElementById(
+        "finalPaymentAmount"
+      ).value =
+        debt.final_payment_amount ?? "";
+
+
+      document.getElementById(
+        "priorityOrder"
+      ).value =
+        debt.priority_order ?? 1;
+
+
+      document.getElementById(
+        "debtActive"
+      ).checked =
+        Boolean(debt.active);
+
+
+      document.getElementById(
+        "debtNotes"
+      ).value =
+        debt.notes || "";
+
+
+      document
+        .getElementById(
+          "debtModal"
+        )
+        .classList
+        .remove("hidden");
+
+    }
+
+
+    function closeModal() {
+
+      document
+        .getElementById(
+          "debtModal"
+        )
+        .classList
+        .add("hidden");
+
+    }
+
+
+    async function saveDebt() {
+
+      const id =
+        document.getElementById(
+          "debtId"
+        ).value;
+
+
+      const balance =
+        Number(
+          document.getElementById(
+            "debtBalance"
+          ).value
+        );
+
+
+      if (!id) {
+        return;
+      }
+
+
+      if (
+        !Number.isFinite(balance)
+        || balance < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid debt balance.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      const creditLimitValue =
+        document.getElementById(
+          "creditLimit"
+        ).value;
+
+
+      const interestRateValue =
+        document.getElementById(
+          "interestRate"
+        ).value;
+
+
+      const minimumPaymentValue =
+        document.getElementById(
+          "minimumPayment"
+        ).value;
+
+
+      const finalPaymentValue =
+        document.getElementById(
+          "finalPaymentAmount"
+        ).value;
+
+
+      const updateData = {
+
+        debt_name:
+          document.getElementById(
+            "debtName"
+          ).value.trim(),
+
+        debt_type:
+          document.getElementById(
+            "debtType"
+          ).value.trim() || null,
+
+        current_balance:
+          balance,
+
+        credit_limit:
+          creditLimitValue
+            ? Number(creditLimitValue)
+            : null,
+
+        interest_rate:
+          interestRateValue
+            ? Number(interestRateValue)
+            : null,
+
+        minimum_payment:
+          minimumPaymentValue
+            ? Number(minimumPaymentValue)
+            : null,
+
+        payment_frequency:
+          document.getElementById(
+            "paymentFrequency"
+          ).value,
+
+        next_payment_date:
+          document.getElementById(
+            "nextPaymentDate"
+          ).value || null,
+
+        end_date:
+          document.getElementById(
+            "debtEndDate"
+          ).value || null,
+
+        final_payment_amount:
+          finalPaymentValue
+            ? Number(finalPaymentValue)
+            : null,
+
+        priority_order:
+          Number(
+            document.getElementById(
+              "priorityOrder"
+            ).value || 1
+          ),
+
+        active:
+          document.getElementById(
+            "debtActive"
+          ).checked,
+
+        notes:
+          document.getElementById(
+            "debtNotes"
+          ).value.trim() || null,
+
+        last_confirmed_date:
+          new Date()
+            .toISOString()
+            .split("T")[0]
+
+      };
+
+
+      const { error } =
+        await supabaseClient
+          .from("debts")
+          .update(updateData)
+          .eq("id", id);
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      closeModal();
+
+
+      showMessage(
+        "Debt updated successfully.",
+        false
+      );
+
+
+      await loadDebts();
+
+    }
+
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "debtMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+          ? "message-box error-message"
+          : "message-box success-message";
+
+
+      setTimeout(
+        () => {
+          box.classList.add("hidden");
+        },
+        3500
+      );
+
+    }
+
+
+    document.getElementById(
+      "saveDebtBtn"
+    ).addEventListener(
+      "click",
+      saveDebt
+    );
+
+
+    document.getElementById(
+      "cancelDebtBtn"
+    ).addEventListener(
+      "click",
+      closeModal
+    );
+
+
+    document.getElementById(
+      "closeModalBtn"
+    ).addEventListener(
+      "click",
+      closeModal
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+        return;
+      }
+
+
+      await loadDebts();
+
+    }
+
+
+    start();
+
+  </script>
+
+</body>
+</html>
