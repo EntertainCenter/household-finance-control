@@ -20,23 +20,17 @@
       <p>Feehan Household</p>
     </div>
 
-
     <div class="topbar-actions">
 
-      <a
-        href="accounts.html"
-        class="nav-btn"
-      >
-        <a href="income.html" class="nav-btn">
-  Manage Income
-</a>
+      <a href="income.html" class="nav-btn">
+        Manage Income
+      </a>
+
+      <a href="accounts.html" class="nav-btn">
         Manage Accounts
       </a>
 
-      <a
-        href="bills.html"
-        class="nav-btn"
-      >
+      <a href="bills.html" class="nav-btn">
         Manage Bills
       </a>
 
@@ -62,6 +56,10 @@
     </div>
 
 
+    <!-- ================================================= -->
+    <!-- FINANCIAL STATUS -->
+    <!-- ================================================= -->
+
     <section
       id="statusSection"
       class="status-panel hidden"
@@ -85,6 +83,10 @@
     </section>
 
 
+    <!-- ================================================= -->
+    <!-- MAIN DASHBOARD -->
+    <!-- ================================================= -->
+
     <section
       class="dashboard-grid hidden"
       id="mainDashboard"
@@ -96,6 +98,311 @@
           Weekly Spending Target
         </h3>
 
+        <div
+          class="big-number"
+          id="weeklySpending"
+        >
+          $0
+        </div>
+
+        <p>
+          Available for household
+          day-to-day spending
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Baseline Income
+        </h3>
+
+        <div
+          class="big-number"
+          id="baselineIncome"
+        >
+          $0
+        </div>
+
+        <p>
+          Monthly income before
+          overtime and music
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Mandatory Bills
+        </h3>
+
+        <div
+          class="big-number"
+          id="mandatoryBills"
+        >
+          $0
+        </div>
+
+        <p>
+          Average monthly protected
+          obligations
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Optional Recurring
+        </h3>
+
+        <div
+          class="big-number"
+          id="optionalBills"
+        >
+          $0
+        </div>
+
+        <p>
+          Subscriptions and
+          non-essential recurring costs
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Projected Monthly Result
+        </h3>
+
+        <div
+          class="big-number"
+          id="monthlyResult"
+        >
+          $0
+        </div>
+
+        <p>
+          Before overtime and music
+          income
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Break-even Weekly Spending
+        </h3>
+
+        <div
+          class="big-number"
+          id="breakEvenWeekly"
+        >
+          $0
+        </div>
+
+        <p>
+          Maximum approximate weekly
+          spending before surplus
+          disappears
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- ACCOUNTS -->
+    <!-- ================================================= -->
+
+    <section
+      class="section hidden"
+      id="accountsSection"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Accounts
+        </h2>
+
+      </div>
+
+
+      <div class="dashboard-grid">
+
+        <div class="card">
+
+          <h3>
+            Bills Account
+          </h3>
+
+          <div
+            class="big-number"
+            id="billsBalance"
+          >
+            $0
+          </div>
+
+          <p>
+            Protected floor:
+            <strong id="billsFloor">
+              $0
+            </strong>
+          </p>
+
+          <p>
+            Above floor:
+            <strong id="aboveFloor">
+              $0
+            </strong>
+          </p>
+
+        </div>
+
+
+        <div class="card">
+
+          <h3>
+            Spending Account
+          </h3>
+
+          <div
+            class="big-number"
+            id="spendingBalance"
+          >
+            $0
+          </div>
+
+          <p>
+            Normal household spending
+            account.
+          </p>
+
+        </div>
+
+
+        <div class="card">
+
+          <h3>
+            Savings
+          </h3>
+
+          <div
+            class="big-number"
+            id="savingsBalance"
+          >
+            $0
+          </div>
+
+          <p>
+            Emergency target:
+            <strong id="emergencyTarget">
+              $0
+            </strong>
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- DEBTS -->
+    <!-- ================================================= -->
+
+    <section
+      class="section hidden"
+      id="debtSection"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Debt Snapshot
+        </h2>
+
+      </div>
+
+
+      <div class="card table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+
+            <tr>
+              <th>Debt</th>
+              <th>Type</th>
+              <th>Balance</th>
+              <th>Rate</th>
+              <th>Payment</th>
+            </tr>
+
+          </thead>
+
+          <tbody
+            id="debtTableBody"
+          >
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- PAYMENTS ENDING SOON -->
+    <!-- ================================================= -->
+
+    <section
+      class="section hidden"
+      id="endingSoonSection"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Money Freeing Up Soon
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <div
+          id="endingSoonContent"
+        >
+          No payments currently have
+          an end date entered.
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script src="app.js"></script>
+
+</body>
+</html>
         <div
           class="big-number"
           id="weeklySpending"
