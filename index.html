@@ -9,9 +9,102 @@
   <link rel="stylesheet" href="style.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+
+    .today-panel {
+      margin-bottom: 28px;
+    }
+
+    .today-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .today-heading h2 {
+      margin: 0;
+    }
+
+    .today-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 18px;
+    }
+
+    .today-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .today-card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 16px;
+      color: #596571;
+    }
+
+    .today-value {
+      font-size: 30px;
+      font-weight: 700;
+      color: #202a34;
+      margin-bottom: 8px;
+    }
+
+    .today-note {
+      color: #66737f;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .today-good {
+      border-left: 5px solid #2e9d55;
+    }
+
+    .today-tight {
+      border-left: 5px solid #e0a620;
+    }
+
+    .today-danger {
+      border-left: 5px solid #c94646;
+    }
+
+    .today-primary {
+      border: 2px solid #2d7df6;
+    }
+
+    .today-action-box {
+      margin-top: 18px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .today-action-box h2 {
+      margin-top: 0;
+      margin-bottom: 7px;
+    }
+
+    .today-action-box p {
+      margin-bottom: 0;
+      line-height: 1.5;
+      color: #56616b;
+    }
+
+  </style>
 </head>
 
 <body>
+
+  <!-- ================================================= -->
+  <!-- HEADER -->
+  <!-- ================================================= -->
 
   <header class="topbar">
 
@@ -25,16 +118,646 @@
       <a href="forecast.html" class="nav-btn">
         Forecast
       </a>
+
       <a href="checkin.html" class="nav-btn">
-  Check-In
-</a>
-<a href="transfers.html" class="nav-btn">
-  Transfers
-</a>
+        Check-In
+      </a>
+
+      <a href="transfers.html" class="nav-btn">
+        Transfers
+      </a>
+
       <a href="extra-income.html" class="nav-btn">
         Extra Income
       </a>
 
+      <a href="income.html" class="nav-btn">
+        Manage Income
+      </a>
+
+      <a href="accounts.html" class="nav-btn">
+        Manage Accounts
+      </a>
+
+      <a href="bills.html" class="nav-btn">
+        Manage Bills
+      </a>
+
+      <a href="debts.html" class="nav-btn">
+        Manage Debts
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <div
+      id="loadingMessage"
+      class="loading"
+    >
+      Loading household finances...
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FINANCIAL STATUS -->
+    <!-- ================================================= -->
+
+    <section
+      id="statusSection"
+      class="status-panel hidden"
+    >
+
+      <div
+        id="statusIndicator"
+        class="status-indicator"
+      ></div>
+
+      <div>
+
+        <h2 id="statusTitle">
+          Financial Status
+        </h2>
+
+        <p id="statusText"></p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- TODAY / THIS WEEK -->
+    <!-- ================================================= -->
+
+    <section
+      id="todayPanel"
+      class="today-panel"
+    >
+
+      <div class="today-heading">
+
+        <div>
+          <h2>Today / This Week</h2>
+        </div>
+
+        <div>
+
+          <a
+            href="checkin.html"
+            class="nav-btn"
+          >
+            Do Check-In
+          </a>
+
+          <a
+            href="forecast.html"
+            class="nav-btn"
+          >
+            View Forecast
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="today-grid">
+
+        <!-- Recommended Transfer -->
+
+        <div
+          class="today-card today-primary"
+          id="todayTransferCard"
+        >
+
+          <h3>
+            Recommended Transfer Today
+          </h3>
+
+          <div
+            class="today-value"
+            id="todayRecommendedTransfer"
+          >
+            $0
+          </div>
+
+          <div
+            class="today-note"
+            id="todayTransferNote"
+          >
+            Calculating...
+          </div>
+
+        </div>
+
+
+        <!-- Spending Balance -->
+
+        <div class="today-card">
+
+          <h3>
+            Spending Account
+          </h3>
+
+          <div
+            class="today-value"
+            id="todaySpendingBalance"
+          >
+            $0
+          </div>
+
+          <div class="today-note">
+            Available for normal household spending.
+          </div>
+
+        </div>
+
+
+        <!-- Bills Balance -->
+
+        <div class="today-card">
+
+          <h3>
+            Bills Account
+          </h3>
+
+          <div
+            class="today-value"
+            id="todayBillsBalance"
+          >
+            $0
+          </div>
+
+          <div
+            class="today-note"
+            id="todayBillsBalanceNote"
+          >
+          </div>
+
+        </div>
+
+
+        <!-- Lowest Forecast -->
+
+        <div
+          class="today-card"
+          id="todayLowCard"
+        >
+
+          <h3>
+            Forecast Low Point
+          </h3>
+
+          <div
+            class="today-value"
+            id="todayForecastLow"
+          >
+            $0
+          </div>
+
+          <div
+            class="today-note"
+            id="todayForecastLowDate"
+          >
+          </div>
+
+        </div>
+
+
+        <!-- Next Income -->
+
+        <div class="today-card">
+
+          <h3>
+            Next Scheduled Income
+          </h3>
+
+          <div
+            class="today-value"
+            id="todayNextIncome"
+          >
+            $0
+          </div>
+
+          <div
+            class="today-note"
+            id="todayNextIncomeNote"
+          >
+          </div>
+
+        </div>
+
+
+        <!-- Bills 7 Days -->
+
+        <div class="today-card">
+
+          <h3>
+            Bills Due Next 7 Days
+          </h3>
+
+          <div
+            class="today-value"
+            id="todayBillsSevenDays"
+          >
+            $0
+          </div>
+
+          <div
+            class="today-note"
+            id="todayBillsSevenDaysNote"
+          >
+          </div>
+
+        </div>
+
+
+        <!-- Attention -->
+
+        <div
+          class="today-card"
+          id="todayAttentionCard"
+        >
+
+          <h3>
+            Items Needing Attention
+          </h3>
+
+          <div
+            class="today-value"
+            id="todayAttentionCount"
+          >
+            0
+          </div>
+
+          <div
+            class="today-note"
+            id="todayAttentionNote"
+          >
+            Nothing overdue.
+          </div>
+
+        </div>
+
+
+        <!-- Last Check-In -->
+
+        <div class="today-card">
+
+          <h3>
+            Last Check-In
+          </h3>
+
+          <div
+            class="today-value"
+            id="todayLastCheckin"
+          >
+            —
+          </div>
+
+          <div
+            class="today-note"
+            id="todayLastCheckinNote"
+          >
+            No check-in recorded yet.
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="todayActionBox"
+        class="today-action-box"
+      >
+
+        <h2 id="todayActionTitle">
+          Calculating today's recommendation...
+        </h2>
+
+        <p id="todayActionText">
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- MAIN DASHBOARD -->
+    <!-- ================================================= -->
+
+    <section
+      class="dashboard-grid hidden"
+      id="mainDashboard"
+    >
+
+      <div class="card highlight">
+
+        <h3>
+          Weekly Spending Target
+        </h3>
+
+        <div
+          class="big-number"
+          id="weeklySpending"
+        >
+          $0
+        </div>
+
+        <p>
+          Available for household day-to-day spending
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Baseline Income
+        </h3>
+
+        <div
+          class="big-number"
+          id="baselineIncome"
+        >
+          $0
+        </div>
+
+        <p>
+          Monthly income before overtime and music
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Mandatory Bills
+        </h3>
+
+        <div
+          class="big-number"
+          id="mandatoryBills"
+        >
+          $0
+        </div>
+
+        <p>
+          Average monthly protected obligations
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Optional Recurring
+        </h3>
+
+        <div
+          class="big-number"
+          id="optionalBills"
+        >
+          $0
+        </div>
+
+        <p>
+          Subscriptions and non-essential recurring costs
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Projected Monthly Result
+        </h3>
+
+        <div
+          class="big-number"
+          id="monthlyResult"
+        >
+          $0
+        </div>
+
+        <p>
+          Before overtime and music income
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Break-even Weekly Spending
+        </h3>
+
+        <div
+          class="big-number"
+          id="breakEvenWeekly"
+        >
+          $0
+        </div>
+
+        <p>
+          Maximum approximate weekly spending before surplus disappears
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- ACCOUNTS -->
+    <!-- ================================================= -->
+
+    <section
+      class="section hidden"
+      id="accountsSection"
+    >
+
+      <div class="section-heading">
+        <h2>Accounts</h2>
+      </div>
+
+
+      <div class="dashboard-grid">
+
+        <div class="card">
+
+          <h3>Bills Account</h3>
+
+          <div
+            class="big-number"
+            id="billsBalance"
+          >
+            $0
+          </div>
+
+          <p>
+            Protected floor:
+            <strong id="billsFloor">
+              $0
+            </strong>
+          </p>
+
+          <p>
+            Above floor:
+            <strong id="aboveFloor">
+              $0
+            </strong>
+          </p>
+
+        </div>
+
+
+        <div class="card">
+
+          <h3>
+            Spending Account
+          </h3>
+
+          <div
+            class="big-number"
+            id="spendingBalance"
+          >
+            $0
+          </div>
+
+          <p>
+            Normal household spending account.
+          </p>
+
+        </div>
+
+
+        <div class="card">
+
+          <h3>Savings</h3>
+
+          <div
+            class="big-number"
+            id="savingsBalance"
+          >
+            $0
+          </div>
+
+          <p>
+            Emergency target:
+            <strong id="emergencyTarget">
+              $0
+            </strong>
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- DEBT -->
+    <!-- ================================================= -->
+
+    <section
+      class="section hidden"
+      id="debtSection"
+    >
+
+      <div class="section-heading">
+        <h2>Debt Snapshot</h2>
+      </div>
+
+
+      <div class="card table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+
+            <tr>
+              <th>Debt</th>
+              <th>Type</th>
+              <th>Balance</th>
+              <th>Rate</th>
+              <th>Payment</th>
+            </tr>
+
+          </thead>
+
+          <tbody
+            id="debtTableBody"
+          >
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- MONEY FREEING UP -->
+    <!-- ================================================= -->
+
+    <section
+      class="section hidden"
+      id="endingSoonSection"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Money Freeing Up Soon
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <div
+          id="endingSoonContent"
+        >
+          No payments currently have an end date entered.
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- Existing dashboard -->
+  <script src="app.js"></script>
+
+  <!-- New Today / This Week dashboard -->
+  <script src="dashboard-extra.js"></script>
+
+</body>
+</html>
       <a href="income.html" class="nav-btn">
         Manage Income
       </a>
