@@ -9,6 +9,45 @@
   <link rel="stylesheet" href="style.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+
+    /* =====================================================
+       FORECAST-SPECIFIC COLOURS
+    ===================================================== */
+
+    .balance-green {
+      color: #287a46;
+      font-weight: 700;
+    }
+
+    .balance-yellow {
+      color: #b57900;
+      font-weight: 700;
+    }
+
+    .balance-red {
+      color: #b93434;
+      font-weight: 700;
+    }
+
+    .safe-transfer-card {
+      border: 2px solid #2e9d55;
+    }
+
+    .safe-transfer-zero {
+      border: 2px solid #e0a620;
+    }
+
+    .safe-transfer-note {
+      margin-top: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #66737f;
+    }
+
+  </style>
+
 </head>
 
 <body>
@@ -35,6 +74,1926 @@
       </a>
 
       <a href="bills.html" class="nav-btn">
+        Bills
+      </a>
+
+      <a href="income.html" class="nav-btn">
+        Income
+      </a>
+
+      <a href="debts.html" class="nav-btn">
+        Debts
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Forward Cash-Flow Forecast
+        </h2>
+
+        <p>
+          Projects the Bills Account using actual payment and income dates.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <div
+      id="forecastMessage"
+      class="message-box hidden"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- FORECAST CONTROLS -->
+    <!-- ================================================= -->
+
+    <section class="card">
+
+      <div
+        style="
+          display:flex;
+          gap:20px;
+          align-items:end;
+          flex-wrap:wrap;
+        "
+      >
+
+        <div>
+
+          <label for="forecastDays">
+            Forecast Period
+          </label>
+
+          <select id="forecastDays">
+
+            <option value="30">
+              30 Days
+            </option>
+
+            <option
+              value="60"
+              selected
+            >
+              60 Days
+            </option>
+
+            <option value="90">
+              90 Days
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div>
+
+          <button
+            id="refreshForecastBtn"
+            type="button"
+          >
+            Refresh Forecast
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- SUMMARY CARDS -->
+    <!-- ================================================= -->
+
+    <section
+      id="forecastSummary"
+      class="dashboard-grid"
+      style="margin-top:20px;"
+    >
+
+
+      <!-- SAFE TO TRANSFER -->
+
+      <div
+        class="card"
+        id="safeTransferCard"
+      >
+
+        <h3>
+          Safe to Transfer Now
+        </h3>
+
+        <div
+          class="big-number"
+          id="safeTransfer"
+        >
+          $0
+        </div>
+
+        <p
+          class="safe-transfer-note"
+          id="safeTransferNote"
+        >
+          Calculating...
+        </p>
+
+      </div>
+
+
+      <!-- STARTING BALANCE -->
+
+      <div class="card highlight">
+
+        <h3>
+          Starting Bills Balance
+        </h3>
+
+        <div
+          class="big-number"
+          id="startingBalance"
+        >
+          $0
+        </div>
+
+      </div>
+
+
+      <!-- PROTECTED FLOOR -->
+
+      <div class="card">
+
+        <h3>
+          Protected Floor
+        </h3>
+
+        <div
+          class="big-number"
+          id="protectedFloor"
+        >
+          $0
+        </div>
+
+      </div>
+
+
+      <!-- LOWEST BALANCE -->
+
+      <div class="card">
+
+        <h3>
+          Lowest Projected Balance
+        </h3>
+
+        <div
+          class="big-number"
+          id="lowestBalance"
+        >
+          $0
+        </div>
+
+        <p id="lowestBalanceDate">
+        </p>
+
+      </div>
+
+
+      <!-- ENDING BALANCE -->
+
+      <div class="card">
+
+        <h3>
+          Forecast Ending Balance
+        </h3>
+
+        <div
+          class="big-number"
+          id="endingBalance"
+        >
+          $0
+        </div>
+
+      </div>
+
+
+      <!-- SCHEDULED INCOME -->
+
+      <div class="card">
+
+        <h3>
+          Scheduled Income
+        </h3>
+
+        <div
+          class="big-number"
+          id="scheduledIncome"
+        >
+          $0
+        </div>
+
+      </div>
+
+
+      <!-- BILLS -->
+
+      <div class="card">
+
+        <h3>
+          Scheduled Bills
+        </h3>
+
+        <div
+          class="big-number"
+          id="scheduledBills"
+        >
+          $0
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- FORECAST STATUS -->
+    <!-- ================================================= -->
+
+    <section
+      id="forecastStatus"
+      class="status-panel"
+    >
+
+      <div
+        id="forecastIndicator"
+        class="status-indicator"
+      ></div>
+
+      <div>
+
+        <h2 id="forecastStatusTitle">
+          Forecast Status
+        </h2>
+
+        <p id="forecastStatusText">
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- WARNINGS -->
+    <!-- ================================================= -->
+
+    <section
+      id="warningSection"
+      class="section hidden"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Forecast Warnings
+        </h2>
+
+      </div>
+
+      <div class="card">
+
+        <div id="warningContent">
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- CASH FLOW TIMELINE -->
+    <!-- ================================================= -->
+
+    <section class="section">
+
+      <div class="section-heading">
+
+        <h2>
+          Cash-Flow Timeline
+        </h2>
+
+      </div>
+
+
+      <div class="card table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Type
+              </th>
+
+              <th>
+                Description
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Running Balance
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody
+            id="forecastTableBody"
+          >
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    // =====================================================
+    // MONEY FORMAT
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+    // =====================================================
+    // DISPLAY DATE
+    // =====================================================
+
+    function dateText(value) {
+
+      const date =
+        new Date(
+          value + "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+    // =====================================================
+    // DATE TO ISO
+    // =====================================================
+
+    function isoDate(date) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+    // =====================================================
+    // ADD DAYS
+    // =====================================================
+
+    function addDays(
+      dateString,
+      days
+    ) {
+
+      const date =
+        new Date(
+          dateString
+          + "T00:00:00"
+        );
+
+
+      date.setDate(
+        date.getDate()
+        + days
+      );
+
+
+      return isoDate(date);
+
+    }
+
+
+    // =====================================================
+    // ADD MONTHS
+    // =====================================================
+
+    function addMonths(
+      dateString,
+      months,
+      dueDay
+    ) {
+
+      const date =
+        new Date(
+          dateString
+          + "T00:00:00"
+        );
+
+
+      date.setMonth(
+        date.getMonth()
+        + months
+      );
+
+
+      if (dueDay) {
+
+        const year =
+          date.getFullYear();
+
+
+        const month =
+          date.getMonth();
+
+
+        const lastDay =
+          new Date(
+            year,
+            month + 1,
+            0
+          ).getDate();
+
+
+        date.setDate(
+          Math.min(
+            dueDay,
+            lastDay
+          )
+        );
+
+      }
+
+
+      return isoDate(date);
+
+    }
+
+
+    // =====================================================
+    // LOGIN CHECK
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    // =====================================================
+    // BUILD BILL OCCURRENCES
+    // =====================================================
+
+    function buildBillOccurrences(
+      bill,
+      startDate,
+      endDate
+    ) {
+
+      const results = [];
+
+
+      if (
+        !bill.active
+        ||
+        !bill.next_due_date
+      ) {
+
+        return results;
+
+      }
+
+
+      let currentDate =
+        bill.next_due_date;
+
+
+      let safety =
+        0;
+
+
+      while (
+        currentDate <= endDate
+        &&
+        safety < 100
+      ) {
+
+        safety++;
+
+
+        if (
+          currentDate >= startDate
+          &&
+          (
+            !bill.end_date
+            ||
+            currentDate
+              <= bill.end_date
+          )
+        ) {
+
+          let amount =
+            Number(
+              bill.amount || 0
+            );
+
+
+          if (
+            bill.end_date
+            &&
+            currentDate
+              === bill.end_date
+            &&
+            bill.final_payment_amount
+              !== null
+          ) {
+
+            amount =
+              Number(
+                bill.final_payment_amount
+              );
+
+          }
+
+
+          results.push({
+
+            date:
+              currentDate,
+
+            type:
+              "Bill",
+
+            description:
+              bill.bill_name,
+
+            amount:
+              -amount
+
+          });
+
+        }
+
+
+        if (
+          bill.end_date
+          &&
+          currentDate
+            >= bill.end_date
+        ) {
+
+          break;
+
+        }
+
+
+        const frequency =
+          (
+            bill.frequency || ""
+          ).toLowerCase();
+
+
+        if (
+          frequency === "weekly"
+        ) {
+
+          currentDate =
+            addDays(
+              currentDate,
+              7
+            );
+
+        }
+
+
+        else if (
+          frequency === "biweekly"
+        ) {
+
+          currentDate =
+            addDays(
+              currentDate,
+              14
+            );
+
+        }
+
+
+        else if (
+          frequency
+            === "semi-monthly"
+        ) {
+
+          currentDate =
+            addDays(
+              currentDate,
+              15
+            );
+
+        }
+
+
+        else if (
+          frequency === "monthly"
+        ) {
+
+          currentDate =
+            addMonths(
+              currentDate,
+              1,
+              bill.due_day
+            );
+
+        }
+
+
+        else if (
+          frequency === "quarterly"
+        ) {
+
+          currentDate =
+            addMonths(
+              currentDate,
+              3,
+              bill.due_day
+            );
+
+        }
+
+
+        else if (
+          frequency === "annual"
+        ) {
+
+          currentDate =
+            addMonths(
+              currentDate,
+              12,
+              bill.due_day
+            );
+
+        }
+
+
+        else {
+
+          break;
+
+        }
+
+      }
+
+
+      return results;
+
+    }
+
+
+    // =====================================================
+    // LOAD FORECAST
+    // =====================================================
+
+    async function loadForecast() {
+
+      const days =
+        Number(
+          document.getElementById(
+            "forecastDays"
+          ).value
+        );
+
+
+      const today =
+        new Date();
+
+
+      const startDate =
+        isoDate(today);
+
+
+      const futureDate =
+        new Date(today);
+
+
+      futureDate.setDate(
+        futureDate.getDate()
+        + days
+      );
+
+
+      const endDate =
+        isoDate(
+          futureDate
+        );
+
+
+      const [
+        accountResult,
+        settingsResult,
+        billsResult,
+        incomeResult,
+        extraIncomeResult,
+        incomeSourcesResult
+      ] =
+        await Promise.all([
+
+
+          // BILLS ACCOUNT
+
+          supabaseClient
+            .from("accounts")
+            .select(`
+              account_name,
+              current_balance,
+              protected_floor,
+              active
+            `)
+            .eq(
+              "account_name",
+              "Bills Account"
+            )
+            .eq(
+              "active",
+              true
+            )
+            .single(),
+
+
+          // SETTINGS
+
+          supabaseClient
+            .from(
+              "finance_settings"
+            )
+            .select(`
+              bills_account_floor
+            `)
+            .single(),
+
+
+          // ACTIVE BILLS
+
+          supabaseClient
+            .from("bills")
+            .select(`
+              bill_name,
+              amount,
+              frequency,
+              due_day,
+              next_due_date,
+              end_date,
+              final_payment_amount,
+              active
+            `)
+            .eq(
+              "active",
+              true
+            ),
+
+
+          // SCHEDULED BASELINE INCOME
+
+          supabaseClient
+            .from(
+              "income_occurrences"
+            )
+            .select(`
+              expected_date,
+              expected_amount,
+              actual_amount,
+              received,
+              income_source_id
+            `)
+            .gte(
+              "expected_date",
+              startDate
+            )
+            .lte(
+              "expected_date",
+              endDate
+            ),
+
+
+          // EXPECTED EXTRA INCOME
+
+          supabaseClient
+            .from(
+              "extra_income"
+            )
+            .select(`
+              income_date,
+              source,
+              amount,
+              received,
+              notes
+            `)
+            .gte(
+              "income_date",
+              startDate
+            )
+            .lte(
+              "income_date",
+              endDate
+            )
+            .eq(
+              "received",
+              false
+            ),
+
+
+          // INCOME SOURCE NAMES
+
+          supabaseClient
+            .from(
+              "income_sources"
+            )
+            .select(`
+              id,
+              source_name,
+              active,
+              reliable,
+              variable
+            `)
+
+        ]);
+
+
+      // ===================================================
+      // CHECK ERRORS
+      // ===================================================
+
+      const errors = [
+
+        accountResult.error,
+        settingsResult.error,
+        billsResult.error,
+        incomeResult.error,
+        extraIncomeResult.error,
+        incomeSourcesResult.error
+
+      ].filter(Boolean);
+
+
+      if (
+        errors.length > 0
+      ) {
+
+        showMessage(
+          errors[0].message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      // ===================================================
+      // RESULTS
+      // ===================================================
+
+      const account =
+        accountResult.data;
+
+
+      const settings =
+        settingsResult.data;
+
+
+      const bills =
+        billsResult.data || [];
+
+
+      const incomeOccurrences =
+        incomeResult.data || [];
+
+
+      const extraIncome =
+        extraIncomeResult.data || [];
+
+
+      const incomeSources =
+        incomeSourcesResult.data || [];
+
+
+      // ===================================================
+      // PROTECTED FLOOR
+      // ===================================================
+
+      const protectedFloor =
+        Number(
+          settings
+            ?.bills_account_floor
+          ??
+          account.protected_floor
+          ??
+          0
+        );
+
+
+      // ===================================================
+      // MAP INCOME SOURCE NAMES
+      // ===================================================
+
+      const sourceMap =
+        {};
+
+
+      incomeSources.forEach(
+        source => {
+
+          sourceMap[
+            source.id
+          ] =
+            source.source_name;
+
+        }
+      );
+
+
+      // ===================================================
+      // BUILD EVENTS
+      // ===================================================
+
+      let events =
+        [];
+
+
+      const missingBillDates =
+        [];
+
+
+      bills.forEach(
+        bill => {
+
+          if (
+            !bill.next_due_date
+          ) {
+
+            missingBillDates.push(
+              bill.bill_name
+            );
+
+
+            return;
+
+          }
+
+
+          events.push(
+            ...buildBillOccurrences(
+              bill,
+              startDate,
+              endDate
+            )
+          );
+
+        }
+      );
+
+
+      // ===================================================
+      // BASELINE SCHEDULED INCOME
+      // ===================================================
+
+      incomeOccurrences.forEach(
+        item => {
+
+          if (
+            item.received
+          ) {
+
+            return;
+
+          }
+
+
+          events.push({
+
+            date:
+              item.expected_date,
+
+            type:
+              "Income",
+
+            description:
+              sourceMap[
+                item.income_source_id
+              ]
+              ||
+              "Scheduled Income",
+
+            amount:
+              Number(
+                item.actual_amount
+                ??
+                item.expected_amount
+                ??
+                0
+              )
+
+          });
+
+        }
+      );
+
+
+      // ===================================================
+      // EXPECTED EXTRA INCOME
+      //
+      // Shown in the forecast timeline,
+      // BUT Safe to Transfer does NOT depend on it.
+      // ===================================================
+
+      extraIncome.forEach(
+        item => {
+
+          events.push({
+
+            date:
+              item.income_date,
+
+            type:
+              "Extra Income",
+
+            description:
+              item.source,
+
+            amount:
+              Number(
+                item.amount || 0
+              )
+
+          });
+
+        }
+      );
+
+
+      // ===================================================
+      // SORT EVENTS
+      // ===================================================
+
+      events.sort(
+        (a, b) => {
+
+          if (
+            a.date !== b.date
+          ) {
+
+            return a.date
+              .localeCompare(
+                b.date
+              );
+
+          }
+
+
+          // Income first on same date
+
+          if (
+            a.type === "Income"
+            ||
+            a.type === "Extra Income"
+          ) {
+
+            return -1;
+
+          }
+
+
+          return 1;
+
+        }
+      );
+
+
+      // ===================================================
+      // RUNNING BALANCE
+      // ===================================================
+
+      let runningBalance =
+        Number(
+          account.current_balance
+          || 0
+        );
+
+
+      const startingBalance =
+        runningBalance;
+
+
+      let lowestBalance =
+        runningBalance;
+
+
+      let lowestDate =
+        startDate;
+
+
+      // ===================================================
+      // CONSERVATIVE BALANCE
+      //
+      // Used for Safe to Transfer.
+      //
+      // Expected Extra Income is ignored so we do not
+      // spend money before it actually arrives.
+      // ===================================================
+
+      let conservativeBalance =
+        startingBalance;
+
+
+      let conservativeLowest =
+        startingBalance;
+
+
+      let conservativeLowestDate =
+        startDate;
+
+
+      let totalIncome =
+        0;
+
+
+      let totalBills =
+        0;
+
+
+      const tbody =
+        document.getElementById(
+          "forecastTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      // ===================================================
+      // CALCULATE TIMELINE
+      // ===================================================
+
+      events.forEach(
+        event => {
+
+          // DISPLAY FORECAST
+
+          runningBalance +=
+            event.amount;
+
+
+          // CONSERVATIVE FORECAST
+
+          if (
+            event.type
+            !== "Extra Income"
+          ) {
+
+            conservativeBalance +=
+              event.amount;
+
+          }
+
+
+          // TOTALS
+
+          if (
+            event.amount >= 0
+          ) {
+
+            totalIncome +=
+              event.amount;
+
+          }
+
+          else {
+
+            totalBills +=
+              Math.abs(
+                event.amount
+              );
+
+          }
+
+
+          // DISPLAY LOW POINT
+
+          if (
+            runningBalance
+            <
+            lowestBalance
+          ) {
+
+            lowestBalance =
+              runningBalance;
+
+
+            lowestDate =
+              event.date;
+
+          }
+
+
+          // CONSERVATIVE LOW POINT
+
+          if (
+            conservativeBalance
+            <
+            conservativeLowest
+          ) {
+
+            conservativeLowest =
+              conservativeBalance;
+
+
+            conservativeLowestDate =
+              event.date;
+
+          }
+
+
+          // =================================================
+          // BALANCE COLOUR
+          // =================================================
+
+          let balanceClass =
+            "balance-green";
+
+
+          if (
+            runningBalance <= 0
+          ) {
+
+            balanceClass =
+              "balance-red";
+
+          }
+
+          else if (
+            runningBalance
+            <
+            protectedFloor
+          ) {
+
+            balanceClass =
+              "balance-yellow";
+
+          }
+
+
+          const tr =
+            document.createElement(
+              "tr"
+            );
+
+
+          const amountText =
+            event.amount >= 0
+
+              ? `+${money(
+                  event.amount
+                )}`
+
+              : `-${money(
+                  Math.abs(
+                    event.amount
+                  )
+                )}`;
+
+
+          tr.innerHTML = `
+
+            <td>
+              ${dateText(
+                event.date
+              )}
+            </td>
+
+            <td>
+              ${event.type}
+            </td>
+
+            <td>
+              ${event.description}
+            </td>
+
+            <td>
+              ${amountText}
+            </td>
+
+            <td>
+              <span class="${balanceClass}">
+                ${money(
+                  runningBalance
+                )}
+              </span>
+            </td>
+
+          `;
+
+
+          tbody.appendChild(
+            tr
+          );
+
+        }
+      );
+
+
+      // ===================================================
+      // SAFE TO TRANSFER
+      //
+      // Amount we could remove TODAY while still keeping
+      // the conservative forecast at or above the floor.
+      // ===================================================
+
+      const safeToTransfer =
+        Math.max(
+          0,
+          conservativeLowest
+          -
+          protectedFloor
+        );
+
+
+      // ===================================================
+      // DISPLAY SAFE TO TRANSFER
+      // ===================================================
+
+      document.getElementById(
+        "safeTransfer"
+      ).textContent =
+        money(
+          safeToTransfer
+        );
+
+
+      const safeCard =
+        document.getElementById(
+          "safeTransferCard"
+        );
+
+
+      const safeNote =
+        document.getElementById(
+          "safeTransferNote"
+        );
+
+
+      if (
+        safeToTransfer > 0
+      ) {
+
+        safeCard.className =
+          "card safe-transfer-card";
+
+
+        safeNote.textContent =
+          `You could transfer up to ${money(safeToTransfer)} from Bills to Spending today and still remain at or above the ${money(protectedFloor)} preferred buffer during the conservative forecast.`;
+
+      }
+
+      else {
+
+        safeCard.className =
+          "card safe-transfer-zero";
+
+
+        if (
+          conservativeLowest
+          > 0
+        ) {
+
+          safeNote.textContent =
+            `No transfer is recommended right now. The Bills Account remains positive but is projected to fall to ${money(conservativeLowest)} on ${dateText(conservativeLowestDate)} before recovering.`;
+
+        }
+
+        else {
+
+          safeNote.textContent =
+            `No transfer is recommended. The Bills Account is projected to reach ${money(conservativeLowest)} on ${dateText(conservativeLowestDate)} without additional income.`;
+
+        }
+
+      }
+
+
+      // ===================================================
+      // DISPLAY OTHER SUMMARY VALUES
+      // ===================================================
+
+      document.getElementById(
+        "startingBalance"
+      ).textContent =
+        money(
+          startingBalance
+        );
+
+
+      document.getElementById(
+        "protectedFloor"
+      ).textContent =
+        money(
+          protectedFloor
+        );
+
+
+      document.getElementById(
+        "lowestBalance"
+      ).textContent =
+        money(
+          lowestBalance
+        );
+
+
+      document.getElementById(
+        "lowestBalanceDate"
+      ).textContent =
+        `Lowest point: ${dateText(
+          lowestDate
+        )}`;
+
+
+      document.getElementById(
+        "endingBalance"
+      ).textContent =
+        money(
+          runningBalance
+        );
+
+
+      document.getElementById(
+        "scheduledIncome"
+      ).textContent =
+        money(
+          totalIncome
+        );
+
+
+      document.getElementById(
+        "scheduledBills"
+      ).textContent =
+        money(
+          totalBills
+        );
+
+
+      // ===================================================
+      // FORECAST STATUS
+      // ===================================================
+
+      updateForecastStatus(
+        conservativeLowest,
+        protectedFloor,
+        conservativeLowestDate
+      );
+
+
+      // ===================================================
+      // WARNINGS
+      // ===================================================
+
+      updateWarnings(
+        missingBillDates,
+        extraIncome.length
+      );
+
+    }
+
+
+    // =====================================================
+    // FORECAST STATUS
+    // =====================================================
+
+    function updateForecastStatus(
+      lowestBalance,
+      protectedFloor,
+      lowestDate
+    ) {
+
+      const indicator =
+        document.getElementById(
+          "forecastIndicator"
+        );
+
+
+      const title =
+        document.getElementById(
+          "forecastStatusTitle"
+        );
+
+
+      const text =
+        document.getElementById(
+          "forecastStatusText"
+        );
+
+
+      // ===================================================
+      // RED
+      // ===================================================
+
+      if (
+        lowestBalance <= 0
+      ) {
+
+        indicator.className =
+          "status-indicator status-danger";
+
+
+        title.textContent =
+          "Cash-flow warning";
+
+
+        text.textContent =
+          `The Bills Account is projected to reach ${money(lowestBalance)} on ${dateText(lowestDate)}. Additional money will be required before then.`;
+
+      }
+
+
+      // ===================================================
+      // YELLOW - BELOW BUFFER
+      // ===================================================
+
+      else if (
+        lowestBalance
+        <
+        protectedFloor
+      ) {
+
+        const belowFloor =
+          protectedFloor
+          -
+          lowestBalance;
+
+
+        indicator.className =
+          "status-indicator status-tight";
+
+
+        title.textContent =
+          "Bills Account drops below the preferred buffer";
+
+
+        text.textContent =
+          `The account remains positive, but is projected to fall to ${money(lowestBalance)} on ${dateText(lowestDate)}, which is ${money(belowFloor)} below the preferred ${money(protectedFloor)} safety buffer.`;
+
+      }
+
+
+      // ===================================================
+      // YELLOW - SMALL CUSHION
+      // ===================================================
+
+      else if (
+        lowestBalance
+        <
+        protectedFloor + 500
+      ) {
+
+        const aboveFloor =
+          lowestBalance
+          -
+          protectedFloor;
+
+
+        indicator.className =
+          "status-indicator status-tight";
+
+
+        title.textContent =
+          "Cash flow is safe but tight";
+
+
+        text.textContent =
+          `The Bills Account remains above the protected floor, with only ${money(aboveFloor)} of extra room at its lowest point on ${dateText(lowestDate)}.`;
+
+      }
+
+
+      // ===================================================
+      // GREEN
+      // ===================================================
+
+      else {
+
+        const aboveFloor =
+          lowestBalance
+          -
+          protectedFloor;
+
+
+        indicator.className =
+          "status-indicator status-good";
+
+
+        title.textContent =
+          "Cash flow looks healthy";
+
+
+        text.textContent =
+          `The Bills Account remains at least ${money(aboveFloor)} above the protected floor throughout this forecast.`;
+
+      }
+
+    }
+
+
+    // =====================================================
+    // WARNINGS
+    // =====================================================
+
+    function updateWarnings(
+      missingBillDates,
+      expectedExtraIncomeCount
+    ) {
+
+      const section =
+        document.getElementById(
+          "warningSection"
+        );
+
+
+      const content =
+        document.getElementById(
+          "warningContent"
+        );
+
+
+      const warnings =
+        [];
+
+
+      if (
+        missingBillDates.length
+        > 0
+      ) {
+
+        warnings.push(
+          `Active bills excluded because they have no next due date: ${missingBillDates.join(", ")}.`
+        );
+
+      }
+
+
+      warnings.push(
+        "The four sons' $200 personal contributions are not included in the dated forecast because they have no fixed schedule."
+      );
+
+
+      if (
+        expectedExtraIncomeCount
+        > 0
+      ) {
+
+        warnings.push(
+          "Expected extra income appears in the visible forecast, but Safe to Transfer does not rely on that money until it is actually received."
+        );
+
+      }
+
+
+      content.innerHTML =
+        warnings
+          .map(
+            item =>
+              `<p>${item}</p>`
+          )
+          .join("");
+
+
+      section.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "forecastMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+          ? "message-box error-message"
+          : "message-box success-message";
+
+    }
+
+
+    // =====================================================
+    // REFRESH
+    // =====================================================
+
+    document.getElementById(
+      "refreshForecastBtn"
+    ).addEventListener(
+      "click",
+      loadForecast
+    );
+
+
+    // =====================================================
+    // FORECAST PERIOD
+    // =====================================================
+
+    document.getElementById(
+      "forecastDays"
+    ).addEventListener(
+      "change",
+      loadForecast
+    );
+
+
+    // =====================================================
+    // LOG OUT
+    // =====================================================
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (
+        !loggedIn
+      ) {
+
+        return;
+
+      }
+
+
+      await loadForecast();
+
+    }
+
+
+    start();
+
+  </script>
+
+</body>
+</html>      <a href="bills.html" class="nav-btn">
         Bills
       </a>
 
