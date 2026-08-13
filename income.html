@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Home Finance Management - Income</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <div>
+      <h1>Home Finance Management</h1>
+      <p>Manage Income</p>
+    </div>
+
+    <div class="topbar-actions">
+
+      <a href="index.html" class="nav-btn">
+        Dashboard
+      </a>
+
+      <a href="accounts.html" class="nav-btn">
+        Accounts
+      </a>
+
+      <a href="bills.html" class="nav-btn">
+        Bills
+      </a>
+
+      <button id="logoutBtn" class="secondary-btn">
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <section class="page-heading">
+      <div>
+        <h2>Income Sources</h2>
+
+        <p>
+          Manage the household income used by the financial dashboard.
+        </p>
+      </div>
+    </section>
+
+
+    <div id="incomeMessage" class="message-box hidden"></div>
+
+
+    <section class="card table-scroll">
+
+      <table class="finance-table">
+
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Amount</th>
+            <th>Frequency</th>
+            <th>Reliable</th>
+            <th>Variable</th>
+            <th>Next Expected</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody id="incomeTableBody">
+        </tbody>
+
+      </table>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- EDIT INCOME MODAL -->
+    <!-- ================================================= -->
+
+    <div id="incomeModal" class="modal hidden">
+
+      <div class="modal-card">
+
+        <div class="modal-header">
+
+          <h2>Edit Income</h2>
+
+          <button
+            id="closeModalBtn"
+            class="icon-btn"
+            type="button"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <input type="hidden" id="incomeId" />
+
+
+        <label for="sourceName">
+          Source Name
+        </label>
+
+        <input
+          id="sourceName"
+          type="text"
+        />
+
+
+        <label for="incomeCategory">
+          Category
+        </label>
+
+        <input
+          id="incomeCategory"
+          type="text"
+        />
+
+
+        <label for="incomeAmount">
+          Amount
+        </label>
+
+        <input
+          id="incomeAmount"
+          type="number"
+          min="0"
+          step="0.01"
+        />
+
+
+        <label for="incomeFrequency">
+          Frequency
+        </label>
+
+        <select id="incomeFrequency">
+          <option value="weekly">Weekly</option>
+          <option value="biweekly">Biweekly</option>
+          <option value="semi-monthly">Semi-monthly</option>
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="annual">Annual</option>
+        </select>
+
+
+        <label for="nextExpectedDate">
+          Next Expected Date
+        </label>
+
+        <input
+          id="nextExpectedDate"
+          type="date"
+        />
+
+
+        <label class="checkbox-row">
+
+          <input
+            id="incomeReliable"
+            type="checkbox"
+          />
+
+          Reliable baseline income
+
+        </label>
+
+
+        <label class="checkbox-row">
+
+          <input
+            id="incomeVariable"
+            type="checkbox"
+          />
+
+          Variable income
+
+        </label>
+
+
+        <label class="checkbox-row">
+
+          <input
+            id="incomeActive"
+            type="checkbox"
+          />
+
+          Active
+
+        </label>
+
+
+        <label for="incomeNotes">
+          Notes
+        </label>
+
+        <textarea
+          id="incomeNotes"
+          rows="4"
+        ></textarea>
+
+
+        <div class="modal-actions">
+
+          <button
+            id="cancelIncomeBtn"
+            class="secondary-btn"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="saveIncomeBtn"
+            type="button"
+          >
+            Save Changes
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    function money(value) {
+
+      return Number(value || 0)
+        .toLocaleString(
+          "en-CA",
+          {
+            style: "currency",
+            currency: "CAD"
+          }
+        );
+
+    }
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+      const date =
+        new Date(value + "T00:00:00");
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    async function loadIncome() {
+
+      const { data, error } =
+        await supabaseClient
+          .from("income_sources")
+          .select(`
+            id,
+            source_name,
+            category,
+            amount,
+            frequency,
+            next_expected_date,
+            reliable,
+            variable,
+            active,
+            notes
+          `)
+          .order(
+            "active",
+            { ascending: false }
+          )
+          .order(
+            "source_name",
+            { ascending: true }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "incomeTableBody"
+        );
+
+
+      tbody.innerHTML = "";
+
+
+      data.forEach(item => {
+
+        const tr =
+          document.createElement("tr");
+
+
+        if (!item.active) {
+          tr.classList.add("inactive-row");
+        }
+
+
+        tr.innerHTML = `
+          <td>
+            <strong>
+              ${item.source_name}
+            </strong>
+
+            <div class="small-text">
+              ${item.category || ""}
+            </div>
+          </td>
+
+          <td>
+            ${money(item.amount)}
+          </td>
+
+          <td>
+            ${item.frequency || ""}
+          </td>
+
+          <td>
+            ${item.reliable ? "Yes" : "No"}
+          </td>
+
+          <td>
+            ${item.variable ? "Yes" : "No"}
+          </td>
+
+          <td>
+            ${prettyDate(item.next_expected_date)}
+          </td>
+
+          <td>
+            ${
+              item.active
+                ? '<span class="status-chip active-chip">Active</span>'
+                : '<span class="status-chip inactive-chip">Inactive</span>'
+            }
+          </td>
+
+          <td>
+            <button
+              class="small-btn"
+              onclick='editIncome(${JSON.stringify(item)})'
+            >
+              Edit
+            </button>
+          </td>
+        `;
+
+
+        tbody.appendChild(tr);
+
+      });
+
+    }
+
+
+    function editIncome(item) {
+
+      document.getElementById(
+        "incomeId"
+      ).value =
+        item.id;
+
+
+      document.getElementById(
+        "sourceName"
+      ).value =
+        item.source_name || "";
+
+
+      document.getElementById(
+        "incomeCategory"
+      ).value =
+        item.category || "";
+
+
+      document.getElementById(
+        "incomeAmount"
+      ).value =
+        item.amount ?? "";
+
+
+      document.getElementById(
+        "incomeFrequency"
+      ).value =
+        item.frequency || "monthly";
+
+
+      document.getElementById(
+        "nextExpectedDate"
+      ).value =
+        item.next_expected_date || "";
+
+
+      document.getElementById(
+        "incomeReliable"
+      ).checked =
+        Boolean(item.reliable);
+
+
+      document.getElementById(
+        "incomeVariable"
+      ).checked =
+        Boolean(item.variable);
+
+
+      document.getElementById(
+        "incomeActive"
+      ).checked =
+        Boolean(item.active);
+
+
+      document.getElementById(
+        "incomeNotes"
+      ).value =
+        item.notes || "";
+
+
+      document
+        .getElementById(
+          "incomeModal"
+        )
+        .classList
+        .remove("hidden");
+
+    }
+
+
+    function closeModal() {
+
+      document
+        .getElementById(
+          "incomeModal"
+        )
+        .classList
+        .add("hidden");
+
+    }
+
+
+    async function saveIncome() {
+
+      const id =
+        document.getElementById(
+          "incomeId"
+        ).value;
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "incomeAmount"
+          ).value
+        );
+
+
+      if (!id) {
+        return;
+      }
+
+
+      if (
+        !Number.isFinite(amount)
+        || amount < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid income amount.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      const updateData = {
+
+        source_name:
+          document.getElementById(
+            "sourceName"
+          ).value.trim(),
+
+        category:
+          document.getElementById(
+            "incomeCategory"
+          ).value.trim() || null,
+
+        amount,
+
+        frequency:
+          document.getElementById(
+            "incomeFrequency"
+          ).value,
+
+        next_expected_date:
+          document.getElementById(
+            "nextExpectedDate"
+          ).value || null,
+
+        reliable:
+          document.getElementById(
+            "incomeReliable"
+          ).checked,
+
+        variable:
+          document.getElementById(
+            "incomeVariable"
+          ).checked,
+
+        active:
+          document.getElementById(
+            "incomeActive"
+          ).checked,
+
+        notes:
+          document.getElementById(
+            "incomeNotes"
+          ).value.trim() || null
+
+      };
+
+
+      const { error } =
+        await supabaseClient
+          .from("income_sources")
+          .update(updateData)
+          .eq("id", id);
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      closeModal();
+
+
+      showMessage(
+        "Income source updated successfully.",
+        false
+      );
+
+
+      await loadIncome();
+
+    }
+
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "incomeMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+          ? "message-box error-message"
+          : "message-box success-message";
+
+
+      setTimeout(
+        () => {
+          box.classList.add("hidden");
+        },
+        3500
+      );
+
+    }
+
+
+    document
+      .getElementById(
+        "saveIncomeBtn"
+      )
+      .addEventListener(
+        "click",
+        saveIncome
+      );
+
+
+    document
+      .getElementById(
+        "cancelIncomeBtn"
+      )
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+
+    document
+      .getElementById(
+        "closeModalBtn"
+      )
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+
+    document
+      .getElementById(
+        "logoutBtn"
+      )
+      .addEventListener(
+        "click",
+        async () => {
+
+          await supabaseClient.auth.signOut();
+
+          window.location.href =
+            "login.html";
+
+        }
+      );
+
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+        return;
+      }
+
+
+      await loadIncome();
+
+    }
+
+
+    start();
+
+  </script>
+
+</body>
+</html>
