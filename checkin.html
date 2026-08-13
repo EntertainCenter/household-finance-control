@@ -34,8 +34,8 @@
       background: #fffaf0;
     }
 
-    .received-row {
-      opacity: 0.65;
+    .overdue-row {
+      background: #fff2f2;
     }
 
     .income-amount {
@@ -57,14 +57,15 @@
       font-size: 14px;
       cursor: pointer;
     }
+
+    .overdue-text {
+      color: #b93434;
+      font-weight: 700;
+    }
   </style>
 </head>
 
 <body>
-
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
 
   <header class="topbar">
 
@@ -104,25 +105,16 @@
   </header>
 
 
-  <!-- =====================================================
-       MAIN
-  ====================================================== -->
-
   <main class="container">
 
     <section class="page-heading">
 
       <div>
-
-        <h2>
-          Weekly Financial Check-In
-        </h2>
+        <h2>Weekly Financial Check-In</h2>
 
         <p>
-          Update the actual bank balances and confirm income
-          that has arrived.
+          Update actual balances and confirm income and bills that have cleared.
         </p>
-
       </div>
 
     </section>
@@ -134,15 +126,13 @@
     ></div>
 
 
-    <!-- =================================================
-         ACCOUNT BALANCES
-    ================================================== -->
+    <!-- ================================================= -->
+    <!-- ACCOUNT BALANCES -->
+    <!-- ================================================= -->
 
     <section class="card">
 
-      <h2>
-        Actual Account Balances
-      </h2>
+      <h2>Actual Account Balances</h2>
 
       <p class="checkin-note">
         Enter what the bank accounts actually show today.
@@ -163,7 +153,6 @@
             id="billsBalance"
             type="number"
             step="0.01"
-            min="0"
           />
 
         </div>
@@ -179,7 +168,6 @@
             id="spendingBalance"
             type="number"
             step="0.01"
-            min="0"
           />
 
         </div>
@@ -195,7 +183,6 @@
             id="savingsBalance"
             type="number"
             step="0.01"
-            min="0"
           />
 
         </div>
@@ -246,9 +233,9 @@
     </section>
 
 
-    <!-- =================================================
-         UPCOMING INCOME
-    ================================================== -->
+    <!-- ================================================= -->
+    <!-- INCOME -->
+    <!-- ================================================= -->
 
     <section
       class="section"
@@ -256,20 +243,15 @@
     >
 
       <div class="section-heading">
-
-        <h2>
-          Income Requiring Attention
-        </h2>
-
+        <h2>Income Requiring Attention</h2>
       </div>
 
 
       <div class="card">
 
         <p class="checkin-note">
-          When scheduled income actually appears in the bank,
-          click <strong>Received</strong>. The forecast will
-          then stop treating it as future income.
+          Shows overdue income and income expected within the next 14 days.
+          When money actually arrives, click <strong>Received</strong>.
         </p>
 
 
@@ -301,9 +283,9 @@
     </section>
 
 
-    <!-- =================================================
-         BILLS DUE SOON
-    ================================================== -->
+    <!-- ================================================= -->
+    <!-- BILLS -->
+    <!-- ================================================= -->
 
     <section
       class="section"
@@ -311,20 +293,16 @@
     >
 
       <div class="section-heading">
-
-        <h2>
-          Bills Due Soon
-        </h2>
-
+        <h2>Bills Requiring Attention</h2>
       </div>
 
 
       <div class="card">
 
         <p class="checkin-note">
-          This first version displays upcoming bill dates
-          without changing them. Once we confirm these dates
-          are correct, we'll add the Paid / Cleared function.
+          Shows overdue bills and bills due within the next 14 days.
+          Click <strong>Paid / Cleared</strong> once the payment has actually
+          appeared in the bank.
         </p>
 
 
@@ -339,6 +317,7 @@
                 <th>Bill</th>
                 <th>Amount</th>
                 <th>Frequency</th>
+                <th></th>
               </tr>
 
             </thead>
@@ -355,9 +334,9 @@
     </section>
 
 
-    <!-- =================================================
-         LAST CHECK-IN
-    ================================================== -->
+    <!-- ================================================= -->
+    <!-- LAST CHECK-IN -->
+    <!-- ================================================= -->
 
     <section
       class="section"
@@ -365,11 +344,7 @@
     >
 
       <div class="section-heading">
-
-        <h2>
-          Last Check-In
-        </h2>
-
+        <h2>Last Check-In</h2>
       </div>
 
 
@@ -377,9 +352,7 @@
         id="lastCheckinCard"
         class="card"
       >
-
         No check-in recorded yet.
-
       </div>
 
     </section>
@@ -388,10 +361,6 @@
 
 
   <script>
-
-    // =====================================================
-    // SUPABASE
-    // =====================================================
 
     const SUPABASE_URL =
       "https://lypfuqoxqxtdocgmryiy.supabase.co";
@@ -415,10 +384,6 @@
     let incomeSourceMap = {};
 
 
-    // =====================================================
-    // MONEY
-    // =====================================================
-
     function money(value) {
 
       return Number(
@@ -434,22 +399,16 @@
     }
 
 
-    // =====================================================
-    // DATE
-    // =====================================================
-
     function prettyDate(value) {
 
       if (!value) {
         return "—";
       }
 
-
       const date =
         new Date(
           value + "T00:00:00"
         );
-
 
       return date.toLocaleDateString(
         "en-CA",
@@ -465,33 +424,12 @@
 
     function todayISO() {
 
-      const now =
+      const date =
         new Date();
 
-
-      const year =
-        now.getFullYear();
-
-
-      const month =
-        String(
-          now.getMonth() + 1
-        ).padStart(
-          2,
-          "0"
-        );
-
-
-      const day =
-        String(
-          now.getDate()
-        ).padStart(
-          2,
-          "0"
-        );
-
-
-      return `${year}-${month}-${day}`;
+      return localISO(
+        date
+      );
 
     }
 
@@ -501,15 +439,21 @@
       const date =
         new Date();
 
-
       date.setDate(
         date.getDate() + days
       );
 
+      return localISO(
+        date
+      );
+
+    }
+
+
+    function localISO(date) {
 
       const year =
         date.getFullYear();
-
 
       const month =
         String(
@@ -519,7 +463,6 @@
           "0"
         );
 
-
       const day =
         String(
           date.getDate()
@@ -528,15 +471,168 @@
           "0"
         );
 
-
       return `${year}-${month}-${day}`;
 
     }
 
 
-    // =====================================================
-    // LOGIN
-    // =====================================================
+    function addDays(
+      dateString,
+      days
+    ) {
+
+      const date =
+        new Date(
+          dateString
+          + "T00:00:00"
+        );
+
+      date.setDate(
+        date.getDate() + days
+      );
+
+      return localISO(
+        date
+      );
+
+    }
+
+
+    function addMonths(
+      dateString,
+      months
+    ) {
+
+      const original =
+        new Date(
+          dateString
+          + "T00:00:00"
+        );
+
+      const originalDay =
+        original.getDate();
+
+      const year =
+        original.getFullYear();
+
+      const month =
+        original.getMonth();
+
+      const target =
+        new Date(
+          year,
+          month + months,
+          1
+        );
+
+      const lastDay =
+        new Date(
+          target.getFullYear(),
+          target.getMonth() + 1,
+          0
+        ).getDate();
+
+      target.setDate(
+        Math.min(
+          originalDay,
+          lastDay
+        )
+      );
+
+      return localISO(
+        target
+      );
+
+    }
+
+
+    function calculateNextDueDate(
+      currentDate,
+      frequency
+    ) {
+
+      const value =
+        (
+          frequency || ""
+        ).toLowerCase();
+
+
+      if (
+        value === "weekly"
+      ) {
+
+        return addDays(
+          currentDate,
+          7
+        );
+
+      }
+
+
+      if (
+        value === "biweekly"
+      ) {
+
+        return addDays(
+          currentDate,
+          14
+        );
+
+      }
+
+
+      if (
+        value === "semi-monthly"
+      ) {
+
+        return addDays(
+          currentDate,
+          15
+        );
+
+      }
+
+
+      if (
+        value === "monthly"
+      ) {
+
+        return addMonths(
+          currentDate,
+          1
+        );
+
+      }
+
+
+      if (
+        value === "quarterly"
+      ) {
+
+        return addMonths(
+          currentDate,
+          3
+        );
+
+      }
+
+
+      if (
+        value === "annual"
+      ) {
+
+        return addMonths(
+          currentDate,
+          12
+        );
+
+      }
+
+
+      return null;
+
+    }
+
 
     async function checkLogin() {
 
@@ -562,10 +658,6 @@
 
     }
 
-
-    // =====================================================
-    // HOUSEHOLD
-    // =====================================================
 
     async function loadHousehold() {
 
@@ -600,10 +692,6 @@
 
     }
 
-
-    // =====================================================
-    // ACCOUNTS
-    // =====================================================
 
     async function loadAccounts() {
 
@@ -701,10 +789,6 @@
     }
 
 
-    // =====================================================
-    // INCOME SOURCES
-    // =====================================================
-
     async function loadIncomeSources() {
 
       const { data, error } =
@@ -728,8 +812,7 @@
       }
 
 
-      incomeSourceMap =
-        {};
+      incomeSourceMap = {};
 
 
       data.forEach(
@@ -746,19 +829,11 @@
     }
 
 
-    // =====================================================
-    // INCOME OCCURRENCES
-    // =====================================================
-
     async function loadIncomeOccurrences() {
-
-      const startDate =
-        todayISO();
-
 
       const endDate =
         futureISO(
-          45
+          14
         );
 
 
@@ -773,9 +848,9 @@
             actual_amount,
             received
           `)
-          .gte(
-            "expected_date",
-            startDate
+          .eq(
+            "received",
+            false
           )
           .lte(
             "expected_date",
@@ -807,8 +882,7 @@
         );
 
 
-      tbody.innerHTML =
-        "";
+      tbody.innerHTML = "";
 
 
       if (
@@ -818,19 +892,20 @@
         tbody.innerHTML = `
 
           <tr>
-
             <td colspan="5">
-              No scheduled income in the next 45 days.
+              No income requires attention.
             </td>
-
           </tr>
 
         `;
 
-
         return;
 
       }
+
+
+      const today =
+        todayISO();
 
 
       data.forEach(
@@ -842,24 +917,15 @@
             );
 
 
-          if (
-            item.received
-          ) {
-
-            row.classList.add(
-              "received-row"
-            );
-
-          }
+          const overdue =
+            item.expected_date < today;
 
 
-          else {
-
-            row.classList.add(
-              "attention-row"
-            );
-
-          }
+          row.classList.add(
+            overdue
+              ? "overdue-row"
+              : "attention-row"
+          );
 
 
           const sourceName =
@@ -870,47 +936,14 @@
             "Income";
 
 
-          const displayAmount =
-            item.actual_amount
-            ??
-            item.expected_amount
-            ??
-            0;
-
-
-          let actionHTML;
-
-
-          if (
-            item.received
-          ) {
-
-            actionHTML =
-              `<span>Received</span>`;
-
-          }
-
-
-          else {
-
-            actionHTML = `
-
-              <button
-                type="button"
-                class="small-action-btn"
-                onclick="markIncomeReceived('${item.id}', ${Number(item.expected_amount || 0)})"
-              >
-                Received
-              </button>
-
-            `;
-
-          }
-
-
           row.innerHTML = `
 
             <td>
+              ${
+                overdue
+                  ? '<span class="overdue-text">Overdue — </span>'
+                  : ""
+              }
               ${prettyDate(
                 item.expected_date
               )}
@@ -922,20 +955,29 @@
 
             <td class="income-amount">
               ${money(
-                displayAmount
+                item.expected_amount
               )}
             </td>
 
             <td>
-              ${
-                item.received
-                  ? "Received"
-                  : "Expected"
-              }
+              Expected
             </td>
 
             <td>
-              ${actionHTML}
+
+              <button
+                type="button"
+                class="small-action-btn"
+                onclick="markIncomeReceived(
+                  '${item.id}',
+                  ${Number(
+                    item.expected_amount || 0
+                  )}
+                )"
+              >
+                Received
+              </button>
+
             </td>
 
           `;
@@ -950,10 +992,6 @@
 
     }
 
-
-    // =====================================================
-    // MARK INCOME RECEIVED
-    // =====================================================
 
     async function markIncomeReceived(
       id,
@@ -1015,9 +1053,7 @@
 
       const { error } =
         await supabaseClient
-          .from(
-            "income_occurrences"
-          )
+          .from("income_occurrences")
           .update({
 
             received:
@@ -1056,15 +1092,11 @@
     }
 
 
-    // =====================================================
-    // BILLS DUE SOON
-    // =====================================================
-
     async function loadBills() {
 
       const endDate =
         futureISO(
-          45
+          14
         );
 
 
@@ -1118,8 +1150,7 @@
         );
 
 
-      tbody.innerHTML =
-        "";
+      tbody.innerHTML = "";
 
 
       if (
@@ -1129,23 +1160,28 @@
         tbody.innerHTML = `
 
           <tr>
-
-            <td colspan="4">
-              No bills due during the next 45 days.
+            <td colspan="5">
+              No bills require attention.
             </td>
-
           </tr>
 
         `;
-
 
         return;
 
       }
 
 
+      const today =
+        todayISO();
+
+
       data.forEach(
         bill => {
+
+          const overdue =
+            bill.next_due_date < today;
+
 
           const row =
             document.createElement(
@@ -1153,9 +1189,25 @@
             );
 
 
+          if (
+            overdue
+          ) {
+
+            row.classList.add(
+              "overdue-row"
+            );
+
+          }
+
+
           row.innerHTML = `
 
             <td>
+              ${
+                overdue
+                  ? '<span class="overdue-text">Overdue — </span>'
+                  : ""
+              }
               ${prettyDate(
                 bill.next_due_date
               )}
@@ -1175,6 +1227,26 @@
               ${bill.frequency || "—"}
             </td>
 
+            <td>
+
+              <button
+                type="button"
+                class="small-action-btn"
+                onclick="clearBill(
+                  '${bill.id}',
+                  '${bill.next_due_date}',
+                  ${Number(
+                    bill.amount || 0
+                  )},
+                  '${bill.frequency || ""}',
+                  '${bill.bill_name.replace(/'/g, "\\'")}'
+                )"
+              >
+                Paid / Cleared
+              </button>
+
+            </td>
+
           `;
 
 
@@ -1188,9 +1260,175 @@
     }
 
 
-    // =====================================================
-    // SAVE CHECK-IN
-    // =====================================================
+    async function clearBill(
+      billId,
+      scheduledDate,
+      expectedAmount,
+      frequency,
+      billName
+    ) {
+
+      const amountText =
+        prompt(
+          `Actual amount cleared for ${billName}:`,
+          Number(
+            expectedAmount || 0
+          ).toFixed(2)
+        );
+
+
+      if (
+        amountText === null
+      ) {
+
+        return;
+
+      }
+
+
+      const actualAmount =
+        Number(
+          amountText
+        );
+
+
+      if (
+        !Number.isFinite(
+          actualAmount
+        )
+        ||
+        actualAmount < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid payment amount.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      const nextDueDate =
+        calculateNextDueDate(
+          scheduledDate,
+          frequency
+        );
+
+
+      if (
+        !nextDueDate
+      ) {
+
+        showMessage(
+          `I can't automatically advance the frequency "${frequency}".`,
+          true
+        );
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          `Mark ${billName} as cleared for ${money(actualAmount)} and move its next due date to ${prettyDate(nextDueDate)}?`
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      const paymentResult =
+        await supabaseClient
+          .from("bill_payments")
+          .upsert({
+
+            household_id:
+              householdId,
+
+            bill_id:
+              billId,
+
+            scheduled_date:
+              scheduledDate,
+
+            amount:
+              actualAmount,
+
+            cleared:
+              true,
+
+            cleared_date:
+              todayISO()
+
+          }, {
+
+            onConflict:
+              "bill_id,scheduled_date"
+
+          });
+
+
+      if (
+        paymentResult.error
+      ) {
+
+        showMessage(
+          paymentResult.error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      const billUpdate =
+        await supabaseClient
+          .from("bills")
+          .update({
+
+            next_due_date:
+              nextDueDate,
+
+            last_confirmed_date:
+              todayISO()
+
+          })
+          .eq(
+            "id",
+            billId
+          );
+
+
+      if (
+        billUpdate.error
+      ) {
+
+        showMessage(
+          billUpdate.error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      showMessage(
+        `${billName} marked cleared. Next due ${prettyDate(nextDueDate)}.`,
+        false
+      );
+
+
+      await loadBills();
+
+    }
+
 
     async function saveCheckin() {
 
@@ -1268,7 +1506,7 @@
 
       const confirmed =
         confirm(
-          `Update the live account balances to Bills ${money(billsBalance)}, Spending ${money(spendingBalance)}, Savings ${money(savingsBalance)}?`
+          `Update balances to Bills ${money(billsBalance)}, Spending ${money(spendingBalance)}, Savings ${money(savingsBalance)}?`
         );
 
 
@@ -1276,10 +1514,6 @@
         return;
       }
 
-
-      // ===================================================
-      // UPDATE BILLS ACCOUNT
-      // ===================================================
 
       const billsUpdate =
         await supabaseClient
@@ -1308,10 +1542,6 @@
       }
 
 
-      // ===================================================
-      // UPDATE SPENDING ACCOUNT
-      // ===================================================
-
       const spendingUpdate =
         await supabaseClient
           .from("accounts")
@@ -1338,10 +1568,6 @@
 
       }
 
-
-      // ===================================================
-      // UPDATE SAVINGS ACCOUNT IF PRESENT
-      // ===================================================
 
       if (
         savingsAccount
@@ -1376,15 +1602,9 @@
       }
 
 
-      // ===================================================
-      // RECORD CHECK-IN HISTORY
-      // ===================================================
-
       const checkinInsert =
         await supabaseClient
-          .from(
-            "account_checkins"
-          )
+          .from("account_checkins")
           .insert({
 
             household_id:
@@ -1423,7 +1643,7 @@
 
 
       showMessage(
-        "Check-in saved and account balances updated.",
+        "Check-in saved and balances updated.",
         false
       );
 
@@ -1441,17 +1661,11 @@
     }
 
 
-    // =====================================================
-    // LAST CHECK-IN
-    // =====================================================
-
     async function loadLastCheckin() {
 
       const { data, error } =
         await supabaseClient
-          .from(
-            "account_checkins"
-          )
+          .from("account_checkins")
           .select(`
             checkin_date,
             bills_balance,
@@ -1550,10 +1764,6 @@
     }
 
 
-    // =====================================================
-    // MESSAGE
-    // =====================================================
-
     function showMessage(
       text,
       isError
@@ -1589,10 +1799,6 @@
     }
 
 
-    // =====================================================
-    // BUTTONS
-    // =====================================================
-
     document.getElementById(
       "saveBalancesBtn"
     ).addEventListener(
@@ -1618,10 +1824,6 @@
       }
     );
 
-
-    // =====================================================
-    // START
-    // =====================================================
 
     async function start() {
 
