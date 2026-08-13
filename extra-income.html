@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Home Finance Management - Extra Income</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <div>
+      <h1>Home Finance Management</h1>
+      <p>Extra Income</p>
+    </div>
+
+    <div class="topbar-actions">
+
+      <a href="index.html" class="nav-btn">
+        Dashboard
+      </a>
+
+      <a href="income.html" class="nav-btn">
+        Income
+      </a>
+
+      <a href="accounts.html" class="nav-btn">
+        Accounts
+      </a>
+
+      <a href="bills.html" class="nav-btn">
+        Bills
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <section class="page-heading">
+
+      <div>
+        <h2>Extra Income</h2>
+
+        <p>
+          Record overtime, music gigs, refunds,
+          bonuses, and other non-baseline income.
+        </p>
+      </div>
+
+    </section>
+
+
+    <div
+      id="extraIncomeMessage"
+      class="message-box hidden"
+    ></div>
+
+
+    <section class="dashboard-grid">
+
+      <div class="card highlight">
+
+        <h3>
+          Extra Income This Month
+        </h3>
+
+        <div
+          class="big-number"
+          id="monthExtraTotal"
+        >
+          $0
+        </div>
+
+        <p>
+          Received extra income for the current month.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Expected Extra Income
+        </h3>
+
+        <div
+          class="big-number"
+          id="expectedExtraTotal"
+        >
+          $0
+        </div>
+
+        <p>
+          Planned but not yet received.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <section class="card">
+
+      <div style="margin-bottom: 18px;">
+
+        <button
+          id="addExtraIncomeBtn"
+          type="button"
+        >
+          Add Extra Income
+        </button>
+
+      </div>
+
+
+      <div class="table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Source</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody id="extraIncomeTableBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================================================= -->
+  <!-- ADD / EDIT MODAL -->
+  <!-- ================================================= -->
+
+  <div
+    id="extraIncomeModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card">
+
+      <div class="modal-header">
+
+        <h2 id="modalTitle">
+          Add Extra Income
+        </h2>
+
+        <button
+          id="closeModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <input
+        type="hidden"
+        id="extraIncomeId"
+      />
+
+
+      <label for="incomeDate">
+        Date
+      </label>
+
+      <input
+        id="incomeDate"
+        type="date"
+      />
+
+
+      <label for="incomeSource">
+        Source
+      </label>
+
+      <select id="incomeSource">
+        <option value="Music Gig">
+          Music Gig
+        </option>
+
+        <option value="SJIAA Overtime">
+          SJIAA Overtime
+        </option>
+
+        <option value="Tax Refund">
+          Tax Refund
+        </option>
+
+        <option value="Bonus">
+          Bonus
+        </option>
+
+        <option value="Sale">
+          Sale
+        </option>
+
+        <option value="Other">
+          Other
+        </option>
+      </select>
+
+
+      <label for="incomeAmount">
+        Amount
+      </label>
+
+      <input
+        id="incomeAmount"
+        type="number"
+        min="0"
+        step="0.01"
+      />
+
+
+      <label class="checkbox-row">
+
+        <input
+          id="incomeReceived"
+          type="checkbox"
+        />
+
+        Money has been received
+
+      </label>
+
+
+      <label for="incomeNotes">
+        Notes
+      </label>
+
+      <textarea
+        id="incomeNotes"
+        rows="4"
+        placeholder="Example: Bridie Molloy's Friday night"
+      ></textarea>
+
+
+      <div class="modal-actions">
+
+        <button
+          id="deleteExtraIncomeBtn"
+          class="secondary-btn hidden"
+          type="button"
+        >
+          Delete
+        </button>
+
+        <button
+          id="cancelExtraIncomeBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="saveExtraIncomeBtn"
+          type="button"
+        >
+          Save
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    function money(value) {
+
+      return Number(value || 0)
+        .toLocaleString(
+          "en-CA",
+          {
+            style: "currency",
+            currency: "CAD"
+          }
+        );
+
+    }
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+      const date =
+        new Date(value + "T00:00:00");
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    async function loadExtraIncome() {
+
+      const { data, error } =
+        await supabaseClient
+          .from("extra_income")
+          .select(`
+            id,
+            income_date,
+            source,
+            amount,
+            received,
+            notes
+          `)
+          .order(
+            "income_date",
+            { ascending: false }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "extraIncomeTableBody"
+        );
+
+
+      tbody.innerHTML = "";
+
+
+      let receivedThisMonth = 0;
+      let expectedTotal = 0;
+
+
+      const now =
+        new Date();
+
+
+      const currentYear =
+        now.getFullYear();
+
+
+      const currentMonth =
+        now.getMonth();
+
+
+      data.forEach(item => {
+
+        const itemDate =
+          new Date(
+            item.income_date
+            + "T00:00:00"
+          );
+
+
+        if (
+          item.received
+          &&
+          itemDate.getFullYear()
+            === currentYear
+          &&
+          itemDate.getMonth()
+            === currentMonth
+        ) {
+
+          receivedThisMonth +=
+            Number(item.amount || 0);
+
+        }
+
+
+        if (!item.received) {
+
+          expectedTotal +=
+            Number(item.amount || 0);
+
+        }
+
+
+        const tr =
+          document.createElement("tr");
+
+
+        tr.innerHTML = `
+
+          <td>
+            ${prettyDate(item.income_date)}
+          </td>
+
+          <td>
+            <strong>
+              ${item.source}
+            </strong>
+          </td>
+
+          <td>
+            ${money(item.amount)}
+          </td>
+
+          <td>
+            ${
+              item.received
+                ? '<span class="status-chip active-chip">Received</span>'
+                : '<span class="status-chip inactive-chip">Expected</span>'
+            }
+          </td>
+
+          <td>
+            ${item.notes || ""}
+          </td>
+
+          <td>
+            <button
+              class="small-btn"
+              onclick='editExtraIncome(${JSON.stringify(item)})'
+            >
+              Edit
+            </button>
+          </td>
+
+        `;
+
+
+        tbody.appendChild(tr);
+
+      });
+
+
+      document.getElementById(
+        "monthExtraTotal"
+      ).textContent =
+        money(receivedThisMonth);
+
+
+      document.getElementById(
+        "expectedExtraTotal"
+      ).textContent =
+        money(expectedTotal);
+
+    }
+
+
+    function openAddModal() {
+
+      document.getElementById(
+        "modalTitle"
+      ).textContent =
+        "Add Extra Income";
+
+
+      document.getElementById(
+        "extraIncomeId"
+      ).value = "";
+
+
+      document.getElementById(
+        "incomeDate"
+      ).value =
+        new Date()
+          .toISOString()
+          .split("T")[0];
+
+
+      document.getElementById(
+        "incomeSource"
+      ).value =
+        "Music Gig";
+
+
+      document.getElementById(
+        "incomeAmount"
+      ).value = "";
+
+
+      document.getElementById(
+        "incomeReceived"
+      ).checked = true;
+
+
+      document.getElementById(
+        "incomeNotes"
+      ).value = "";
+
+
+      document.getElementById(
+        "deleteExtraIncomeBtn"
+      ).classList.add("hidden");
+
+
+      document.getElementById(
+        "extraIncomeModal"
+      ).classList.remove("hidden");
+
+    }
+
+
+    function editExtraIncome(item) {
+
+      document.getElementById(
+        "modalTitle"
+      ).textContent =
+        "Edit Extra Income";
+
+
+      document.getElementById(
+        "extraIncomeId"
+      ).value =
+        item.id;
+
+
+      document.getElementById(
+        "incomeDate"
+      ).value =
+        item.income_date || "";
+
+
+      document.getElementById(
+        "incomeSource"
+      ).value =
+        item.source || "Other";
+
+
+      document.getElementById(
+        "incomeAmount"
+      ).value =
+        item.amount ?? "";
+
+
+      document.getElementById(
+        "incomeReceived"
+      ).checked =
+        Boolean(item.received);
+
+
+      document.getElementById(
+        "incomeNotes"
+      ).value =
+        item.notes || "";
+
+
+      document.getElementById(
+        "deleteExtraIncomeBtn"
+      ).classList.remove("hidden");
+
+
+      document.getElementById(
+        "extraIncomeModal"
+      ).classList.remove("hidden");
+
+    }
+
+
+    function closeModal() {
+
+      document.getElementById(
+        "extraIncomeModal"
+      ).classList.add("hidden");
+
+    }
+
+
+    async function saveExtraIncome() {
+
+      const id =
+        document.getElementById(
+          "extraIncomeId"
+        ).value;
+
+
+      const date =
+        document.getElementById(
+          "incomeDate"
+        ).value;
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "incomeAmount"
+          ).value
+        );
+
+
+      if (!date) {
+
+        showMessage(
+          "Please enter an income date.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !Number.isFinite(amount)
+        || amount <= 0
+      ) {
+
+        showMessage(
+          "Please enter a valid amount.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      const record = {
+
+        income_date:
+          date,
+
+        source:
+          document.getElementById(
+            "incomeSource"
+          ).value,
+
+        amount,
+
+        received:
+          document.getElementById(
+            "incomeReceived"
+          ).checked,
+
+        notes:
+          document.getElementById(
+            "incomeNotes"
+          ).value.trim() || null
+
+      };
+
+
+      let error;
+
+
+      if (id) {
+
+        const result =
+          await supabaseClient
+            .from("extra_income")
+            .update(record)
+            .eq("id", id);
+
+
+        error =
+          result.error;
+
+      }
+
+      else {
+
+        const householdResult =
+          await supabaseClient
+            .from("households")
+            .select("id")
+            .eq(
+              "name",
+              "Feehan Household"
+            )
+            .single();
+
+
+        if (householdResult.error) {
+
+          showMessage(
+            householdResult.error.message,
+            true
+          );
+
+          return;
+
+        }
+
+
+        record.household_id =
+          householdResult.data.id;
+
+
+        const result =
+          await supabaseClient
+            .from("extra_income")
+            .insert(record);
+
+
+        error =
+          result.error;
+
+      }
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      closeModal();
+
+
+      showMessage(
+        "Extra income saved successfully.",
+        false
+      );
+
+
+      await loadExtraIncome();
+
+    }
+
+
+    async function deleteExtraIncome() {
+
+      const id =
+        document.getElementById(
+          "extraIncomeId"
+        ).value;
+
+
+      if (!id) {
+        return;
+      }
+
+
+      const confirmed =
+        confirm(
+          "Delete this extra income entry?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      const { error } =
+        await supabaseClient
+          .from("extra_income")
+          .delete()
+          .eq("id", id);
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      closeModal();
+
+
+      showMessage(
+        "Extra income deleted.",
+        false
+      );
+
+
+      await loadExtraIncome();
+
+    }
+
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "extraIncomeMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+          ? "message-box error-message"
+          : "message-box success-message";
+
+
+      setTimeout(
+        () => {
+          box.classList.add("hidden");
+        },
+        3500
+      );
+
+    }
+
+
+    document.getElementById(
+      "addExtraIncomeBtn"
+    ).addEventListener(
+      "click",
+      openAddModal
+    );
+
+
+    document.getElementById(
+      "saveExtraIncomeBtn"
+    ).addEventListener(
+      "click",
+      saveExtraIncome
+    );
+
+
+    document.getElementById(
+      "deleteExtraIncomeBtn"
+    ).addEventListener(
+      "click",
+      deleteExtraIncome
+    );
+
+
+    document.getElementById(
+      "cancelExtraIncomeBtn"
+    ).addEventListener(
+      "click",
+      closeModal
+    );
+
+
+    document.getElementById(
+      "closeModalBtn"
+    ).addEventListener(
+      "click",
+      closeModal
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+        return;
+      }
+
+
+      await loadExtraIncome();
+
+    }
+
+
+    start();
+
+  </script>
+
+</body>
+</html>
