@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Home Finance Management</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div>
+      <h1>Home Finance Management</h1>
+      <p>Feehan Household</p>
+    </div>
+
+    <button id="logoutBtn" class="secondary-btn">
+      Sign Out
+    </button>
+  </header>
+
+
+  <main class="container">
+
+    <div id="loadingMessage" class="loading">
+      Loading household finances...
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STATUS -->
+    <!-- ================================================= -->
+
+    <section id="statusSection" class="status-panel hidden">
+      <div id="statusIndicator" class="status-indicator"></div>
+
+      <div>
+        <h2 id="statusTitle">Financial Status</h2>
+        <p id="statusText"></p>
+      </div>
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- MAIN FINANCIAL CARDS -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-grid hidden" id="mainDashboard">
+
+      <div class="card highlight">
+        <h3>Weekly Spending Target</h3>
+        <div class="big-number" id="weeklySpending">$0</div>
+        <p>Available for household day-to-day spending</p>
+      </div>
+
+
+      <div class="card">
+        <h3>Baseline Income</h3>
+        <div class="big-number" id="baselineIncome">$0</div>
+        <p>Monthly income before overtime and music</p>
+      </div>
+
+
+      <div class="card">
+        <h3>Mandatory Bills</h3>
+        <div class="big-number" id="mandatoryBills">$0</div>
+        <p>Average monthly protected obligations</p>
+      </div>
+
+
+      <div class="card">
+        <h3>Optional Recurring</h3>
+        <div class="big-number" id="optionalBills">$0</div>
+        <p>Subscriptions and non-essential recurring costs</p>
+      </div>
+
+
+      <div class="card">
+        <h3>Projected Monthly Result</h3>
+        <div class="big-number" id="monthlyResult">$0</div>
+        <p>Before overtime and music income</p>
+      </div>
+
+
+      <div class="card">
+        <h3>Break-even Weekly Spending</h3>
+        <div class="big-number" id="breakEvenWeekly">$0</div>
+        <p>Approximate maximum before monthly surplus disappears</p>
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- ACCOUNTS -->
+    <!-- ================================================= -->
+
+    <section class="section hidden" id="accountsSection">
+
+      <div class="section-heading">
+        <h2>Accounts</h2>
+      </div>
+
+      <div class="dashboard-grid">
+
+        <div class="card">
+          <h3>Bills Account</h3>
+          <div class="big-number" id="billsBalance">$0</div>
+
+          <p>
+            Protected floor:
+            <strong id="billsFloor">$0</strong>
+          </p>
+
+          <p>
+            Above floor:
+            <strong id="aboveFloor">$0</strong>
+          </p>
+        </div>
+
+
+        <div class="card">
+          <h3>Spending Account</h3>
+          <div class="big-number" id="spendingBalance">$0</div>
+
+          <p>
+            Use this account for normal household spending.
+          </p>
+        </div>
+
+
+        <div class="card">
+          <h3>Savings</h3>
+          <div class="big-number" id="savingsBalance">$0</div>
+
+          <p>
+            Emergency target:
+            <strong id="emergencyTarget">$0</strong>
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- DEBT -->
+    <!-- ================================================= -->
+
+    <section class="section hidden" id="debtSection">
+
+      <div class="section-heading">
+        <h2>Debt Snapshot</h2>
+      </div>
+
+      <div class="card">
+
+        <table class="finance-table">
+          <thead>
+            <tr>
+              <th>Debt</th>
+              <th>Type</th>
+              <th>Balance</th>
+              <th>Rate</th>
+              <th>Payment</th>
+            </tr>
+          </thead>
+
+          <tbody id="debtTableBody">
+          </tbody>
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- BILLS ENDING SOON -->
+    <!-- ================================================= -->
+
+    <section class="section hidden" id="endingSoonSection">
+
+      <div class="section-heading">
+        <h2>Money Freeing Up Soon</h2>
+      </div>
+
+      <div class="card">
+        <div id="endingSoonContent">
+          No payments currently have an end date entered.
+        </div>
+      </div>
+
+    </section>
+
+
+  </main>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
