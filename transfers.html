@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Home Finance Management - Transfers</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <div>
+      <h1>Home Finance Management</h1>
+      <p>Spending Transfers</p>
+    </div>
+
+    <div class="topbar-actions">
+
+      <a href="index.html" class="nav-btn">
+        Dashboard
+      </a>
+
+      <a href="forecast.html" class="nav-btn">
+        Forecast
+      </a>
+
+      <a href="accounts.html" class="nav-btn">
+        Accounts
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Bills → Spending Transfers
+        </h2>
+
+        <p>
+          Record planned and completed transfers into the household spending account.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <div
+      id="transferMessage"
+      class="message-box hidden"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- SUMMARY -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-grid">
+
+      <div class="card highlight">
+
+        <h3>
+          Weekly Target
+        </h3>
+
+        <div
+          class="big-number"
+          id="weeklyTarget"
+        >
+          $0
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Planned This Month
+        </h3>
+
+        <div
+          class="big-number"
+          id="plannedMonth"
+        >
+          $0
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Completed This Month
+        </h3>
+
+        <div
+          class="big-number"
+          id="completedMonth"
+        >
+          $0
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- TRANSFER LIST -->
+    <!-- ================================================= -->
+
+    <section class="card">
+
+      <div style="margin-bottom:18px;">
+
+        <button
+          id="addTransferBtn"
+          type="button"
+        >
+          Add Transfer
+        </button>
+
+      </div>
+
+
+      <div class="table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Notes
+              </th>
+
+              <th>
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody
+            id="transferTableBody"
+          >
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================================================= -->
+  <!-- ADD / EDIT MODAL -->
+  <!-- ================================================= -->
+
+  <div
+    id="transferModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card">
+
+      <div class="modal-header">
+
+        <h2 id="transferModalTitle">
+          Add Transfer
+        </h2>
+
+        <button
+          id="closeTransferModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <input
+        type="hidden"
+        id="transferId"
+      />
+
+
+      <label for="transferDate">
+        Transfer Date
+      </label>
+
+      <input
+        id="transferDate"
+        type="date"
+      />
+
+
+      <label for="transferAmount">
+        Amount
+      </label>
+
+      <input
+        id="transferAmount"
+        type="number"
+        min="0"
+        step="0.01"
+      />
+
+
+      <label for="transferStatus">
+        Status
+      </label>
+
+      <select id="transferStatus">
+
+        <option value="planned">
+          Planned
+        </option>
+
+        <option value="completed">
+          Completed
+        </option>
+
+      </select>
+
+
+      <label for="transferNotes">
+        Notes
+      </label>
+
+      <textarea
+        id="transferNotes"
+        rows="4"
+        placeholder="Example: Weekly household spending transfer"
+      ></textarea>
+
+
+      <div class="modal-actions">
+
+        <button
+          id="deleteTransferBtn"
+          class="secondary-btn hidden"
+          type="button"
+        >
+          Delete
+        </button>
+
+        <button
+          id="cancelTransferBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="saveTransferBtn"
+          type="button"
+        >
+          Save
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+
+      const date =
+        new Date(
+          value + "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    async function loadWeeklyTarget() {
+
+      const { data, error } =
+        await supabaseClient
+          .from(
+            "finance_settings"
+          )
+          .select(`
+            weekly_spending_target
+          `)
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      document.getElementById(
+        "weeklyTarget"
+      ).textContent =
+        money(
+          data.weekly_spending_target
+        );
+
+    }
+
+
+    async function loadTransfers() {
+
+      const { data, error } =
+        await supabaseClient
+          .from(
+            "spending_transfers"
+          )
+          .select(`
+            id,
+            transfer_date,
+            amount,
+            status,
+            notes
+          `)
+          .order(
+            "transfer_date",
+            {
+              ascending: false
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "transferTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      const now =
+        new Date();
+
+
+      const currentYear =
+        now.getFullYear();
+
+
+      const currentMonth =
+        now.getMonth();
+
+
+      let plannedMonth =
+        0;
+
+
+      let completedMonth =
+        0;
+
+
+      data.forEach(
+        item => {
+
+          const transferDate =
+            new Date(
+              item.transfer_date
+              + "T00:00:00"
+            );
+
+
+          const isCurrentMonth =
+            transferDate.getFullYear()
+              === currentYear
+            &&
+            transferDate.getMonth()
+              === currentMonth;
+
+
+          if (
+            isCurrentMonth
+            &&
+            item.status
+              === "planned"
+          ) {
+
+            plannedMonth +=
+              Number(
+                item.amount || 0
+              );
+
+          }
+
+
+          if (
+            isCurrentMonth
+            &&
+            item.status
+              === "completed"
+          ) {
+
+            completedMonth +=
+              Number(
+                item.amount || 0
+              );
+
+          }
+
+
+          const tr =
+            document.createElement(
+              "tr"
+            );
+
+
+          const statusChip =
+            item.status
+              === "completed"
+
+              ? '<span class="status-chip active-chip">Completed</span>'
+
+              : '<span class="status-chip inactive-chip">Planned</span>';
+
+
+          tr.innerHTML = `
+
+            <td>
+              ${prettyDate(
+                item.transfer_date
+              )}
+            </td>
+
+            <td>
+              ${money(
+                item.amount
+              )}
+            </td>
+
+            <td>
+              ${statusChip}
+            </td>
+
+            <td>
+              ${item.notes || ""}
+            </td>
+
+            <td>
+
+              <button
+                class="small-btn"
+                onclick='editTransfer(${JSON.stringify(item)})'
+              >
+                Edit
+              </button>
+
+            </td>
+
+          `;
+
+
+          tbody.appendChild(
+            tr
+          );
+
+        }
+      );
+
+
+      document.getElementById(
+        "plannedMonth"
+      ).textContent =
+        money(
+          plannedMonth
+        );
+
+
+      document.getElementById(
+        "completedMonth"
+      ).textContent =
+        money(
+          completedMonth
+        );
+
+    }
+
+
+    function openAddTransfer() {
+
+      document.getElementById(
+        "transferModalTitle"
+      ).textContent =
+        "Add Transfer";
+
+
+      document.getElementById(
+        "transferId"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "transferDate"
+      ).value =
+        new Date()
+          .toISOString()
+          .split("T")[0];
+
+
+      document.getElementById(
+        "transferAmount"
+      ).value =
+        500;
+
+
+      document.getElementById(
+        "transferStatus"
+      ).value =
+        "planned";
+
+
+      document.getElementById(
+        "transferNotes"
+      ).value =
+        "Weekly household spending transfer";
+
+
+      document.getElementById(
+        "deleteTransferBtn"
+      ).classList.add(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "transferModal"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    function editTransfer(item) {
+
+      document.getElementById(
+        "transferModalTitle"
+      ).textContent =
+        "Edit Transfer";
+
+
+      document.getElementById(
+        "transferId"
+      ).value =
+        item.id;
+
+
+      document.getElementById(
+        "transferDate"
+      ).value =
+        item.transfer_date || "";
+
+
+      document.getElementById(
+        "transferAmount"
+      ).value =
+        item.amount ?? "";
+
+
+      document.getElementById(
+        "transferStatus"
+      ).value =
+        item.status || "planned";
+
+
+      document.getElementById(
+        "transferNotes"
+      ).value =
+        item.notes || "";
+
+
+      document.getElementById(
+        "deleteTransferBtn"
+      ).classList.remove(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "transferModal"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    function closeTransferModal() {
+
+      document.getElementById(
+        "transferModal"
+      ).classList.add(
+        "hidden"
+      );
+
+    }
+
+
+    async function saveTransfer() {
+
+      const id =
+        document.getElementById(
+          "transferId"
+        ).value;
+
+
+      const transferDate =
+        document.getElementById(
+          "transferDate"
+        ).value;
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "transferAmount"
+          ).value
+        );
+
+
+      if (!transferDate) {
+
+        showMessage(
+          "Please enter a transfer date.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      if (
+        !Number.isFinite(amount)
+        ||
+        amount <= 0
+      ) {
+
+        showMessage(
+          "Please enter a valid transfer amount.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const record = {
+
+        transfer_date:
+          transferDate,
+
+        amount:
+          amount,
+
+        status:
+          document.getElementById(
+            "transferStatus"
+          ).value,
+
+        notes:
+          document.getElementById(
+            "transferNotes"
+          ).value.trim()
+          || null
+
+      };
+
+
+      let error;
+
+
+      if (id) {
+
+        const result =
+          await supabaseClient
+            .from(
+              "spending_transfers"
+            )
+            .update(
+              record
+            )
+            .eq(
+              "id",
+              id
+            );
+
+
+        error =
+          result.error;
+
+      }
+
+
+      else {
+
+        const householdResult =
+          await supabaseClient
+            .from(
+              "households"
+            )
+            .select(
+              "id"
+            )
+            .eq(
+              "name",
+              "Feehan Household"
+            )
+            .single();
+
+
+        if (
+          householdResult.error
+        ) {
+
+          showMessage(
+            householdResult.error.message,
+            true
+          );
+
+
+          return;
+
+        }
+
+
+        record.household_id =
+          householdResult.data.id;
+
+
+        const result =
+          await supabaseClient
+            .from(
+              "spending_transfers"
+            )
+            .insert(
+              record
+            );
+
+
+        error =
+          result.error;
+
+      }
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      closeTransferModal();
+
+
+      showMessage(
+        "Transfer saved successfully.",
+        false
+      );
+
+
+      await loadTransfers();
+
+    }
+
+
+    async function deleteTransfer() {
+
+      const id =
+        document.getElementById(
+          "transferId"
+        ).value;
+
+
+      if (!id) {
+        return;
+      }
+
+
+      const confirmed =
+        confirm(
+          "Delete this transfer?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      const { error } =
+        await supabaseClient
+          .from(
+            "spending_transfers"
+          )
+          .delete()
+          .eq(
+            "id",
+            id
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      closeTransferModal();
+
+
+      showMessage(
+        "Transfer deleted.",
+        false
+      );
+
+
+      await loadTransfers();
+
+    }
+
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "transferMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+          ? "message-box error-message"
+          : "message-box success-message";
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        3500
+      );
+
+    }
+
+
+    document.getElementById(
+      "addTransferBtn"
+    ).addEventListener(
+      "click",
+      openAddTransfer
+    );
+
+
+    document.getElementById(
+      "saveTransferBtn"
+    ).addEventListener(
+      "click",
+      saveTransfer
+    );
+
+
+    document.getElementById(
+      "deleteTransferBtn"
+    ).addEventListener(
+      "click",
+      deleteTransfer
+    );
+
+
+    document.getElementById(
+      "cancelTransferBtn"
+    ).addEventListener(
+      "click",
+      closeTransferModal
+    );
+
+
+    document.getElementById(
+      "closeTransferModalBtn"
+    ).addEventListener(
+      "click",
+      closeTransferModal
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+        return;
+      }
+
+
+      await loadWeeklyTarget();
+
+      await loadTransfers();
+
+    }
+
+
+    start();
+
+  </script>
+
+</body>
+</html>
