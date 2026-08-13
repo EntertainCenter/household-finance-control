@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Bills
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .page-heading-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+
+    .add-btn {
+      background: #2e9d55;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+
+    .add-btn:hover {
+      opacity: 0.9;
+    }
+
+
+    .form-note {
+      background: #f3f8ff;
+      border-left: 5px solid #2d7df6;
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+
+    .required {
+      color: #b93434;
+    }
+
+
+    .modal-card select,
+    .modal-card input,
+    .modal-card textarea {
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+
+    .checkbox-row input {
+      width: auto;
+    }
+
+
+    @media (max-width: 700px) {
+
+      .page-heading-actions {
+        width: 100%;
+      }
+
+      .page-heading-actions button,
+      .page-heading-actions a {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Manage Bills
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- MAIN -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Recurring Bills
+        </h2>
+
+        <p>
+          Add new bills or update existing payment amounts,
+          due dates, end dates and status.
+        </p>
+
+      </div>
+
+
+      <div class="page-heading-actions">
+
+        <button
+          id="addBillBtn"
+          class="add-btn"
+          type="button"
+        >
+          + Add New Bill
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <div
+      id="billMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <!-- BILL TABLE -->
+
+    <section class="card">
+
+      <div class="table-scroll">
+
+        <table class="finance-table bills-table">
+
+          <thead>
+
+            <tr>
+
+              <th>Bill</th>
+
+              <th>Amount</th>
+
+              <th>Frequency</th>
+
+              <th>Next Due</th>
+
+              <th>Ends</th>
+
+              <th>Status</th>
+
+              <th></th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="billTableBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- ADD / EDIT BILL MODAL -->
+    <!-- ================================================= -->
+
+    <div
+      id="billModal"
+      class="modal hidden"
+    >
+
+
+      <div class="modal-card">
+
+
+        <div class="modal-header">
+
+          <h2 id="billModalTitle">
+            Edit Bill
+          </h2>
+
+
+          <button
+            id="closeModalBtn"
+            class="icon-btn"
+            type="button"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+
+        <div class="form-note">
+
+          Enter the normal recurring payment information.
+
+          The <strong>Next Due Date</strong> should be the next
+          date this payment is expected to leave the Bills Account.
+
+        </div>
+
+
+
+        <input
+          type="hidden"
+          id="billId"
+        />
+
+
+
+        <!-- BILL NAME -->
+
+        <label for="billName">
+
+          Bill Name
+          <span class="required">*</span>
+
+        </label>
+
+
+        <input
+          id="billName"
+          type="text"
+          placeholder="Example: Newfoundland Power"
+        />
+
+
+
+        <!-- CATEGORY -->
+
+        <label for="billCategory">
+
+          Category
+
+        </label>
+
+
+        <input
+          id="billCategory"
+          type="text"
+          list="billCategoryList"
+          placeholder="Example: Utilities"
+        />
+
+
+        <datalist id="billCategoryList">
+
+          <option value="Housing"></option>
+
+          <option value="Utilities"></option>
+
+          <option value="Insurance"></option>
+
+          <option value="Vehicle"></option>
+
+          <option value="Debt Payment"></option>
+
+          <option value="Phone / Internet"></option>
+
+          <option value="Subscriptions"></option>
+
+          <option value="Medical"></option>
+
+          <option value="Household"></option>
+
+          <option value="Other"></option>
+
+        </datalist>
+
+
+
+        <!-- AMOUNT -->
+
+        <label for="billAmount">
+
+          Normal Payment Amount
+          <span class="required">*</span>
+
+        </label>
+
+
+        <input
+          id="billAmount"
+          type="number"
+          min="0"
+          step="0.01"
+          inputmode="decimal"
+          placeholder="0.00"
+        />
+
+
+
+        <!-- FREQUENCY -->
+
+        <label for="billFrequency">
+
+          Frequency
+          <span class="required">*</span>
+
+        </label>
+
+
+        <select id="billFrequency">
+
+          <option value="weekly">
+            Weekly
+          </option>
+
+          <option value="biweekly">
+            Biweekly
+          </option>
+
+          <option value="semi-monthly">
+            Semi-monthly
+          </option>
+
+          <option
+            value="monthly"
+            selected
+          >
+            Monthly
+          </option>
+
+          <option value="quarterly">
+            Quarterly
+          </option>
+
+          <option value="annual">
+            Annual
+          </option>
+
+        </select>
+
+
+
+        <!-- NEXT DUE -->
+
+        <label for="billNextDue">
+
+          Next Due Date
+          <span class="required">*</span>
+
+        </label>
+
+
+        <input
+          id="billNextDue"
+          type="date"
+        />
+
+
+
+        <!-- END DATE -->
+
+        <label for="billEndDate">
+
+          End Date
+
+          <span class="field-note">
+            optional
+          </span>
+
+        </label>
+
+
+        <input
+          id="billEndDate"
+          type="date"
+        />
+
+
+
+        <!-- FINAL PAYMENT -->
+
+        <label for="billFinalPayment">
+
+          Final Payment Amount
+
+          <span class="field-note">
+            optional
+          </span>
+
+        </label>
+
+
+        <input
+          id="billFinalPayment"
+          type="number"
+          min="0"
+          step="0.01"
+          inputmode="decimal"
+          placeholder="Leave blank if not applicable"
+        />
+
+
+
+        <!-- ESSENTIAL -->
+
+        <label class="checkbox-row">
+
+          <input
+            id="billEssential"
+            type="checkbox"
+          />
+
+          Essential / protected bill
+
+        </label>
+
+
+
+        <!-- AUTOPAY -->
+
+        <label class="checkbox-row">
+
+          <input
+            id="billAutopay"
+            type="checkbox"
+          />
+
+          Automatic payment
+
+        </label>
+
+
+
+        <!-- ACTIVE -->
+
+        <label class="checkbox-row">
+
+          <input
+            id="billActive"
+            type="checkbox"
+            checked
+          />
+
+          Active
+
+        </label>
+
+
+
+        <!-- NOTES -->
+
+        <label for="billNotes">
+
+          Notes
+
+        </label>
+
+
+        <textarea
+          id="billNotes"
+          rows="4"
+          placeholder="Optional notes"
+        ></textarea>
+
+
+
+        <!-- ACTIONS -->
+
+        <div class="modal-actions">
+
+
+          <button
+            id="cancelBillBtn"
+            class="secondary-btn"
+            type="button"
+          >
+            Cancel
+          </button>
+
+
+          <button
+            id="saveBillBtn"
+            type="button"
+          >
+            Save Bill
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  </main>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // HOUSEHOLD
+    // =====================================================
+
+    let householdId = null;
+
+
+
+    // =====================================================
+    // MONEY
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // DATE
+    // =====================================================
+
+    function prettyDate(value) {
+
+      if (!value) {
+
+        return "—";
+
+      }
+
+
+      const date =
+        new Date(
+          value + "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD HOUSEHOLD
+    // =====================================================
+
+    async function loadHousehold() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "households"
+          )
+          .select(
+            "id"
+          )
+          .eq(
+            "name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return false;
+
+      }
+
+
+      householdId =
+        data.id;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD BILLS
+    // =====================================================
+
+    async function loadBills() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "bills"
+          )
+          .select(`
+            id,
+            bill_name,
+            category,
+            amount,
+            frequency,
+            next_due_date,
+            end_date,
+            final_payment_amount,
+            autopay,
+            essential,
+            active,
+            notes
+          `)
+          .order(
+            "active",
+            {
+              ascending: false
+            }
+          )
+          .order(
+            "next_due_date",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "billTableBody"
+        );
+
+
+      tbody.innerHTML = "";
+
+
+      if (
+        !data ||
+        data.length === 0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="7">
+
+              No bills have been entered yet.
+
+            </td>
+
+          </tr>
+
+        `;
+
+        return;
+
+      }
+
+
+
+      data.forEach(
+        bill => {
+
+
+          const tr =
+            document.createElement(
+              "tr"
+            );
+
+
+          if (!bill.active) {
+
+            tr.classList.add(
+              "inactive-row"
+            );
+
+          }
+
+
+          tr.innerHTML = `
+
+            <td>
+
+              <strong>
+                ${escapeHtml(
+                  bill.bill_name
+                )}
+              </strong>
+
+              <div class="small-text">
+
+                ${escapeHtml(
+                  bill.category || ""
+                )}
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              ${money(
+                bill.amount
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${formatFrequency(
+                bill.frequency
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${prettyDate(
+                bill.next_due_date
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${prettyDate(
+                bill.end_date
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${
+                bill.active
+
+                  ? '<span class="status-chip active-chip">Active</span>'
+
+                  : '<span class="status-chip inactive-chip">Inactive</span>'
+              }
+
+            </td>
+
+
+            <td></td>
+
+          `;
+
+
+          const editButton =
+            document.createElement(
+              "button"
+            );
+
+
+          editButton.type =
+            "button";
+
+
+          editButton.className =
+            "small-btn";
+
+
+          editButton.textContent =
+            "Edit";
+
+
+          editButton.addEventListener(
+            "click",
+            () => {
+
+              editBill(
+                bill
+              );
+
+            }
+          );
+
+
+          tr
+            .lastElementChild
+            .appendChild(
+              editButton
+            );
+
+
+          tbody.appendChild(
+            tr
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // FORMAT FREQUENCY
+    // =====================================================
+
+    function formatFrequency(value) {
+
+      const map = {
+
+        "weekly":
+          "Weekly",
+
+        "biweekly":
+          "Biweekly",
+
+        "semi-monthly":
+          "Semi-monthly",
+
+        "monthly":
+          "Monthly",
+
+        "quarterly":
+          "Quarterly",
+
+        "annual":
+          "Annual"
+
+      };
+
+
+      return map[value] || value || "—";
+
+    }
+
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // OPEN NEW BILL
+    // =====================================================
+
+    function newBill() {
+
+
+      document.getElementById(
+        "billModalTitle"
+      ).textContent =
+        "Add New Bill";
+
+
+      document.getElementById(
+        "saveBillBtn"
+      ).textContent =
+        "Add Bill";
+
+
+      document.getElementById(
+        "billId"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "billName"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "billCategory"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "billAmount"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "billFrequency"
+      ).value =
+        "monthly";
+
+
+      document.getElementById(
+        "billNextDue"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "billEndDate"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "billFinalPayment"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "billEssential"
+      ).checked =
+        false;
+
+
+      document.getElementById(
+        "billAutopay"
+      ).checked =
+        false;
+
+
+      document.getElementById(
+        "billActive"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "billNotes"
+      ).value =
+        "";
+
+
+      document
+        .getElementById(
+          "billModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+
+      setTimeout(
+        () => {
+
+          document.getElementById(
+            "billName"
+          ).focus();
+
+        },
+        100
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EDIT BILL
+    // =====================================================
+
+    function editBill(bill) {
+
+
+      document.getElementById(
+        "billModalTitle"
+      ).textContent =
+        "Edit Bill";
+
+
+      document.getElementById(
+        "saveBillBtn"
+      ).textContent =
+        "Save Changes";
+
+
+      document.getElementById(
+        "billId"
+      ).value =
+        bill.id;
+
+
+      document.getElementById(
+        "billName"
+      ).value =
+        bill.bill_name || "";
+
+
+      document.getElementById(
+        "billCategory"
+      ).value =
+        bill.category || "";
+
+
+      document.getElementById(
+        "billAmount"
+      ).value =
+        bill.amount ?? "";
+
+
+      document.getElementById(
+        "billFrequency"
+      ).value =
+        bill.frequency || "monthly";
+
+
+      document.getElementById(
+        "billNextDue"
+      ).value =
+        bill.next_due_date || "";
+
+
+      document.getElementById(
+        "billEndDate"
+      ).value =
+        bill.end_date || "";
+
+
+      document.getElementById(
+        "billFinalPayment"
+      ).value =
+        bill.final_payment_amount ?? "";
+
+
+      document.getElementById(
+        "billEssential"
+      ).checked =
+        Boolean(
+          bill.essential
+        );
+
+
+      document.getElementById(
+        "billAutopay"
+      ).checked =
+        Boolean(
+          bill.autopay
+        );
+
+
+      document.getElementById(
+        "billActive"
+      ).checked =
+        Boolean(
+          bill.active
+        );
+
+
+      document.getElementById(
+        "billNotes"
+      ).value =
+        bill.notes || "";
+
+
+      document
+        .getElementById(
+          "billModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // CLOSE MODAL
+    // =====================================================
+
+    function closeModal() {
+
+      document
+        .getElementById(
+          "billModal"
+        )
+        .classList
+        .add(
+          "hidden"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // SAVE BILL
+    // ADD OR UPDATE
+    // =====================================================
+
+    async function saveBill() {
+
+
+      const id =
+        document.getElementById(
+          "billId"
+        ).value;
+
+
+      const billName =
+        document.getElementById(
+          "billName"
+        ).value.trim();
+
+
+      const category =
+        document.getElementById(
+          "billCategory"
+        ).value.trim();
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "billAmount"
+          ).value
+        );
+
+
+      const frequency =
+        document.getElementById(
+          "billFrequency"
+        ).value;
+
+
+      const nextDueDate =
+        document.getElementById(
+          "billNextDue"
+        ).value;
+
+
+      const endDate =
+        document.getElementById(
+          "billEndDate"
+        ).value;
+
+
+      const finalPaymentText =
+        document.getElementById(
+          "billFinalPayment"
+        ).value;
+
+
+      const notes =
+        document.getElementById(
+          "billNotes"
+        ).value.trim();
+
+
+
+      // VALIDATION
+
+      if (!billName) {
+
+        showMessage(
+          "Please enter a bill name.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !Number.isFinite(
+          amount
+        )
+        ||
+        amount < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid payment amount.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (!nextDueDate) {
+
+        showMessage(
+          "Please enter the next due date.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (
+        endDate &&
+        endDate < nextDueDate
+      ) {
+
+        showMessage(
+          "The end date cannot be before the next due date.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      let finalPaymentAmount =
+        null;
+
+
+      if (finalPaymentText) {
+
+        finalPaymentAmount =
+          Number(
+            finalPaymentText
+          );
+
+
+        if (
+          !Number.isFinite(
+            finalPaymentAmount
+          )
+          ||
+          finalPaymentAmount < 0
+        ) {
+
+          showMessage(
+            "Please enter a valid final payment amount.",
+            true
+          );
+
+          return;
+
+        }
+
+      }
+
+
+
+      const billData = {
+
+        bill_name:
+          billName,
+
+        category:
+          category || null,
+
+        amount:
+          amount,
+
+        frequency:
+          frequency,
+
+        next_due_date:
+          nextDueDate,
+
+        end_date:
+          endDate || null,
+
+        final_payment_amount:
+          finalPaymentAmount,
+
+        essential:
+          document.getElementById(
+            "billEssential"
+          ).checked,
+
+        autopay:
+          document.getElementById(
+            "billAutopay"
+          ).checked,
+
+        active:
+          document.getElementById(
+            "billActive"
+          ).checked,
+
+        notes:
+          notes || null,
+
+        last_confirmed_date:
+          new Date()
+            .toISOString()
+            .split(
+              "T"
+            )[0]
+
+      };
+
+
+
+      // ===================================================
+      // UPDATE EXISTING BILL
+      // ===================================================
+
+      if (id) {
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from(
+              "bills"
+            )
+            .update(
+              billData
+            )
+            .eq(
+              "id",
+              id
+            );
+
+
+        if (error) {
+
+          showMessage(
+            error.message,
+            true
+          );
+
+          return;
+
+        }
+
+
+        closeModal();
+
+
+        showMessage(
+          "Bill updated successfully.",
+          false
+        );
+
+
+        await loadBills();
+
+
+        return;
+
+      }
+
+
+
+      // ===================================================
+      // ADD NEW BILL
+      // ===================================================
+
+      if (!householdId) {
+
+        showMessage(
+          "Household information could not be loaded.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      const newBillData = {
+
+        ...billData,
+
+        household_id:
+          householdId
+
+      };
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "bills"
+          )
+          .insert(
+            newBillData
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      closeModal();
+
+
+      showMessage(
+        "New bill added successfully.",
+        false
+      );
+
+
+      await loadBills();
+
+
+      // Remove ?new=1 from the address after saving.
+
+      if (
+        window.location.search
+      ) {
+
+        window.history.replaceState(
+          {},
+          "",
+          "bills.html"
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+
+      const box =
+        document.getElementById(
+          "billMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ? "message-box error-message"
+
+          : "message-box success-message";
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        4000
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document
+      .getElementById(
+        "addBillBtn"
+      )
+      .addEventListener(
+        "click",
+        newBill
+      );
+
+
+    document
+      .getElementById(
+        "saveBillBtn"
+      )
+      .addEventListener(
+        "click",
+        saveBill
+      );
+
+
+    document
+      .getElementById(
+        "cancelBillBtn"
+      )
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+
+    document
+      .getElementById(
+        "closeModalBtn"
+      )
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+
+    document
+      .getElementById(
+        "billModal"
+      )
+      .addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target.id ===
+            "billModal"
+          ) {
+
+            closeModal();
+
+          }
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        "logoutBtn"
+      )
+      .addEventListener(
+        "click",
+        async () => {
+
+
+          await supabaseClient
+            .auth
+            .signOut();
+
+
+          window.location.href =
+            "login.html";
+
+
+        }
+      );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      const householdLoaded =
+        await loadHousehold();
+
+
+      if (!householdLoaded) {
+
+        return;
+
+      }
+
+
+      await loadBills();
+
+
+
+      // If user arrived from:
+      // bills.html?new=1
+      // automatically open Add Bill.
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+
+      if (
+        params.get(
+          "new"
+        ) === "1"
+      ) {
+
+        newBill();
+
+      }
+
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
