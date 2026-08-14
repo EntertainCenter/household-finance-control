@@ -1,0 +1,2662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Help & User Guide
+  </title>
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .help-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .help-index {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+
+    .help-index h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .help-index a {
+      display: block;
+      padding: 7px 0;
+      color: #2d7df6;
+      text-decoration: none;
+      line-height: 1.3;
+    }
+
+    .help-index a:hover {
+      text-decoration: underline;
+    }
+
+    .help-content section {
+      background: white;
+      border-radius: 12px;
+      padding: 26px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .help-content h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #e2e7ec;
+      padding-bottom: 10px;
+    }
+
+    .help-content h3 {
+      margin-top: 24px;
+    }
+
+    .help-content p,
+    .help-content li {
+      line-height: 1.6;
+    }
+
+    .quick-box {
+      background: #f3f8ff;
+      border-left: 5px solid #2d7df6;
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+    .warning-box {
+      background: #fff8e8;
+      border-left: 5px solid #e0a620;
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+    .danger-box {
+      background: #fff2f2;
+      border-left: 5px solid #c94646;
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+    .success-box {
+      background: #f0faf3;
+      border-left: 5px solid #2e9d55;
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+
+    .training-card {
+      background: #f8f9fb;
+      border-radius: 10px;
+      padding: 18px;
+      margin: 15px 0;
+    }
+
+    .help-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+
+    .help-table th,
+    .help-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 11px;
+      border-bottom: 1px solid #e1e6eb;
+    }
+
+    .help-table th {
+      background: #f5f7f9;
+    }
+
+    .top-link {
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #2d7df6;
+      text-decoration: none;
+    }
+
+    .weekly-checklist {
+      padding-left: 22px;
+    }
+
+    .weekly-checklist li {
+      margin-bottom: 8px;
+    }
+
+    .example-box {
+      background: #f7f9fb;
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin: 16px 0;
+      border: 1px solid #e4e9ee;
+    }
+
+    .formula-box {
+      background: #eef6ff;
+      border: 1px solid #c9def9;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .help-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .help-index {
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .help-content section {
+        padding: 18px;
+      }
+
+      .help-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+
+    @media print {
+
+      .topbar,
+      .help-index,
+      .top-link {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+      }
+
+      .help-layout {
+        display: block;
+      }
+
+      .help-content section {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+      }
+    }
+
+  </style>
+
+</head>
+
+
+<body id="top">
+
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Help & User Guide
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a href="index.html" class="nav-btn">
+        Dashboard
+      </a>
+
+      <a href="checkin.html" class="nav-btn">
+        Check-In
+      </a>
+
+      <a href="forecast.html" class="nav-btn">
+        Forecast
+      </a>
+
+      <a href="guidance.html" class="nav-btn">
+        Guidance
+      </a>
+
+      <a href="transfers.html" class="nav-btn">
+        Transfers
+      </a>
+
+      <a href="manage.html" class="nav-btn">
+        Manage
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Home Finance Management User Guide
+        </h2>
+
+        <p>
+          How the system works, what the numbers mean,
+          and how to use it without turning household finances
+          into a complicated budgeting exercise.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <div class="help-layout">
+
+
+      <!-- INDEX -->
+
+      <aside class="help-index">
+
+        <h2>
+          Guide Index
+        </h2>
+
+        <a href="#purpose">1. What This System Is For</a>
+
+        <a href="#basic-model">2. The Basic Household Model</a>
+
+        <a href="#protected">3. Protected Bills Balance</a>
+
+        <a href="#available">4. Available Funds to Transfer</a>
+
+        <a href="#dashboard">5. Dashboard</a>
+
+        <a href="#checkin">6. Check-In</a>
+
+        <a href="#forecast">7. Forecast</a>
+
+        <a href="#guidance">8. Financial Guidance</a>
+
+        <a href="#accounts">9. Accounts</a>
+
+        <a href="#envelopes">10. Savings Envelopes</a>
+
+        <a href="#transfers">11. Transfers & Payments</a>
+
+        <a href="#spending">12. Record Spending</a>
+
+        <a href="#card-purchases">13. Credit-Card Purchases</a>
+
+        <a href="#card-obligations">14. Card Obligations</a>
+
+        <a href="#card-payments">15. Paying Credit Cards & Debts</a>
+
+        <a href="#groceries">16. Grocery Card Example</a>
+
+        <a href="#activity">17. Activity & Transaction History</a>
+
+        <a href="#income">18. Regular vs Extra Income</a>
+
+        <a href="#debts">19. Managing Debts</a>
+
+        <a href="#manage">20. Manage & Setup</a>
+
+        <a href="#routine">21. Recommended Routine</a>
+
+        <a href="#testing">22. Bug & Test Notes</a>
+
+        <a href="#mobile">23. Using It on a Phone</a>
+
+        <a href="#rules">24. Important Rules</a>
+
+        <a href="#troubleshooting">25. Troubleshooting</a>
+
+        <a href="#glossary">26. Glossary</a>
+
+      </aside>
+
+
+
+      <div class="help-content">
+
+
+        <!-- PURPOSE -->
+
+        <section id="purpose">
+
+          <h2>
+            1. What This System Is For
+          </h2>
+
+          <p>
+            Home Finance Management is designed to answer a question
+            that a normal bank balance cannot answer:
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              How much money is genuinely safe to use after protecting
+              the household obligations that have not happened yet?
+            </strong>
+
+          </div>
+
+          <p>
+            Seeing several thousand dollars in a bank account can create
+            the impression that there is plenty of money available.
+            But some of that money may already be required for mortgage
+            payments, insurance, utilities, loans, credit-card repayment
+            or other future obligations.
+          </p>
+
+          <p>
+            The system therefore combines actual balances with future
+            bills, regular income, planned transactions, debt payments,
+            protected cash and other known obligations.
+          </p>
+
+          <div class="success-box">
+
+            <strong>
+              This is not intended to be a strict zero-based budget.
+            </strong>
+
+            <p>
+              The goal is not to account for every dollar or prevent
+              normal spending. The goal is to make better decisions while
+              gradually improving the household financial position.
+            </p>
+
+          </div>
+
+          <p>
+            The system should provide useful guidance without requiring
+            constant bookkeeping.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- BASIC MODEL -->
+
+        <section id="basic-model">
+
+          <h2>
+            2. The Basic Household Model
+          </h2>
+
+          <h3>
+            Bills Account
+          </h3>
+
+          <p>
+            The Bills Account is the household operating account.
+            Regular income generally enters here and scheduled household
+            obligations are paid from here.
+          </p>
+
+          <p>
+            This account should not be treated as ordinary spending money.
+          </p>
+
+
+          <h3>
+            Spending Account
+          </h3>
+
+          <p>
+            The Spending Account is intended for ordinary household life
+            and discretionary spending.
+          </p>
+
+          <p>
+            There is deliberately no requirement that a fixed amount such
+            as $500 must be transferred every week. The appropriate amount
+            can change depending on the household's position.
+          </p>
+
+
+          <h3>
+            Savings
+          </h3>
+
+          <p>
+            Savings is a real bank account used as a reserve for emergencies
+            and future needs.
+          </p>
+
+
+          <h3>
+            Envelopes
+          </h3>
+
+          <p>
+            Envelopes allow part of a real account balance to be mentally
+            assigned to a particular goal without opening another bank account.
+          </p>
+
+
+          <h3>
+            Debts
+          </h3>
+
+          <p>
+            Credit cards, lines of credit, mortgages, vehicle loans,
+            financing and other amounts owing are stored separately
+            as debts.
+          </p>
+
+
+          <div class="quick-box">
+
+            <strong>
+              The system separates three different ideas:
+            </strong>
+
+            <p>
+              Where the cash physically exists, what some of that cash
+              has been reserved for, and what money the household owes.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- PROTECTED BALANCE -->
+
+        <section id="protected">
+
+          <h2>
+            3. Protected Bills Balance
+          </h2>
+
+          <p>
+            The Protected Bills Balance is the amount of your own money
+            you ultimately want the Bills Account to retain above $0.
+          </p>
+
+          <div class="formula-box">
+            Current target Protected Bills Balance = $1,500 above $0
+          </div>
+
+          <p>
+            This does not mean the household must reach that level immediately.
+            The system can still be useful while the Bills Account is below
+            the target.
+          </p>
+
+          <p>
+            The long-term objective is to move from relying on overdraft,
+            through $0, and eventually build a real cash cushion.
+          </p>
+
+          <div class="danger-box">
+
+            <strong>
+              Overdraft is not part of the protected balance.
+            </strong>
+
+            <p>
+              Overdraft is borrowed money. The target is eventually
+              $1,500 of household cash above zero.
+            </p>
+
+          </div>
+
+          <div class="success-box">
+
+            <strong>
+              The safe floor is a destination, not a punishment.
+            </strong>
+
+            <p>
+              If the household falls below it because of a legitimate
+              unexpected expense, Guidance can help identify the shortfall.
+              The goal is then to rebuild gradually rather than immediately
+              eliminating all discretionary spending.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- AVAILABLE -->
+
+        <section id="available">
+
+          <h2>
+            4. Available Funds to Transfer
+          </h2>
+
+          <p>
+            Available Funds to Transfer estimates how much could leave
+            the Bills Account while still protecting future obligations
+            and the desired Bills Account floor.
+          </p>
+
+          <div class="formula-box">
+
+            Available Funds to Transfer =
+            Conservative Forecast Low Point
+            minus Protected Bills Balance
+
+          </div>
+
+          <p>
+            This is a safety ceiling rather than a spending target.
+          </p>
+
+          <div class="warning-box">
+
+            <strong>
+              A $0 result does not mean the household can never spend money.
+            </strong>
+
+            <p>
+              It means the Bills Account does not currently have money
+              above the full protected target according to the conservative
+              forecast.
+            </p>
+
+            <p>
+              Guidance is intended to provide a more realistic view while
+              the household is still building toward that target.
+            </p>
+
+          </div>
+
+          <p>
+            Groceries and other necessary household spending should not
+            be confused with optional discretionary transfers.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboard">
+
+          <h2>
+            5. Dashboard
+          </h2>
+
+          <p>
+            The Dashboard is the main day-to-day overview.
+          </p>
+
+          <p>
+            It provides quick access to important balances, upcoming
+            obligations and financial decision information.
+          </p>
+
+          <h3>
+            Bills Account
+          </h3>
+
+          <p>
+            Shows the currently recorded Bills Account balance.
+          </p>
+
+          <h3>
+            Spending Account
+          </h3>
+
+          <p>
+            Shows money currently recorded in the Spending Account.
+          </p>
+
+          <h3>
+            Forecast Low Point
+          </h3>
+
+          <p>
+            Shows the lowest projected Bills Account balance during the
+            forecast period.
+          </p>
+
+          <h3>
+            Available Funds to Transfer
+          </h3>
+
+          <p>
+            Shows the maximum amount currently above the protected
+            forecast requirement.
+          </p>
+
+          <h3>
+            Record Spending
+          </h3>
+
+          <p>
+            Allows a significant purchase to be recorded immediately
+            against either an appropriate cash account or a purchase-capable
+            debt such as a credit card.
+          </p>
+
+          <div class="warning-box">
+
+            <strong>
+              Do not judge affordability from today's Bills Account
+              balance alone.
+            </strong>
+
+            <p>
+              Future bills and obligations matter just as much as the
+              current balance.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- CHECK-IN -->
+
+        <section id="checkin">
+
+          <h2>
+            6. Check-In
+          </h2>
+
+          <p>
+            Check-In keeps Home Finance synchronized with reality.
+          </p>
+
+          <h3>
+            Bank Accounts
+          </h3>
+
+          <p>
+            Compare the balances stored in Home Finance with the actual
+            balances shown by the bank and update them when necessary.
+          </p>
+
+          <h3>
+            Debts and Credit Cards
+          </h3>
+
+          <p>
+            Check-In can also be used to review and update current
+            credit-card, line-of-credit and other debt balances.
+          </p>
+
+          <p>
+            Regularly seeing the actual balances helps keep the amount
+            owed visible and prevents the system from gradually drifting
+            away from reality.
+          </p>
+
+          <h3>
+            Income and Bills
+          </h3>
+
+          <p>
+            Mark income Received only after it actually arrives.
+            Mark bills Paid / Cleared only after they actually clear.
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              The real financial institution is always the final
+              source of truth.
+            </strong>
+
+            <p>
+              Check-In exists so the app can be corrected easily rather
+              than requiring perfect transaction entry.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- FORECAST -->
+
+        <section id="forecast">
+
+          <h2>
+            7. Forecast
+          </h2>
+
+          <p>
+            Forecast projects the Bills Account forward using scheduled
+            income, bills and planned money movements.
+          </p>
+
+          <h3>
+            Conservative Forecast
+          </h3>
+
+          <p>
+            The conservative calculation is deliberately cautious.
+            It protects known obligations while avoiding dependence
+            on uncertain money.
+          </p>
+
+          <p>
+            It can include:
+          </p>
+
+          <ul>
+            <li>current Bills balance;</li>
+            <li>scheduled regular income;</li>
+            <li>scheduled bills;</li>
+            <li>planned transfers from Bills;</li>
+            <li>planned credit-card/debt payments from Bills.</li>
+          </ul>
+
+          <p>
+            It does not depend on extra income that has not actually arrived.
+          </p>
+
+          <h3>
+            Forecast Colours
+          </h3>
+
+          <table class="help-table">
+
+            <thead>
+              <tr>
+                <th>Colour</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr>
+                <td>Green</td>
+                <td>
+                  Bills remains above the Protected Bills Balance.
+                </td>
+              </tr>
+
+              <tr>
+                <td>Yellow</td>
+                <td>
+                  Bills remains above $0 but falls below the protected level.
+                </td>
+              </tr>
+
+              <tr>
+                <td>Red</td>
+                <td>
+                  The forecast reaches $0 or below.
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+          <div class="warning-box">
+
+            <strong>
+              Missing bill dates matter.
+            </strong>
+
+            <p>
+              An active bill without a usable next due date cannot be
+              forecast correctly.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- GUIDANCE -->
+
+        <section id="guidance">
+
+          <h2>
+            8. Financial Guidance
+          </h2>
+
+          <p>
+            Forecast shows the mathematics. Guidance is intended to
+            explain what those numbers mean for the household.
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              Guidance answers a different question:
+            </strong>
+
+            <p>
+              Where are we financially, what needs attention, and what
+              is a realistic next step?
+            </p>
+
+          </div>
+
+          <p>
+            Guidance can identify situations such as:
+          </p>
+
+          <ul>
+            <li>a forecast below $0;</li>
+            <li>a Protected Bills Balance shortfall;</li>
+            <li>limited room for discretionary transfers;</li>
+            <li>Savings that may help reinforce Bills;</li>
+            <li>missing bill information;</li>
+            <li>a negative Spending Account balance;</li>
+            <li>incomplete debt information;</li>
+            <li>high-interest debt;</li>
+            <li>other conditions that deserve attention.</li>
+          </ul>
+
+          <p>
+            As the system develops, this is also the natural place to
+            show the progress toward rebuilding the Bills Account safe
+            floor if the household is below it.
+          </p>
+
+          <div class="warning-box">
+
+            <strong>
+              Guidance does not move money automatically.
+            </strong>
+
+            <p>
+              It is an adviser. The household still makes the decision.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- ACCOUNTS -->
+
+        <section id="accounts">
+
+          <h2>
+            9. Accounts
+          </h2>
+
+          <p>
+            Accounts are not hardwired into the application.
+            The Accounts page allows the household's financial structure
+            to change over time.
+          </p>
+
+          <p>
+            Accounts can include:
+          </p>
+
+          <ul>
+            <li>chequing accounts;</li>
+            <li>savings accounts;</li>
+            <li>Bills accounts;</li>
+            <li>Spending accounts;</li>
+            <li>other real cash accounts added in the future.</li>
+          </ul>
+
+          <p>
+            Account information can include its role, current balance,
+            protected floor and whether it should participate in various
+            calculations.
+          </p>
+
+          <div class="success-box">
+
+            <strong>
+              The system can grow with the household.
+            </strong>
+
+            <p>
+              A new bank account can be added without redesigning the
+              application. An account that is no longer used can be made
+              inactive rather than permanently deleting its history.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- ENVELOPES -->
+
+        <section id="envelopes">
+
+          <h2>
+            10. Savings Envelopes
+          </h2>
+
+          <p>
+            Envelopes are virtual subdivisions of money that physically
+            remains inside a real bank account.
+          </p>
+
+          <div class="example-box">
+
+            <strong>Example</strong>
+
+            <p>
+              Savings bank balance: $2,000
+            </p>
+
+            <p>
+              Vacation envelope: $500
+            </p>
+
+            <p>
+              Car Repair envelope: $300
+            </p>
+
+            <p>
+              The bank still contains only $2,000.
+              The envelopes simply identify that $800 of that money
+              has particular purposes.
+            </p>
+
+          </div>
+
+          <div class="danger-box">
+
+            <strong>
+              Envelope balances are not additional cash.
+            </strong>
+
+            <p>
+              A $500 envelope inside a $2,000 Savings account does not
+              mean the household has $2,500.
+            </p>
+
+          </div>
+
+          <h3>
+            Allocating money to an envelope
+          </h3>
+
+          <p>
+            Allocating money assigns part of an account balance to the
+            envelope. It does not create a second copy of the money.
+          </p>
+
+          <h3>
+            Releasing money from an envelope
+          </h3>
+
+          <p>
+            Releasing money removes that assignment and makes the money
+            available again within the underlying account.
+          </p>
+
+          <p>
+            This provides the convenience of having multiple savings
+            buckets without requiring multiple physical bank accounts.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- TRANSFERS -->
+
+        <section id="transfers">
+
+          <h2>
+            11. Transfers & Payments
+          </h2>
+
+          <p>
+            Transfers records intentional movements of money.
+          </p>
+
+          <h3>
+            Account to Account
+          </h3>
+
+          <p>
+            Examples include:
+          </p>
+
+          <ul>
+            <li>Bills → Spending;</li>
+            <li>Bills → Savings;</li>
+            <li>Savings → Bills;</li>
+            <li>Spending → Savings.</li>
+          </ul>
+
+          <h3>
+            Account and Envelope Movements
+          </h3>
+
+          <p>
+            Transfers can also be used to allocate money to envelopes
+            or release money from them.
+          </p>
+
+          <p>
+            Remember that an envelope movement is an internal assignment
+            of cash, not new income or spending.
+          </p>
+
+          <h3>
+            Debt Payments
+          </h3>
+
+          <p>
+            Money can be transferred from an account to a credit card,
+            line of credit or other debt.
+          </p>
+
+          <h3>
+            Planned
+          </h3>
+
+          <p>
+            A transaction can be saved before it actually happens.
+            A planned transaction from Bills can then be recognized by
+            the forecast.
+          </p>
+
+          <h3>
+            Completed
+          </h3>
+
+          <p>
+            Once the real transaction occurs, open it using
+            View / Edit and complete it.
+          </p>
+
+          <div class="danger-box">
+
+            <strong>
+              Never mark a transaction Completed before the real
+              movement of money occurs.
+            </strong>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- RECORD SPENDING -->
+
+        <section id="spending">
+
+          <h2>
+            12. Record Spending
+          </h2>
+
+          <p>
+            Record Spending provides a quick way to enter a purchase
+            that is significant enough to matter to the current
+            financial picture.
+          </p>
+
+          <p>
+            A purchase can be funded from an eligible cash account
+            or from an eligible purchase-capable debt such as a
+            credit card.
+          </p>
+
+          <div class="warning-box">
+
+            <strong>
+              Do not turn this into detailed bookkeeping.
+            </strong>
+
+            <p>
+              There is no need to record every coffee, small debit purchase
+              or individual household item.
+            </p>
+
+          </div>
+
+          <p>
+            Record Spending is useful when:
+          </p>
+
+          <ul>
+            <li>a meaningful purchase occurs;</li>
+            <li>groceries are charged to a credit card;</li>
+            <li>a large discretionary purchase occurs;</li>
+            <li>you want the financial position updated immediately.</li>
+          </ul>
+
+          <p>
+            Check-In remains available to correct balances later,
+            so missing a small transaction is not a disaster.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- CARD PURCHASES -->
+
+        <section id="card-purchases">
+
+          <h2>
+            13. Credit-Card Purchases
+          </h2>
+
+          <p>
+            Credit-card purchases require different treatment from
+            purchases paid directly from a bank account.
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              When a purchase is made on a credit card:
+            </strong>
+
+            <p>
+              The purchase is the household expense.
+              The credit-card balance increases, but no bank cash
+              has left the household yet.
+            </p>
+
+          </div>
+
+          <div class="example-box">
+
+            <strong>Example</strong>
+
+            <p>
+              Groceries purchased on a credit card: $850
+            </p>
+
+            <p>
+              The app records $850 of household spending.
+            </p>
+
+            <p>
+              The credit-card amount owing increases by $850.
+            </p>
+
+            <p>
+              Bills Account does not decrease at that moment because
+              the bank has not yet paid the card.
+            </p>
+
+          </div>
+
+          <p>
+            Only debts that are marked as usable for purchases should
+            normally appear as funding choices for Record Spending.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- CARD OBLIGATIONS -->
+
+        <section id="card-obligations">
+
+          <h2>
+            14. Card Obligations
+          </h2>
+
+          <p>
+            A credit-card purchase creates an important timing problem:
+            the cash is still sitting in the bank even though some of it
+            will eventually be needed to repay the card.
+          </p>
+
+          <p>
+            Home Finance therefore creates a card repayment obligation
+            when appropriate.
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              Card obligation = cash that has not left the bank yet,
+              but has effectively been committed by a card purchase.
+            </strong>
+
+          </div>
+
+          <div class="example-box">
+
+            <strong>Example</strong>
+
+            <p>
+              $850 of groceries are charged to a credit card.
+            </p>
+
+            <p>
+              The bank may still show the same cash balance,
+              but the household now has an $850 obligation associated
+              with that card spending.
+            </p>
+
+          </div>
+
+          <p>
+            This prevents card-funded household spending from falsely
+            making the household appear richer simply because the cash
+            has not left the bank yet.
+          </p>
+
+          <p>
+            As credit-card payments are completed, the related open
+            obligations can be reduced or closed.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- CARD PAYMENTS -->
+
+        <section id="card-payments">
+
+          <h2>
+            15. Paying Credit Cards & Debts
+          </h2>
+
+          <p>
+            A payment from a bank account to a credit card is different
+            from the purchase that originally created the debt.
+          </p>
+
+          <div class="formula-box">
+
+            Credit-card purchase = Expense
+
+            <br><br>
+
+            Later credit-card payment = Debt repayment / cash movement
+
+          </div>
+
+          <div class="danger-box">
+
+            <strong>
+              Do not count both as household expenses.
+            </strong>
+
+            <p>
+              Doing so would double-count the same spending.
+            </p>
+
+          </div>
+
+          <h3>
+            When a debt payment is completed
+          </h3>
+
+          <ul>
+            <li>the source bank account decreases;</li>
+            <li>the amount owed on the debt decreases;</li>
+            <li>the transaction changes to Completed;</li>
+            <li>the activity history records what happened;</li>
+            <li>related card obligations can be reduced or satisfied.</li>
+          </ul>
+
+          <p>
+            This same transfer mechanism can be used for credit cards,
+            lines of credit and other debts where appropriate.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- GROCERIES -->
+
+        <section id="groceries">
+
+          <h2>
+            16. Grocery Card Example
+          </h2>
+
+          <p>
+            Groceries are a good example of why the credit-card
+            purchase system exists.
+          </p>
+
+          <p>
+            If groceries are purchased on a rewards credit card,
+            the purchase can be captured without pretending that cash
+            already left the bank.
+          </p>
+
+          <div class="example-box">
+
+            <strong>Example</strong>
+
+            <p>
+              Grocery purchase: $850
+            </p>
+
+            <p>
+              Payment method: grocery credit card
+            </p>
+
+            <p>
+              Result:
+            </p>
+
+            <ul>
+              <li>$850 of spending is recorded;</li>
+              <li>the credit-card obligation increases;</li>
+              <li>the card balance increases;</li>
+              <li>the Bills Account does not immediately decrease.</li>
+            </ul>
+
+          </div>
+
+          <h3>
+            Later, when the card is paid
+          </h3>
+
+          <p>
+            Use Transfers and create a Credit Card / Debt Payment
+            from the appropriate bank account to the card.
+          </p>
+
+          <p>
+            The payment reduces the bank balance and the card balance.
+          </p>
+
+          <div class="success-box">
+
+            <strong>
+              The later card payment is not another grocery expense.
+            </strong>
+
+            <p>
+              The grocery expense was already recorded when the
+              groceries were purchased.
+            </p>
+
+          </div>
+
+          <p>
+            This allows groceries to be treated separately from ordinary
+            discretionary weekly spending while still protecting the
+            cash eventually required to pay the card.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- ACTIVITY -->
+
+        <section id="activity">
+
+          <h2>
+            17. Activity & Transaction History
+          </h2>
+
+          <p>
+            Activity provides a running history of important financial
+            events recorded by Home Finance.
+          </p>
+
+          <p>
+            Depending on the transaction, history can include:
+          </p>
+
+          <ul>
+            <li>account transfers;</li>
+            <li>envelope allocations and releases;</li>
+            <li>credit-card and debt payments;</li>
+            <li>recorded spending;</li>
+            <li>credit-card purchases;</li>
+            <li>Check-In adjustments;</li>
+            <li>income confirmations;</li>
+            <li>bill confirmations;</li>
+            <li>planned, completed and cancelled activity.</li>
+          </ul>
+
+          <p>
+            Transaction history is particularly useful for bills and
+            debts because it allows you to see what happened rather than
+            relying only on today's balance.
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              If you wonder why a balance changed, transaction history
+              should be one of the first places you look.
+            </strong>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- INCOME -->
+
+        <section id="income">
+
+          <h2>
+            18. Regular vs Extra Income
+          </h2>
+
+          <h3>
+            Regular Income
+          </h3>
+
+          <p>
+            Regular income is dependable or reasonably predictable
+            income that can be used in baseline planning.
+          </p>
+
+          <h3>
+            Extra Income
+          </h3>
+
+          <p>
+            Extra income includes money such as:
+          </p>
+
+          <ul>
+            <li>overtime;</li>
+            <li>music income;</li>
+            <li>refunds;</li>
+            <li>unexpected payments;</li>
+            <li>other one-time income.</li>
+          </ul>
+
+          <div class="warning-box">
+
+            <strong>
+              Conservative rule:
+            </strong>
+
+            <p>
+              Do not rely on uncertain extra income before it actually arrives.
+            </p>
+
+          </div>
+
+          <p>
+            Once extra money actually arrives, it can help rebuild the
+            Bills Account floor, increase Savings, support discretionary
+            spending or accelerate debt repayment.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- DEBTS -->
+
+        <section id="debts">
+
+          <h2>
+            19. Managing Debts
+          </h2>
+
+          <p>
+            Debts are not hardwired into the application.
+            New debts can be added and old ones can be made inactive
+            when they are no longer relevant.
+          </p>
+
+          <p>
+            Debt types can include:
+          </p>
+
+          <ul>
+            <li>credit cards;</li>
+            <li>lines of credit;</li>
+            <li>mortgages;</li>
+            <li>vehicle loans;</li>
+            <li>consolidation loans;</li>
+            <li>store financing;</li>
+            <li>other financing.</li>
+          </ul>
+
+          <p>
+            Useful debt information can include:
+          </p>
+
+          <ul>
+            <li>current balance;</li>
+            <li>credit limit;</li>
+            <li>interest rate;</li>
+            <li>minimum or regular payment;</li>
+            <li>payment frequency;</li>
+            <li>next payment date;</li>
+            <li>end date;</li>
+            <li>priority;</li>
+            <li>whether it can be used for purchases;</li>
+            <li>notes.</li>
+          </ul>
+
+          <div class="warning-box">
+
+            <strong>
+              Keep balances and interest rates reasonably current.
+            </strong>
+
+            <p>
+              This information will become increasingly useful for
+              future debt-reduction guidance.
+            </p>
+
+          </div>
+
+          <p>
+            A purchase-capable card may sometimes have a negative balance.
+            This represents prepaid credit rather than money owed.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- MANAGE -->
+
+        <section id="manage">
+
+          <h2>
+            20. Manage & Setup
+          </h2>
+
+          <p>
+            Manage is used when the household's financial structure changes.
+          </p>
+
+          <p>
+            It provides access to areas such as:
+          </p>
+
+          <ul>
+            <li>Accounts;</li>
+            <li>Bills;</li>
+            <li>Regular Income;</li>
+            <li>Extra Income;</li>
+            <li>Debts;</li>
+            <li>and related setup functions.</li>
+          </ul>
+
+          <p>
+            Use Manage when:
+          </p>
+
+          <ul>
+            <li>a new bank account is opened;</li>
+            <li>an old account is no longer used;</li>
+            <li>a new bill is added;</li>
+            <li>a bill ends;</li>
+            <li>a payment amount changes;</li>
+            <li>a new credit card is added;</li>
+            <li>a loan is paid off;</li>
+            <li>an income source changes;</li>
+            <li>debt information needs updating.</li>
+          </ul>
+
+          <div class="success-box">
+
+            <strong>
+              Avoid deleting useful history.
+            </strong>
+
+            <p>
+              Where possible, make old accounts, bills or debts inactive
+              rather than removing records that may be referenced by
+              historical transactions.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- ROUTINE -->
+
+        <section id="routine">
+
+          <h2>
+            21. Recommended Routine
+          </h2>
+
+          <p>
+            Home Finance should not require constant attention.
+          </p>
+
+          <h3>
+            Once or twice per week
+          </h3>
+
+          <ol class="weekly-checklist">
+
+            <li>
+              Look at the real bank-account balances.
+            </li>
+
+            <li>
+              Look at the current credit-card/debt balances when appropriate.
+            </li>
+
+            <li>
+              Open Check-In.
+            </li>
+
+            <li>
+              Correct account and debt balances that have changed.
+            </li>
+
+            <li>
+              Confirm income that actually arrived.
+            </li>
+
+            <li>
+              Confirm bills that actually cleared.
+            </li>
+
+            <li>
+              Save the Check-In.
+            </li>
+
+            <li>
+              Return to Dashboard.
+            </li>
+
+            <li>
+              Review the Bills Account and Spending Account.
+            </li>
+
+            <li>
+              Review Available Funds to Transfer.
+            </li>
+
+            <li>
+              Look at the Forecast Low Point.
+            </li>
+
+            <li>
+              Open Guidance if the financial position needs explanation.
+            </li>
+
+          </ol>
+
+
+          <h3>
+            During the week
+          </h3>
+
+          <p>
+            You do not need to record every purchase.
+          </p>
+
+          <p>
+            Use Record Spending when a purchase is significant enough
+            that you want it reflected immediately.
+          </p>
+
+          <p>
+            Credit-card purchases that create meaningful household
+            obligations are particularly useful to record.
+          </p>
+
+
+          <h3>
+            When moving money
+          </h3>
+
+          <ol class="weekly-checklist">
+
+            <li>
+              Decide what movement you actually want to make.
+            </li>
+
+            <li>
+              Use Forecast or Guidance when the decision could affect Bills.
+            </li>
+
+            <li>
+              Record it as Planned if it has not happened yet.
+            </li>
+
+            <li>
+              Perform the real bank or card transaction.
+            </li>
+
+            <li>
+              Mark it Completed afterward.
+            </li>
+
+          </ol>
+
+          <div class="success-box">
+
+            <strong>
+              The routine should take minutes, not hours.
+            </strong>
+
+            <p>
+              The system is successful if it gives the household better
+              information without becoming a burden to maintain.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- TESTING -->
+
+        <section id="testing">
+
+          <h2>
+            22. Bug & Test Notes
+          </h2>
+
+          <p>
+            During the testing period, use the
+            <strong>Log Bug / Test Note</strong>
+            feature whenever something deserves attention.
+          </p>
+
+          <p>
+            This includes:
+          </p>
+
+          <ul>
+            <li>something that does not work;</li>
+            <li>a number that looks wrong;</li>
+            <li>a page that is confusing;</li>
+            <li>a feature that takes too many steps;</li>
+            <li>an improvement idea;</li>
+            <li>something that works especially well;</li>
+            <li>a situation the system does not seem to handle.</li>
+          </ul>
+
+          <div class="quick-box">
+
+            <strong>
+              Record the thought when it happens.
+            </strong>
+
+            <p>
+              Real household use is now more valuable than adding
+              features simply because we can.
+            </p>
+
+          </div>
+
+          <p>
+            After a period of normal use, these notes can be reviewed
+            together to decide which improvements are actually worthwhile.
+          </p>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- MOBILE -->
+
+        <section id="mobile">
+
+          <h2>
+            23. Using It on a Phone
+          </h2>
+
+          <p>
+            Home Finance is designed to work on phones as well as computers.
+          </p>
+
+          <p>
+            The main pages are mobile-friendly and can be used for
+            quick Check-Ins, transfers, spending entries and financial
+            reviews.
+          </p>
+
+          <p>
+            The Home Finance icon can be added to the phone Home Screen,
+            making the website behave more like an installed app.
+          </p>
+
+          <div class="quick-box">
+
+            <strong>
+              A useful phone workflow:
+            </strong>
+
+            <p>
+              Dashboard → Check-In when needed → Record Spending or
+              Transfers when something important happens → Guidance or
+              Forecast when making a larger decision.
+            </p>
+
+          </div>
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- RULES -->
+
+        <section id="rules">
+
+          <h2>
+            24. Important Rules
+          </h2>
+
+
+          <div class="danger-box">
+
+            <strong>
+              Rule 1
+            </strong>
+
+            <p>
+              Never mark income Received before it actually arrives.
+            </p>
+
+          </div>
+
+
+          <div class="danger-box">
+
+            <strong>
+              Rule 2
+            </strong>
+
+            <p>
+              Never mark a bill Paid / Cleared before it actually clears.
+            </p>
+
+          </div>
+
+
+          <div class="danger-box">
+
+            <strong>
+              Rule 3
+            </strong>
+
+            <p>
+              Never mark a transfer or debt payment Completed before
+              the real transaction occurs.
+            </p>
+
+          </div>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Rule 4
+            </strong>
+
+            <p>
+              Do not treat the Bills Account balance as freely
+              spendable money.
+            </p>
+
+          </div>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Rule 5
+            </strong>
+
+            <p>
+              Do not count overdraft as available household cash.
+            </p>
+
+          </div>
+
+
+          <div class="warning-box">
+
+            <strong>
+              Rule 6
+            </strong>
+
+            <p>
+              When the app and the financial institution disagree,
+              use Check-In to correct the app.
+            </p>
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 7
+            </strong>
+
+            <p>
+              Do not try to record every small household purchase.
+            </p>
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 8
+            </strong>
+
+            <p>
+              A planned payment from Bills is already reserved by
+              the forecast. Do not mentally spend it again.
+            </p>
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 9
+            </strong>
+
+            <p>
+              Available Funds to Transfer is a maximum safety figure,
+              not an instruction to spend or transfer all of it.
+            </p>
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 10
+            </strong>
+
+            <p>
+              A credit-card purchase is the expense.
+              Paying the credit card later is not a second expense.
+            </p>
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              Rule 11
+            </strong>
+
+            <p>
+              Money assigned to an envelope is still part of the
+              underlying real account. Never count it twice.
+            </p>
+
+          </div>
+
+
+          <div class="success-box">
+
+            <strong>
+              Rule 12
+            </strong>
+
+            <p>
+              Keep the system simple enough that you will actually use it.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- TROUBLESHOOTING -->
+
+        <section id="troubleshooting">
+
+          <h2>
+            25. Troubleshooting
+          </h2>
+
+
+          <h3>
+            Dashboard balance does not match the bank
+          </h3>
+
+          <p>
+            Perform a Check-In using the actual balance.
+          </p>
+
+
+          <h3>
+            Credit-card balance does not match the card provider
+          </h3>
+
+          <p>
+            Update the debt balance during Check-In.
+          </p>
+
+
+          <h3>
+            Forecast and Guidance do not agree
+          </h3>
+
+          <p>
+            Refresh both pages. If they remain inconsistent,
+            use Log Bug / Test Note.
+          </p>
+
+
+          <h3>
+            Forecast looks too low
+          </h3>
+
+          <p>
+            Check for:
+          </p>
+
+          <ul>
+            <li>planned transactions that should be cancelled;</li>
+            <li>wrong bill dates;</li>
+            <li>duplicate bills;</li>
+            <li>incorrect amounts;</li>
+            <li>old bills still marked Active.</li>
+          </ul>
+
+
+          <h3>
+            Forecast looks too high
+          </h3>
+
+          <p>
+            Look for missing bills, missing due dates or obligations
+            that have not been properly represented.
+          </p>
+
+
+          <h3>
+            A planned transaction is no longer needed
+          </h3>
+
+          <p>
+            Open Transfers → View / Edit → Cancel Transaction.
+          </p>
+
+
+          <h3>
+            Completed payment is still being treated as Planned
+          </h3>
+
+          <p>
+            Confirm the transaction status is Completed.
+          </p>
+
+
+          <h3>
+            A credit card shows a negative balance
+          </h3>
+
+          <p>
+            This may be correct. A negative balance can represent
+            prepaid credit.
+          </p>
+
+
+          <h3>
+            A debt does not appear as a spending method
+          </h3>
+
+          <p>
+            Confirm that the debt is Active and is marked as usable
+            for purchases.
+          </p>
+
+
+          <h3>
+            A debt is missing from Transfers
+          </h3>
+
+          <p>
+            Confirm that the debt record is Active.
+          </p>
+
+
+          <h3>
+            A bill is excluded from Forecast
+          </h3>
+
+          <p>
+            Check that the active bill has a valid next due date.
+          </p>
+
+
+          <h3>
+            An envelope appears to increase total household cash
+          </h3>
+
+          <p>
+            It should not. An envelope represents money already contained
+            in a real account. If total household cash appears to increase
+            merely because money was assigned to an envelope, record a
+            Bug / Test Note.
+          </p>
+
+
+          <h3>
+            A credit-card purchase appears to reduce the bank immediately
+          </h3>
+
+          <p>
+            A card-funded purchase should normally increase the card debt
+            rather than immediately reducing a bank balance.
+            If both happen for the same purchase, record a Bug / Test Note.
+          </p>
+
+
+          <h3>
+            Paying a card appears as another household expense
+          </h3>
+
+          <p>
+            A card payment should be treated as repayment of the debt,
+            not another copy of the original purchase expense.
+            If the same spending appears to be counted twice, record a
+            Bug / Test Note.
+          </p>
+
+
+          <a href="#top" class="top-link">Back to top</a>
+
+        </section>
+
+
+
+        <!-- GLOSSARY -->
+
+        <section id="glossary">
+
+          <h2>
+            26. Glossary
+          </h2>
+
+
+          <table class="help-table">
+
+            <thead>
+
+              <tr>
+                <th>Term</th>
+                <th>Meaning</th>
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+              <tr>
+                <td>Bills Account</td>
+                <td>
+                  Main household operating account used for regular
+                  income and scheduled obligations.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Spending Account</td>
+                <td>
+                  Account intended for ordinary household and
+                  discretionary spending.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Savings</td>
+                <td>
+                  Real cash reserve for emergencies and future goals.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Envelope</td>
+                <td>
+                  Virtual allocation of money that remains physically
+                  inside a real bank account.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Protected Bills Balance</td>
+                <td>
+                  Target amount of household-owned cash the system tries
+                  to preserve in Bills above $0.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Available Funds to Transfer</td>
+                <td>
+                  Maximum amount that could leave Bills while the
+                  conservative forecast remains above the protected target.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Forecast Low Point</td>
+                <td>
+                  Lowest projected Bills Account balance during the
+                  selected forecast.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Protected Balance Shortfall</td>
+                <td>
+                  Amount required to bring the forecast low point back
+                  to the Protected Bills Balance.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Conservative Forecast</td>
+                <td>
+                  Safety calculation that recognizes known obligations
+                  without relying heavily on uncertain future money.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Planned Transaction</td>
+                <td>
+                  Future movement of money that has been recorded but
+                  has not yet actually occurred.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Completed Transaction</td>
+                <td>
+                  Transaction that has actually occurred and has been
+                  applied to the appropriate recorded balances.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Debt / Card Payment</td>
+                <td>
+                  Money leaving a cash account and being sent to reduce
+                  a credit card, LOC, loan or other debt.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Credit-Card Purchase</td>
+                <td>
+                  Household purchase funded by a credit card. It creates
+                  an expense and increases the amount owed without
+                  immediately reducing bank cash.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Card Obligation</td>
+                <td>
+                  Amount of cash effectively committed to repaying
+                  spending that has already been charged to a card.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Credit Balance</td>
+                <td>
+                  Prepaid value on an eligible credit card or financing
+                  account rather than an amount currently owed.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Check-In</td>
+                <td>
+                  Process of reconciling Home Finance with actual
+                  account and debt balances.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Activity Log</td>
+                <td>
+                  Historical audit trail of important financial activity.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Guidance</td>
+                <td>
+                  Adviser page that interprets the financial position
+                  and identifies warnings or possible actions.
+                </td>
+              </tr>
+
+
+              <tr>
+                <td>Extra Income</td>
+                <td>
+                  Income outside the dependable baseline such as overtime,
+                  music income, refunds or one-time payments.
+                </td>
+              </tr>
+
+
+            </tbody>
+
+          </table>
+
+
+
+          <div class="success-box">
+
+            <strong>
+              The simplest way to remember the whole system:
+            </strong>
+
+            <p>
+              Keep the balances reasonably accurate, protect future
+              obligations, distinguish cash from debt, avoid counting
+              anything twice, and use the system to make better decisions
+              rather than trying to account for every penny.
+            </p>
+
+          </div>
+
+
+          <div class="quick-box">
+
+            <strong>
+              During the test period:
+            </strong>
+
+            <p>
+              Use the system normally. If something feels confusing,
+              inconvenient, unnecessary or wrong, log it. We can improve
+              the system based on real experience rather than adding
+              complexity in advance.
+            </p>
+
+          </div>
+
+
+          <a href="#top" class="top-link">
+            Back to top
+          </a>
+
+        </section>
+
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // LOGIN CHECK
+    // =====================================================
+
+    async function start() {
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return;
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // SIGN OUT
+    // =====================================================
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
