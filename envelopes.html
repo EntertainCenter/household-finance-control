@@ -1,1 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Envelopes
+  </title>
+
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .page-heading-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+
+    .add-btn {
+      background: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+
+    .add-btn:hover {
+      opacity: 0.92;
+    }
+
+
+    .account-summary {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+    }
+
+
+    .account-summary h2 {
+      margin-top: 0;
+      margin-bottom: 14px;
+    }
+
+
+    .summary-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(170px, 1fr)
+        );
+
+      gap: 14px;
+    }
+
+
+    .summary-item {
+      background: #f7f9fb;
+      border-radius: 8px;
+      padding: 13px;
+    }
+
+
+    .summary-label {
+      color: #66737f;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+
+    .summary-value {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+
+    .envelope-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(250px, 1fr)
+        );
+
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+
+    .envelope-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    .envelope-card.inactive {
+      opacity: 0.6;
+    }
+
+
+    .envelope-card h3 {
+      margin-top: 0;
+      margin-bottom: 5px;
+    }
+
+
+    .parent-account {
+      color: #66737f;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+
+    .envelope-balance {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: #e8ebef;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0 6px;
+    }
+
+
+    .progress-fill {
+      height: 100%;
+      background: #7c3aed;
+    }
+
+
+    .progress-label {
+      color: #66737f;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+
+    .envelope-card .small-btn {
+      margin-top: auto;
+    }
+
+
+    .intro-box {
+      background: #f7f3ff;
+      border-left: 5px solid #7c3aed;
+      border-radius: 8px;
+      padding: 15px 17px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+
+    .warning-box {
+      background: #fff8e8;
+      border-left: 5px solid #e0a620;
+      border-radius: 8px;
+      padding: 13px 15px;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+
+    .required {
+      color: #b93434;
+    }
+
+
+    .field-note {
+      font-size: 12px;
+      color: #7a858f;
+      font-weight: normal;
+    }
+
+
+    .modal-card input,
+    .modal-card select,
+    .modal-card textarea {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+
+    .checkbox-row input {
+      width: auto;
+    }
+
+
+    @media (max-width: 700px) {
+
+      .page-heading-actions {
+        width: 100%;
+      }
+
+
+      .page-heading-actions button {
+        width: 100%;
+      }
+
+
+      .modal-card {
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Envelopes & Savings Goals
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Envelopes & Savings Goals
+        </h2>
+
+        <p>
+          Divide money inside your real accounts into virtual
+          purposes without opening additional bank accounts.
+        </p>
+
+      </div>
+
+
+      <div class="page-heading-actions">
+
+        <button
+          id="addEnvelopeBtn"
+          class="add-btn"
+          type="button"
+        >
+          + Add New Envelope
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <div class="intro-box">
+
+      <strong>
+        Envelopes do not create additional money.
+      </strong>
+
+      <br><br>
+
+      They simply identify what part of a real account you intend
+      to reserve for a particular purpose.
+
+      <br><br>
+
+      Example: if Savings contains $1,000 and $300 is allocated
+      to Christmas, the bank still contains $1,000 — Home Finance
+      simply knows that $300 of it has a specific purpose.
+
+    </div>
+
+
+
+    <div
+      id="envelopeMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <section id="accountSummaries">
+    </section>
+
+
+
+    <section
+      id="envelopeGrid"
+      class="envelope-grid"
+    >
+    </section>
+
+
+  </main>
+
+
+
+  <!-- ADD / EDIT ENVELOPE MODAL -->
+
+  <div
+    id="envelopeModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card">
+
+
+      <div class="modal-header">
+
+        <h2 id="envelopeModalTitle">
+          Add New Envelope
+        </h2>
+
+        <button
+          id="closeEnvelopeModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+
+      <input
+        type="hidden"
+        id="envelopeId"
+      />
+
+
+
+      <label for="envelopeName">
+
+        Envelope Name
+        <span class="required">*</span>
+
+      </label>
+
+      <input
+        id="envelopeName"
+        type="text"
+        placeholder="Example: Christmas"
+      />
+
+
+
+      <label for="parentAccount">
+
+        Real Account
+        <span class="required">*</span>
+
+      </label>
+
+      <select id="parentAccount">
+      </select>
+
+
+
+      <label>
+
+        Current Allocation
+
+      </label>
+
+      <input
+        id="currentEnvelopeBalance"
+        type="text"
+        value="$0.00"
+        disabled
+      />
+
+
+      <div class="field-note">
+
+        Envelope balances will be changed through Transfers,
+        not by manually editing this number.
+
+      </div>
+
+
+
+      <label for="targetAmount">
+
+        Target Amount
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <input
+        id="targetAmount"
+        type="number"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="Example: 1000"
+      />
+
+
+
+      <label for="targetDate">
+
+        Target Date
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <input
+        id="targetDate"
+        type="date"
+      />
+
+
+
+      <label for="envelopePriority">
+
+        Priority
+
+      </label>
+
+      <select id="envelopePriority">
+
+        <option value="1">
+          1 - Highest
+        </option>
+
+        <option value="2">
+          2 - High
+        </option>
+
+        <option
+          value="3"
+          selected
+        >
+          3 - Normal
+        </option>
+
+        <option value="4">
+          4 - Low
+        </option>
+
+        <option value="5">
+          5 - Lowest
+        </option>
+
+      </select>
+
+
+
+      <label class="checkbox-row">
+
+        <input
+          id="envelopeActive"
+          type="checkbox"
+          checked
+        />
+
+        Active
+
+      </label>
+
+
+
+      <label for="envelopeNotes">
+
+        Notes
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <textarea
+        id="envelopeNotes"
+        rows="4"
+        placeholder="Optional notes about this goal"
+      ></textarea>
+
+
+
+      <div class="warning-box">
+
+        To add money to or remove money from an envelope,
+        use the Transfers page.
+
+        That keeps a proper history of every allocation change.
+
+      </div>
+
+
+
+      <div class="modal-actions">
+
+        <button
+          id="cancelEnvelopeBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="saveEnvelopeBtn"
+          type="button"
+        >
+          Save Envelope
+        </button>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    let householdId =
+      null;
+
+
+    let accounts =
+      [];
+
+
+    let envelopes =
+      [];
+
+
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+        return "No target date";
+      }
+
+
+      const date =
+        new Date(
+          value + "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    async function loadHousehold() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("households")
+          .select("id")
+          .eq(
+            "name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return false;
+
+      }
+
+
+      householdId =
+        data.id;
+
+
+      return true;
+
+    }
+
+
+
+    async function loadAccounts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("accounts")
+          .select(`
+            id,
+            account_name,
+            account_type,
+            account_role,
+            current_balance,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .order(
+            "account_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return false;
+
+      }
+
+
+      accounts =
+        data || [];
+
+
+      populateAccountSelect();
+
+
+      return true;
+
+    }
+
+
+
+    async function loadEnvelopes() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("envelopes")
+          .select(`
+            id,
+            household_id,
+            account_id,
+            envelope_name,
+            current_balance,
+            target_amount,
+            target_date,
+            priority,
+            active,
+            notes,
+            created_at,
+            updated_at
+          `)
+          .order(
+            "active",
+            {
+              ascending: false
+            }
+          )
+          .order(
+            "priority",
+            {
+              ascending: true
+            }
+          )
+          .order(
+            "envelope_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return false;
+
+      }
+
+
+      envelopes =
+        data || [];
+
+
+      renderAccountSummaries();
+
+      renderEnvelopes();
+
+
+      return true;
+
+    }
+
+
+
+    function populateAccountSelect() {
+
+      const select =
+        document.getElementById(
+          "parentAccount"
+        );
+
+
+      select.innerHTML =
+        "";
+
+
+      accounts.forEach(
+        account => {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+
+          option.value =
+            account.id;
+
+
+          option.textContent =
+            `${account.account_name} — ${money(account.current_balance)}`;
+
+
+          select.appendChild(
+            option
+          );
+
+        }
+      );
+
+    }
+
+
+
+    function totalAllocatedForAccount(
+      accountId
+    ) {
+
+      return envelopes
+        .filter(
+          envelope =>
+            envelope.account_id ===
+              accountId
+            &&
+            envelope.active
+        )
+        .reduce(
+          (sum, envelope) =>
+            sum +
+            Number(
+              envelope.current_balance || 0
+            ),
+          0
+        );
+
+    }
+
+
+
+    function renderAccountSummaries() {
+
+      const container =
+        document.getElementById(
+          "accountSummaries"
+        );
+
+
+      container.innerHTML =
+        "";
+
+
+      accounts.forEach(
+        account => {
+
+          const allocated =
+            totalAllocatedForAccount(
+              account.id
+            );
+
+
+          const actual =
+            Number(
+              account.current_balance || 0
+            );
+
+
+          const unallocated =
+            actual - allocated;
+
+
+          const section =
+            document.createElement(
+              "div"
+            );
+
+
+          section.className =
+            "account-summary";
+
+
+          section.innerHTML = `
+
+            <h2>
+              ${escapeHtml(account.account_name)}
+            </h2>
+
+            <div class="summary-grid">
+
+              <div class="summary-item">
+
+                <div class="summary-label">
+                  Real Account Balance
+                </div>
+
+                <div class="summary-value">
+                  ${money(actual)}
+                </div>
+
+              </div>
+
+
+              <div class="summary-item">
+
+                <div class="summary-label">
+                  Allocated to Envelopes
+                </div>
+
+                <div class="summary-value">
+                  ${money(allocated)}
+                </div>
+
+              </div>
+
+
+              <div class="summary-item">
+
+                <div class="summary-label">
+                  Unallocated
+                </div>
+
+                <div class="summary-value">
+                  ${money(unallocated)}
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+
+          container.appendChild(
+            section
+          );
+
+        }
+      );
+
+    }
+
+
+
+    function renderEnvelopes() {
+
+      const grid =
+        document.getElementById(
+          "envelopeGrid"
+        );
+
+
+      grid.innerHTML =
+        "";
+
+
+      if (
+        !envelopes.length
+      ) {
+
+        grid.innerHTML = `
+
+          <div class="envelope-card">
+
+            <h3>
+              No Envelopes Yet
+            </h3>
+
+            <p>
+              Add your first savings goal when you're ready.
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+
+      envelopes.forEach(
+        envelope => {
+
+          const account =
+            accounts.find(
+              item =>
+                item.id ===
+                envelope.account_id
+            );
+
+
+          const balance =
+            Number(
+              envelope.current_balance || 0
+            );
+
+
+          const target =
+            envelope.target_amount === null
+
+              ? null
+
+              : Number(
+                  envelope.target_amount
+                );
+
+
+          let progress =
+            0;
+
+
+          if (
+            target &&
+            target > 0
+          ) {
+
+            progress =
+              Math.min(
+                100,
+                Math.max(
+                  0,
+                  balance / target * 100
+                )
+              );
+
+          }
+
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            envelope.active
+
+              ? "envelope-card"
+
+              : "envelope-card inactive";
+
+
+          card.innerHTML = `
+
+            <h3>
+              ${escapeHtml(envelope.envelope_name)}
+            </h3>
+
+            <div class="parent-account">
+              Inside:
+              ${escapeHtml(
+                account
+                  ?.account_name
+                ||
+                "Unknown Account"
+              )}
+            </div>
+
+
+            <div class="envelope-balance">
+              ${money(balance)}
+            </div>
+
+
+            ${
+              target !== null
+
+                ? `
+
+                  <div class="progress-track">
+
+                    <div
+                      class="progress-fill"
+                      style="width:${progress}%"
+                    ></div>
+
+                  </div>
+
+                  <div class="progress-label">
+
+                    ${progress.toFixed(0)}%
+                    of
+                    ${money(target)}
+
+                  </div>
+
+                `
+
+                : `
+
+                  <div class="progress-label">
+                    No target amount set
+                  </div>
+
+                `
+            }
+
+
+            <p>
+
+              Target date:
+
+              <strong>
+                ${prettyDate(
+                  envelope.target_date
+                )}
+              </strong>
+
+            </p>
+
+
+            <p>
+
+              Priority:
+
+              <strong>
+                ${envelope.priority || 3}
+              </strong>
+
+            </p>
+
+
+            <p>
+
+              ${
+                envelope.active
+
+                  ? '<span class="status-chip active-chip">Active</span>'
+
+                  : '<span class="status-chip inactive-chip">Inactive</span>'
+              }
+
+            </p>
+
+          `;
+
+
+
+          const button =
+            document.createElement(
+              "button"
+            );
+
+
+          button.type =
+            "button";
+
+
+          button.className =
+            "small-btn";
+
+
+          button.textContent =
+            "Edit Envelope";
+
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              editEnvelope(
+                envelope
+              );
+
+            }
+          );
+
+
+          card.appendChild(
+            button
+          );
+
+
+          grid.appendChild(
+            card
+          );
+
+        }
+      );
+
+    }
+
+
+
+    function newEnvelope() {
+
+      document.getElementById(
+        "envelopeModalTitle"
+      ).textContent =
+        "Add New Envelope";
+
+
+      document.getElementById(
+        "saveEnvelopeBtn"
+      ).textContent =
+        "Add Envelope";
+
+
+      document.getElementById(
+        "envelopeId"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "envelopeName"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "currentEnvelopeBalance"
+      ).value =
+        money(0);
+
+
+      document.getElementById(
+        "targetAmount"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "targetDate"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "envelopePriority"
+      ).value =
+        "3";
+
+
+      document.getElementById(
+        "envelopeActive"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "envelopeNotes"
+      ).value =
+        "";
+
+
+      document
+        .getElementById(
+          "envelopeModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+
+      setTimeout(
+        () => {
+
+          document.getElementById(
+            "envelopeName"
+          ).focus();
+
+        },
+        100
+      );
+
+    }
+
+
+
+    function editEnvelope(
+      envelope
+    ) {
+
+      document.getElementById(
+        "envelopeModalTitle"
+      ).textContent =
+        "Edit Envelope";
+
+
+      document.getElementById(
+        "saveEnvelopeBtn"
+      ).textContent =
+        "Save Changes";
+
+
+      document.getElementById(
+        "envelopeId"
+      ).value =
+        envelope.id;
+
+
+      document.getElementById(
+        "envelopeName"
+      ).value =
+        envelope.envelope_name || "";
+
+
+      document.getElementById(
+        "parentAccount"
+      ).value =
+        envelope.account_id;
+
+
+      document.getElementById(
+        "currentEnvelopeBalance"
+      ).value =
+        money(
+          envelope.current_balance
+        );
+
+
+      document.getElementById(
+        "targetAmount"
+      ).value =
+        envelope.target_amount ?? "";
+
+
+      document.getElementById(
+        "targetDate"
+      ).value =
+        envelope.target_date || "";
+
+
+      document.getElementById(
+        "envelopePriority"
+      ).value =
+        String(
+          envelope.priority || 3
+        );
+
+
+      document.getElementById(
+        "envelopeActive"
+      ).checked =
+        Boolean(
+          envelope.active
+        );
+
+
+      document.getElementById(
+        "envelopeNotes"
+      ).value =
+        envelope.notes || "";
+
+
+      document
+        .getElementById(
+          "envelopeModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+    }
+
+
+
+    function closeEnvelopeModal() {
+
+      document
+        .getElementById(
+          "envelopeModal"
+        )
+        .classList
+        .add(
+          "hidden"
+        );
+
+    }
+
+
+
+    async function saveEnvelope() {
+
+      const id =
+        document.getElementById(
+          "envelopeId"
+        ).value;
+
+
+      const name =
+        document.getElementById(
+          "envelopeName"
+        ).value.trim();
+
+
+      const accountId =
+        document.getElementById(
+          "parentAccount"
+        ).value;
+
+
+      const targetText =
+        document.getElementById(
+          "targetAmount"
+        ).value;
+
+
+      const targetDate =
+        document.getElementById(
+          "targetDate"
+        ).value;
+
+
+      const priority =
+        Number(
+          document.getElementById(
+            "envelopePriority"
+          ).value
+        );
+
+
+      const notes =
+        document.getElementById(
+          "envelopeNotes"
+        ).value.trim();
+
+
+
+      if (!name) {
+
+        showMessage(
+          "Please enter an envelope name.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (!accountId) {
+
+        showMessage(
+          "Please select the real account that holds this money.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      let targetAmount =
+        null;
+
+
+      if (
+        targetText !== ""
+      ) {
+
+        targetAmount =
+          Number(
+            targetText
+          );
+
+
+        if (
+          !Number.isFinite(
+            targetAmount
+          )
+          ||
+          targetAmount < 0
+        ) {
+
+          showMessage(
+            "Please enter a valid target amount.",
+            true
+          );
+
+          return;
+
+        }
+
+      }
+
+
+
+      const envelopeData = {
+
+        envelope_name:
+          name,
+
+        account_id:
+          accountId,
+
+        target_amount:
+          targetAmount,
+
+        target_date:
+          targetDate || null,
+
+        priority:
+          priority,
+
+        active:
+          document.getElementById(
+            "envelopeActive"
+          ).checked,
+
+        notes:
+          notes || null,
+
+        updated_at:
+          new Date()
+            .toISOString()
+
+      };
+
+
+
+      if (id) {
+
+        const existing =
+          envelopes.find(
+            item =>
+              item.id === id
+          );
+
+
+        if (
+          existing
+          &&
+          Number(
+            existing.current_balance || 0
+          ) > 0
+          &&
+          existing.account_id !==
+            accountId
+        ) {
+
+          showMessage(
+            "This envelope already contains allocated money. Move the money out through Transfers before changing its real account.",
+            true
+          );
+
+          return;
+
+        }
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("envelopes")
+            .update(
+              envelopeData
+            )
+            .eq(
+              "id",
+              id
+            );
+
+
+        if (error) {
+
+          showMessage(
+            error.message,
+            true
+          );
+
+          return;
+
+        }
+
+
+        closeEnvelopeModal();
+
+
+        showMessage(
+          "Envelope updated successfully.",
+          false
+        );
+
+
+        await loadEnvelopes();
+
+
+        return;
+
+      }
+
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("envelopes")
+          .insert({
+
+            household_id:
+              householdId,
+
+            current_balance:
+              0,
+
+            ...envelopeData
+
+          });
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      closeEnvelopeModal();
+
+
+      showMessage(
+        "New envelope added successfully.",
+        false
+      );
+
+
+      await loadEnvelopes();
+
+
+      if (
+        window.location.search
+      ) {
+
+        window.history.replaceState(
+          {},
+          "",
+          "envelopes.html"
+        );
+
+      }
+
+    }
+
+
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "envelopeMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ? "message-box error-message"
+
+          : "message-box success-message";
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        5000
+      );
+
+    }
+
+
+
+    document.getElementById(
+      "addEnvelopeBtn"
+    ).addEventListener(
+      "click",
+      newEnvelope
+    );
+
+
+    document.getElementById(
+      "saveEnvelopeBtn"
+    ).addEventListener(
+      "click",
+      saveEnvelope
+    );
+
+
+    document.getElementById(
+      "cancelEnvelopeBtn"
+    ).addEventListener(
+      "click",
+      closeEnvelopeModal
+    );
+
+
+    document.getElementById(
+      "closeEnvelopeModalBtn"
+    ).addEventListener(
+      "click",
+      closeEnvelopeModal
+    );
+
+
+    document.getElementById(
+      "envelopeModal"
+    ).addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.id ===
+          "envelopeModal"
+        ) {
+
+          closeEnvelopeModal();
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+        return;
+      }
+
+
+      const householdLoaded =
+        await loadHousehold();
+
+
+      if (!householdLoaded) {
+        return;
+      }
+
+
+      const accountsLoaded =
+        await loadAccounts();
+
+
+      if (!accountsLoaded) {
+        return;
+      }
+
+
+      await loadEnvelopes();
+
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+
+      if (
+        params.get(
+          "new"
+        ) === "1"
+      ) {
+
+        newEnvelope();
+
+      }
+
+    }
+
+
+    start();
+
+  </script>
+
+
+</body>
+
+</html>
