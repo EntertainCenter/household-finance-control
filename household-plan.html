@@ -1,0 +1,3494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Household Plan
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .plan-intro {
+
+      background: #f3f8ff;
+
+      border-left: 5px solid #2d7df6;
+
+      border-radius: 8px;
+
+      padding: 16px 18px;
+
+      margin-bottom: 24px;
+
+      line-height: 1.55;
+
+    }
+
+
+    .summary-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(210px, 1fr)
+        );
+
+      gap: 16px;
+
+      margin-bottom: 24px;
+
+    }
+
+
+    .summary-card {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+
+    }
+
+
+    .summary-card h3 {
+
+      margin: 0 0 8px 0;
+
+      color: #66737f;
+
+      font-size: 15px;
+
+      font-weight: 600;
+
+    }
+
+
+    .summary-value {
+
+      font-size: 29px;
+
+      font-weight: 700;
+
+      line-height: 1.1;
+
+    }
+
+
+    .summary-detail {
+
+      color: #66737f;
+
+      margin-top: 8px;
+
+      font-size: 13px;
+
+      line-height: 1.4;
+
+    }
+
+
+    .positive-value {
+
+      color: #287a46;
+
+    }
+
+
+    .warning-value {
+
+      color: #b26b00;
+
+    }
+
+
+    .negative-value {
+
+      color: #b93434;
+
+    }
+
+
+    .plan-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(320px, 1fr)
+        );
+
+      gap: 20px;
+
+      margin-bottom: 24px;
+
+    }
+
+
+    .plan-card {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 22px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+
+    }
+
+
+    .plan-card h2 {
+
+      margin-top: 0;
+
+      margin-bottom: 8px;
+
+    }
+
+
+    .plan-card p {
+
+      line-height: 1.5;
+
+    }
+
+
+    .metric-row {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      gap: 14px;
+
+      padding: 10px 0;
+
+      border-bottom:
+        1px solid #e8edf2;
+
+    }
+
+
+    .metric-row:last-child {
+
+      border-bottom: none;
+
+    }
+
+
+    .metric-label {
+
+      color: #56616c;
+
+    }
+
+
+    .metric-value {
+
+      font-weight: 700;
+
+      text-align: right;
+
+    }
+
+
+    .outlook-box {
+
+      border-radius: 10px;
+
+      padding: 18px;
+
+      line-height: 1.55;
+
+      margin-top: 14px;
+
+    }
+
+
+    .outlook-good {
+
+      background: #f0faf3;
+
+      border-left: 5px solid #2e9d55;
+
+    }
+
+
+    .outlook-watch {
+
+      background: #fff8e8;
+
+      border-left: 5px solid #e0a620;
+
+    }
+
+
+    .outlook-danger {
+
+      background: #fff2f2;
+
+      border-left: 5px solid #c94646;
+
+    }
+
+
+    .section-note {
+
+      color: #66737f;
+
+      line-height: 1.5;
+
+      margin-bottom: 18px;
+
+    }
+
+
+    .settings-row {
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(170px, 1fr)
+        minmax(130px, 180px)
+        auto;
+
+      gap: 12px;
+
+      align-items: end;
+
+      margin-top: 16px;
+
+    }
+
+
+    .settings-row label {
+
+      display: block;
+
+      font-weight: 600;
+
+      margin-bottom: 6px;
+
+    }
+
+
+    .settings-row input {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+    }
+
+
+    .horizon-buttons {
+
+      display: flex;
+
+      gap: 8px;
+
+      flex-wrap: wrap;
+
+      margin: 16px 0;
+
+    }
+
+
+    .horizon-btn {
+
+      border: 1px solid #cbd4dd;
+
+      background: white;
+
+      padding: 9px 14px;
+
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-weight: 600;
+
+    }
+
+
+    .horizon-btn.active {
+
+      background: #2d7df6;
+
+      color: white;
+
+      border-color: #2d7df6;
+
+    }
+
+
+    .projection-big {
+
+      font-size: 31px;
+
+      font-weight: 700;
+
+      margin-top: 6px;
+
+    }
+
+
+    .projection-caption {
+
+      color: #66737f;
+
+      font-size: 13px;
+
+      line-height: 1.45;
+
+    }
+
+
+    .scenario-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(190px, 1fr)
+        );
+
+      gap: 14px;
+
+      margin-top: 18px;
+
+    }
+
+
+    .scenario-field {
+
+      background: #f7f9fb;
+
+      border-radius: 9px;
+
+      padding: 14px;
+
+    }
+
+
+    .scenario-field label {
+
+      display: block;
+
+      font-weight: 600;
+
+      margin-bottom: 6px;
+
+    }
+
+
+    .scenario-field input {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+    }
+
+
+    .scenario-result {
+
+      margin-top: 20px;
+
+      background: #eef6ff;
+
+      border-left: 5px solid #2d7df6;
+
+      border-radius: 9px;
+
+      padding: 17px;
+
+    }
+
+
+    .scenario-result-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(170px, 1fr)
+        );
+
+      gap: 12px;
+
+      margin-top: 12px;
+
+    }
+
+
+    .scenario-result-item {
+
+      background: white;
+
+      border-radius: 8px;
+
+      padding: 12px;
+
+    }
+
+
+    .scenario-result-label {
+
+      color: #66737f;
+
+      font-size: 12px;
+
+      margin-bottom: 5px;
+
+    }
+
+
+    .scenario-result-value {
+
+      font-size: 20px;
+
+      font-weight: 700;
+
+    }
+
+
+    .category-bar-wrap {
+
+      background: #eef1f4;
+
+      height: 9px;
+
+      border-radius: 999px;
+
+      overflow: hidden;
+
+      min-width: 110px;
+
+    }
+
+
+    .category-bar {
+
+      height: 100%;
+
+      background: #2d7df6;
+
+      border-radius: 999px;
+
+    }
+
+
+    .category-flexible {
+
+      font-size: 12px;
+
+      color: #946200;
+
+      font-weight: 600;
+
+    }
+
+
+    .category-essential {
+
+      font-size: 12px;
+
+      color: #287a46;
+
+      font-weight: 600;
+
+    }
+
+
+    .cash-progress {
+
+      margin-top: 18px;
+
+    }
+
+
+    .progress-track {
+
+      background: #e8edf2;
+
+      height: 14px;
+
+      border-radius: 999px;
+
+      overflow: hidden;
+
+      margin-top: 8px;
+
+    }
+
+
+    .progress-fill {
+
+      height: 100%;
+
+      background: #2d7df6;
+
+      border-radius: 999px;
+
+    }
+
+
+    .progress-caption {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      color: #66737f;
+
+      font-size: 12px;
+
+      margin-top: 6px;
+
+    }
+
+
+    .important-note {
+
+      background: #fff8e8;
+
+      border-left: 5px solid #e0a620;
+
+      border-radius: 8px;
+
+      padding: 15px 17px;
+
+      line-height: 1.5;
+
+      margin-top: 18px;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      .settings-row {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .plan-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .summary-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="topbar">
+
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Household Plan & Budget Outlook
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+
+      <a
+        href="guidance.html"
+        class="nav-btn"
+      >
+        Guidance
+      </a>
+
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+
+      <div>
+
+        <h2>
+          Household Plan
+        </h2>
+
+        <p>
+          A concise view of what the household normally earns,
+          what it normally costs, and where the current financial
+          position appears to be heading.
+        </p>
+
+      </div>
+
+
+    </section>
+
+
+
+    <div
+      id="planMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <div class="plan-intro">
+
+      <strong>
+        This is the planning page — not a strict budget.
+      </strong>
+
+      <br><br>
+
+      It uses your actual Home Finance data to estimate a normal
+      household month.
+
+      The goal is to show whether normal income appears sufficient,
+      how much room is left after major commitments, how far the Bills
+      Account is from its protected floor, and how different choices
+      could affect the plan.
+
+    </div>
+
+
+
+    <!-- ===================================================
+         TOP SUMMARY
+    ==================================================== -->
+
+    <section class="summary-grid">
+
+
+      <div class="summary-card">
+
+        <h3>
+          Baseline Monthly Income
+        </h3>
+
+        <div
+          id="monthlyIncome"
+          class="summary-value"
+        >
+          —
+        </div>
+
+        <div class="summary-detail">
+          Normal income included in household planning.
+        </div>
+
+      </div>
+
+
+
+      <div class="summary-card">
+
+        <h3>
+          Baseline Monthly Outgo
+        </h3>
+
+        <div
+          id="monthlyOutgo"
+          class="summary-value"
+        >
+          —
+        </div>
+
+        <div class="summary-detail">
+          Recurring bills + planned groceries + additional debt minimums.
+        </div>
+
+      </div>
+
+
+
+      <div class="summary-card">
+
+        <h3>
+          Expected Monthly Margin
+        </h3>
+
+        <div
+          id="monthlyMargin"
+          class="summary-value"
+        >
+          —
+        </div>
+
+        <div class="summary-detail">
+          What remains before other variable/discretionary household spending.
+        </div>
+
+      </div>
+
+
+
+      <div class="summary-card">
+
+        <h3>
+          Bills Floor Gap
+        </h3>
+
+        <div
+          id="floorGap"
+          class="summary-value"
+        >
+          —
+        </div>
+
+        <div class="summary-detail">
+          Amount currently needed to reach the protected Bills balance.
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         OUTLOOK + CASH
+    ==================================================== -->
+
+    <section class="plan-grid">
+
+
+      <div class="plan-card">
+
+        <h2>
+          Current Household Outlook
+        </h2>
+
+        <p class="section-note">
+          This interpretation uses the normalized monthly plan and
+          current Bills Account position.
+        </p>
+
+
+        <div
+          id="outlookBox"
+          class="outlook-box"
+        >
+          Loading household outlook...
+        </div>
+
+
+        <div class="cash-progress">
+
+          <strong>
+            Bills Protected-Floor Progress
+          </strong>
+
+          <div class="progress-track">
+
+            <div
+              id="floorProgress"
+              class="progress-fill"
+              style="width:0%;"
+            ></div>
+
+          </div>
+
+          <div class="progress-caption">
+
+            <span id="floorCurrentLabel">
+              $0
+            </span>
+
+            <span id="floorTargetLabel">
+              Target $0
+            </span>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="plan-card">
+
+        <h2>
+          Current Financial Snapshot
+        </h2>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Total Recorded Cash
+          </span>
+
+          <span
+            id="totalCash"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Bills Account
+          </span>
+
+          <span
+            id="billsBalance"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Protected Bills Floor
+          </span>
+
+          <span
+            id="protectedFloor"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Total Recorded Debt
+          </span>
+
+          <span
+            id="totalDebt"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Open Card Obligations
+          </span>
+
+          <span
+            id="cardObligations"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Highest Recorded Interest Rate
+          </span>
+
+          <span
+            id="highestRate"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         NORMAL MONTH
+    ==================================================== -->
+
+    <section class="plan-grid">
+
+
+      <div class="plan-card">
+
+        <h2>
+          What a Normal Month Looks Like
+        </h2>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Regular Income
+          </span>
+
+          <span
+            id="normalIncome"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Essential Recurring Bills
+          </span>
+
+          <span
+            id="essentialBills"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Flexible Recurring Bills
+          </span>
+
+          <span
+            id="flexibleBills"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Typical Groceries
+          </span>
+
+          <span
+            id="groceryDisplay"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Additional Debt Minimums
+          </span>
+
+          <span
+            id="extraDebtMinimums"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <strong>
+            Baseline Monthly Outgo
+          </strong>
+
+          <strong
+            id="normalOutgo"
+            class="metric-value"
+          >
+            —
+          </strong>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <strong>
+            Remaining Monthly Margin
+          </strong>
+
+          <strong
+            id="normalMargin"
+            class="metric-value"
+          >
+            —
+          </strong>
+
+        </div>
+
+
+        <div class="important-note">
+
+          This remaining margin is
+          <strong>not automatically disposable spending money.</strong>
+
+          It is the portion of baseline income not already assigned
+          to recurring bills and the grocery planning assumption.
+
+          From this amount must come other variable spending,
+          rebuilding the Bills floor, extra debt reduction,
+          savings and unexpected costs.
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           GROCERY SETTING
+      ================================================== -->
+
+      <div class="plan-card">
+
+        <h2>
+          Grocery Planning Assumption
+        </h2>
+
+        <p class="section-note">
+
+          Groceries are kept separate from ordinary discretionary
+          spending because they are a necessary household cost.
+
+          Adjust this assumption as real experience gives you a
+          better monthly average.
+
+        </p>
+
+
+        <div class="settings-row">
+
+
+          <div>
+
+            <label for="grocerySetting">
+              Typical Monthly Groceries
+            </label>
+
+            <input
+              id="grocerySetting"
+              type="number"
+              min="0"
+              step="25"
+              inputmode="decimal"
+            />
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Current Setting
+            </label>
+
+            <div
+              id="grocerySettingCurrent"
+              class="metric-value"
+              style="padding:10px 0;"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <button
+            id="saveGroceryBtn"
+            type="button"
+          >
+            Save
+          </button>
+
+
+        </div>
+
+
+        <div class="important-note">
+
+          Changing this number changes the
+          <strong>Household Plan assumption</strong>.
+
+          It does not create a transaction and does not change
+          any bank or credit-card balance.
+
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         CATEGORY BREAKDOWN
+    ==================================================== -->
+
+    <section
+      class="plan-card"
+      style="margin-bottom:24px;"
+    >
+
+      <h2>
+        Monthly Recurring Cost Breakdown
+      </h2>
+
+      <p class="section-note">
+
+        Recurring bills are normalized to monthly amounts.
+
+        Biweekly bills use 26 payments per year, so the monthly
+        equivalent is more accurate than simply multiplying by two.
+
+      </p>
+
+
+      <div class="table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Category
+              </th>
+
+              <th>
+                Classification
+              </th>
+
+              <th>
+                Monthly Amount
+              </th>
+
+              <th>
+                Share of Bills
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody
+            id="categoryTableBody"
+          >
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         BASELINE PROJECTION
+    ==================================================== -->
+
+    <section class="plan-grid">
+
+
+      <div class="plan-card">
+
+        <h2>
+          Baseline Projection
+        </h2>
+
+        <p class="section-note">
+
+          This is a simple projection based on the normalized monthly
+          Household Plan.
+
+          It is
+          <strong>not</strong>
+          a replacement for the detailed date-by-date Forecast page.
+
+        </p>
+
+
+        <div class="horizon-buttons">
+
+          <button
+            class="horizon-btn"
+            data-days="30"
+            type="button"
+          >
+            30 Days
+          </button>
+
+          <button
+            class="horizon-btn active"
+            data-days="60"
+            type="button"
+          >
+            60 Days
+          </button>
+
+          <button
+            class="horizon-btn"
+            data-days="90"
+            type="button"
+          >
+            90 Days
+          </button>
+
+        </div>
+
+
+        <div>
+
+          Approximate baseline margin over
+          <strong id="projectionDays">
+            60 days
+          </strong>
+
+        </div>
+
+
+        <div
+          id="projectionMargin"
+          class="projection-big"
+        >
+          —
+        </div>
+
+
+        <div
+          id="projectionCaption"
+          class="projection-caption"
+        >
+        </div>
+
+
+        <div class="important-note">
+
+          Use
+          <strong>Forecast</strong>
+          before making a major cash decision.
+
+          Forecast uses actual dates and can reveal temporary low points
+          that a monthly-average calculation cannot.
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="plan-card">
+
+        <h2>
+          Floor Recovery Estimate
+        </h2>
+
+        <p class="section-note">
+
+          This gives a rough idea of how quickly the current protected-floor
+          gap could be rebuilt if some of the baseline monthly margin
+          were deliberately retained in Bills.
+
+        </p>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Current Gap
+          </span>
+
+          <span
+            id="recoveryGap"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            Baseline Monthly Margin
+          </span>
+
+          <span
+            id="recoveryMargin"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            If 25% of Margin Rebuilds Bills
+          </span>
+
+          <span
+            id="recovery25"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            If 50% of Margin Rebuilds Bills
+          </span>
+
+          <span
+            id="recovery50"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="metric-row">
+
+          <span class="metric-label">
+            If 75% of Margin Rebuilds Bills
+          </span>
+
+          <span
+            id="recovery75"
+            class="metric-value"
+          >
+            —
+          </span>
+
+        </div>
+
+
+        <div class="important-note">
+
+          These are illustrations, not rules.
+
+          The purpose is to show that rebuilding the protected floor
+          can happen gradually while leaving some room for normal life.
+
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         WHAT IF
+    ==================================================== -->
+
+    <section
+      class="plan-card"
+      style="margin-bottom:24px;"
+    >
+
+      <h2>
+        What If?
+      </h2>
+
+      <p class="section-note">
+
+        Test a decision without changing any real data.
+
+        These values exist only on this screen and disappear when
+        the page is refreshed.
+
+      </p>
+
+
+      <div class="scenario-grid">
+
+
+        <div class="scenario-field">
+
+          <label for="scenarioExtraIncome">
+            Extra Income
+          </label>
+
+          <input
+            id="scenarioExtraIncome"
+            type="number"
+            min="0"
+            step="25"
+            value="0"
+          />
+
+        </div>
+
+
+        <div class="scenario-field">
+
+          <label for="scenarioExtraSpending">
+            Extra Spending
+          </label>
+
+          <input
+            id="scenarioExtraSpending"
+            type="number"
+            min="0"
+            step="25"
+            value="0"
+          />
+
+        </div>
+
+
+        <div class="scenario-field">
+
+          <label for="scenarioDebtPayment">
+            Extra Debt Payment
+          </label>
+
+          <input
+            id="scenarioDebtPayment"
+            type="number"
+            min="0"
+            step="25"
+            value="0"
+          />
+
+        </div>
+
+
+        <div class="scenario-field">
+
+          <label for="scenarioFloorRebuild">
+            Extra Bills-Floor Rebuild
+          </label>
+
+          <input
+            id="scenarioFloorRebuild"
+            type="number"
+            min="0"
+            step="25"
+            value="0"
+          />
+
+        </div>
+
+
+      </div>
+
+
+      <div class="scenario-result">
+
+
+        <strong>
+          Scenario Result
+        </strong>
+
+
+        <div class="scenario-result-grid">
+
+
+          <div class="scenario-result-item">
+
+            <div class="scenario-result-label">
+              Starting Monthly Margin
+            </div>
+
+            <div
+              id="scenarioStartingMargin"
+              class="scenario-result-value"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="scenario-result-item">
+
+            <div class="scenario-result-label">
+              Margin After Choices
+            </div>
+
+            <div
+              id="scenarioEndingMargin"
+              class="scenario-result-value"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="scenario-result-item">
+
+            <div class="scenario-result-label">
+              Projected Debt Reduction
+            </div>
+
+            <div
+              id="scenarioDebtReduction"
+              class="scenario-result-value"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div class="scenario-result-item">
+
+            <div class="scenario-result-label">
+              Remaining Bills Floor Gap
+            </div>
+
+            <div
+              id="scenarioFloorGap"
+              class="scenario-result-value"
+            >
+              —
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+        <p
+          id="scenarioExplanation"
+          style="margin-bottom:0;"
+        >
+        </p>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         DECISION GUIDE
+    ==================================================== -->
+
+    <section
+      class="plan-card"
+      style="margin-bottom:30px;"
+    >
+
+      <h2>
+        How to Read This Page
+      </h2>
+
+
+      <div class="metric-row">
+
+        <span class="metric-label">
+          Monthly margin is positive
+        </span>
+
+        <span class="metric-value">
+          Good starting point
+        </span>
+
+      </div>
+
+
+      <div class="metric-row">
+
+        <span class="metric-label">
+          Bills floor is below target
+        </span>
+
+        <span class="metric-value">
+          Rebuild gradually
+        </span>
+
+      </div>
+
+
+      <div class="metric-row">
+
+        <span class="metric-label">
+          Open card obligations increase
+        </span>
+
+        <span class="metric-value">
+          Some cash is already spoken for
+        </span>
+
+      </div>
+
+
+      <div class="metric-row">
+
+        <span class="metric-label">
+          Debt decreases over Check-Ins
+        </span>
+
+        <span class="metric-value">
+          Financial position improving
+        </span>
+
+      </div>
+
+
+      <div class="metric-row">
+
+        <span class="metric-label">
+          Major spending decision
+        </span>
+
+        <span class="metric-value">
+          Check Forecast first
+        </span>
+
+      </div>
+
+
+      <div class="success-box">
+
+        <strong>
+          The Household Plan is intended to show direction.
+        </strong>
+
+        <p>
+          It should help answer whether the household's normal income
+          supports its normal commitments and where any remaining room
+          could realistically be used.
+
+          It is not intended to tell you that every unused dollar must
+          immediately be assigned somewhere.
+        </p>
+
+      </div>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // GLOBAL DATA
+    // =====================================================
+
+    let householdId =
+      null;
+
+
+    let summary =
+      null;
+
+
+    let categories =
+      [];
+
+
+    let projectionDays =
+      60;
+
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+
+    function percent(value) {
+
+      if (
+        value ===
+        null
+        ||
+        value ===
+        undefined
+      ) {
+
+        return "Not entered";
+
+      }
+
+
+      return `${Number(
+        value
+      ).toFixed(
+        2
+      )}%`;
+
+    }
+
+
+
+    function monthsText(value) {
+
+      if (
+        !Number.isFinite(
+          value
+        )
+      ) {
+
+        return "Not currently achievable from baseline margin";
+
+      }
+
+
+      if (
+        value <=
+        0
+      ) {
+
+        return "Already achieved";
+
+      }
+
+
+      if (
+        value <
+        1
+      ) {
+
+        return "Less than 1 month";
+
+      }
+
+
+      if (
+        value <
+        1.5
+      ) {
+
+        return "About 1 month";
+
+      }
+
+
+      return `About ${value.toFixed(1)} months`;
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD SUMMARY
+    // =====================================================
+
+    async function loadSummary() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "v_household_plan_summary"
+          )
+          .select(
+            "*"
+          )
+          .eq(
+            "household_name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      summary =
+        data;
+
+
+      householdId =
+        summary.household_id;
+
+
+      projectionDays =
+        Number(
+          summary.default_forecast_days ||
+          60
+        );
+
+
+      renderSummary();
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD CATEGORIES
+    // =====================================================
+
+    async function loadCategories() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "v_household_plan_bill_categories"
+          )
+          .select(`
+            household_id,
+            budget_category,
+            budget_classification,
+            monthly_amount
+          `)
+          .eq(
+            "household_id",
+            householdId
+          )
+          .order(
+            "monthly_amount",
+            {
+              ascending:
+                false
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      categories =
+        data ||
+        [];
+
+
+      renderCategories();
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // RENDER SUMMARY
+    // =====================================================
+
+    function renderSummary() {
+
+      const monthlyIncome =
+        Number(
+          summary.monthly_income ||
+          0
+        );
+
+
+      const monthlyOutgo =
+        Number(
+          summary.baseline_monthly_outgo ||
+          0
+        );
+
+
+      const monthlyMargin =
+        Number(
+          summary.baseline_monthly_margin ||
+          0
+        );
+
+
+      const floorGap =
+        Number(
+          summary.current_bills_floor_gap ||
+          0
+        );
+
+
+      const billsBalance =
+        Number(
+          summary.bills_balance ||
+          0
+        );
+
+
+      const protectedFloor =
+        Number(
+          summary.bills_protected_floor ||
+          0
+        );
+
+
+
+      // TOP SUMMARY
+
+      document.getElementById(
+        "monthlyIncome"
+      ).textContent =
+        money(
+          monthlyIncome
+        );
+
+
+      document.getElementById(
+        "monthlyOutgo"
+      ).textContent =
+        money(
+          monthlyOutgo
+        );
+
+
+      const marginElement =
+        document.getElementById(
+          "monthlyMargin"
+        );
+
+
+      marginElement.textContent =
+        money(
+          monthlyMargin
+        );
+
+
+      marginElement.className =
+        "summary-value " +
+        (
+          monthlyMargin > 0
+
+            ? "positive-value"
+
+            : monthlyMargin < 0
+
+              ? "negative-value"
+
+              : "warning-value"
+        );
+
+
+      const floorGapElement =
+        document.getElementById(
+          "floorGap"
+        );
+
+
+      floorGapElement.textContent =
+        money(
+          floorGap
+        );
+
+
+      floorGapElement.className =
+        "summary-value " +
+        (
+          floorGap === 0
+
+            ? "positive-value"
+
+            : "warning-value"
+        );
+
+
+
+      // SNAPSHOT
+
+      document.getElementById(
+        "totalCash"
+      ).textContent =
+        money(
+          summary.total_account_cash
+        );
+
+
+      document.getElementById(
+        "billsBalance"
+      ).textContent =
+        money(
+          billsBalance
+        );
+
+
+      document.getElementById(
+        "protectedFloor"
+      ).textContent =
+        money(
+          protectedFloor
+        );
+
+
+      document.getElementById(
+        "totalDebt"
+      ).textContent =
+        money(
+          summary.total_debt
+        );
+
+
+      document.getElementById(
+        "cardObligations"
+      ).textContent =
+        money(
+          summary.open_card_obligations
+        );
+
+
+      document.getElementById(
+        "highestRate"
+      ).textContent =
+        percent(
+          summary.highest_interest_rate
+        );
+
+
+
+      // NORMAL MONTH
+
+      document.getElementById(
+        "normalIncome"
+      ).textContent =
+        money(
+          summary.monthly_income
+        );
+
+
+      document.getElementById(
+        "essentialBills"
+      ).textContent =
+        money(
+          summary.essential_bills
+        );
+
+
+      document.getElementById(
+        "flexibleBills"
+      ).textContent =
+        money(
+          summary.flexible_bills
+        );
+
+
+      document.getElementById(
+        "groceryDisplay"
+      ).textContent =
+        money(
+          summary.typical_monthly_groceries
+        );
+
+
+      document.getElementById(
+        "extraDebtMinimums"
+      ).textContent =
+        money(
+          summary.additional_debt_minimums
+        );
+
+
+      document.getElementById(
+        "normalOutgo"
+      ).textContent =
+        money(
+          summary.baseline_monthly_outgo
+        );
+
+
+      const normalMargin =
+        document.getElementById(
+          "normalMargin"
+        );
+
+
+      normalMargin.textContent =
+        money(
+          monthlyMargin
+        );
+
+
+      normalMargin.className =
+        "metric-value " +
+        (
+          monthlyMargin >= 0
+
+            ? "positive-value"
+
+            : "negative-value"
+        );
+
+
+
+      // GROCERY SETTING
+
+      document.getElementById(
+        "grocerySetting"
+      ).value =
+        Number(
+          summary.typical_monthly_groceries ||
+          0
+        ).toFixed(
+          2
+        );
+
+
+      document.getElementById(
+        "grocerySettingCurrent"
+      ).textContent =
+        money(
+          summary.typical_monthly_groceries
+        );
+
+
+
+      // FLOOR PROGRESS
+
+      const progress =
+        protectedFloor > 0
+
+          ? Math.max(
+              0,
+              Math.min(
+                100,
+                (
+                  billsBalance /
+                  protectedFloor
+                ) * 100
+              )
+            )
+
+          : 100;
+
+
+      document.getElementById(
+        "floorProgress"
+      ).style.width =
+        `${progress}%`;
+
+
+      document.getElementById(
+        "floorCurrentLabel"
+      ).textContent =
+        money(
+          billsBalance
+        );
+
+
+      document.getElementById(
+        "floorTargetLabel"
+      ).textContent =
+        `Target ${money(
+          protectedFloor
+        )}`;
+
+
+
+      renderOutlook();
+
+      renderProjectionButtons();
+
+      renderProjection();
+
+      renderRecovery();
+
+      renderScenario();
+
+    }
+
+
+
+    // =====================================================
+    // OUTLOOK
+    // =====================================================
+
+    function renderOutlook() {
+
+      const box =
+        document.getElementById(
+          "outlookBox"
+        );
+
+
+      const margin =
+        Number(
+          summary.baseline_monthly_margin ||
+          0
+        );
+
+
+      const gap =
+        Number(
+          summary.current_bills_floor_gap ||
+          0
+        );
+
+
+      const obligations =
+        Number(
+          summary.open_card_obligations ||
+          0
+        );
+
+
+      if (
+        margin > 0
+        &&
+        gap === 0
+        &&
+        obligations === 0
+      ) {
+
+        box.className =
+          "outlook-box outlook-good";
+
+
+        box.innerHTML = `
+
+          <strong>
+            Household baseline position looks positive.
+          </strong>
+
+          <br><br>
+
+          Normal income currently exceeds the baseline household
+          plan by approximately
+          <strong>${money(margin)} per month</strong>,
+          and the Bills Account has reached its protected floor.
+
+          The next priorities can increasingly shift toward savings,
+          discretionary spending and accelerated debt reduction.
+
+        `;
+
+
+        return;
+
+      }
+
+
+
+      if (
+        margin > 0
+        &&
+        gap > 0
+      ) {
+
+        box.className =
+          "outlook-box outlook-watch";
+
+
+        box.innerHTML = `
+
+          <strong>
+            Baseline cash flow appears positive, but the cash reserve
+            is still rebuilding.
+          </strong>
+
+          <br><br>
+
+          Normal income currently exceeds the baseline plan by
+          approximately
+          <strong>${money(margin)} per month</strong>.
+
+          However, the Bills Account is still
+          <strong>${money(gap)}</strong>
+          below its protected floor.
+
+          This suggests the household may have room for normal life
+          while still gradually rebuilding the Bills reserve.
+
+          ${
+            obligations > 0
+
+              ? `<br><br>There is also <strong>${money(obligations)}</strong> of open card-funded household spending that should be treated as committed cash.`
+
+              : ""
+          }
+
+        `;
+
+
+        return;
+
+      }
+
+
+
+      if (
+        margin <= 0
+      ) {
+
+        box.className =
+          "outlook-box outlook-danger";
+
+
+        box.innerHTML = `
+
+          <strong>
+            Baseline household costs currently meet or exceed
+            baseline income.
+          </strong>
+
+          <br><br>
+
+          The normalized Household Plan shows a monthly margin of
+          <strong>${money(margin)}</strong>.
+
+          This deserves attention before increasing discretionary
+          transfers or additional debt payments.
+
+          Review the category breakdown and use Forecast and Guidance
+          before making larger decisions.
+
+        `;
+
+
+        return;
+
+      }
+
+
+
+      box.className =
+        "outlook-box outlook-watch";
+
+
+      box.innerHTML = `
+
+        <strong>
+          Household position requires review.
+        </strong>
+
+        <br><br>
+
+        The numbers are not currently giving a clear positive or
+        negative picture. Review Check-In, Forecast and Guidance.
+
+      `;
+
+    }
+
+
+
+    // =====================================================
+    // CATEGORIES
+    // =====================================================
+
+    function renderCategories() {
+
+      const tbody =
+        document.getElementById(
+          "categoryTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      const totalBills =
+        Number(
+          summary.monthly_bills ||
+          0
+        );
+
+
+      categories.forEach(
+        item => {
+
+
+          const amount =
+            Number(
+              item.monthly_amount ||
+              0
+            );
+
+
+          const share =
+            totalBills > 0
+
+              ? (
+                  amount /
+                  totalBills
+                ) * 100
+
+              : 0;
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          const classificationClass =
+            item.budget_classification ===
+            "flexible"
+
+              ? "category-flexible"
+
+              : "category-essential";
+
+
+          row.innerHTML = `
+
+            <td>
+
+              <strong>
+                ${escapeHtml(
+                  item.budget_category
+                )}
+              </strong>
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="${classificationClass}"
+              >
+                ${escapeHtml(
+                  item.budget_classification
+                )}
+              </span>
+
+            </td>
+
+
+            <td>
+
+              ${money(
+                amount
+              )}
+
+            </td>
+
+
+            <td>
+
+              <div style="min-width:160px;">
+
+                <div class="category-bar-wrap">
+
+                  <div
+                    class="category-bar"
+                    style="width:${Math.min(100, share)}%;"
+                  ></div>
+
+                </div>
+
+                <div
+                  style="
+                    font-size:12px;
+                    color:#66737f;
+                    margin-top:4px;
+                  "
+                >
+                  ${share.toFixed(1)}%
+                </div>
+
+              </div>
+
+            </td>
+
+          `;
+
+
+          tbody.appendChild(
+            row
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // PROJECTION
+    // =====================================================
+
+    function renderProjectionButtons() {
+
+      document
+        .querySelectorAll(
+          ".horizon-btn"
+        )
+        .forEach(
+          button => {
+
+            const days =
+              Number(
+                button.dataset.days
+              );
+
+
+            button.classList.toggle(
+              "active",
+              days ===
+              projectionDays
+            );
+
+          }
+        );
+
+    }
+
+
+
+    function renderProjection() {
+
+      const monthlyMargin =
+        Number(
+          summary.baseline_monthly_margin ||
+          0
+        );
+
+
+      const multiplier =
+        projectionDays /
+        30;
+
+
+      const projected =
+        monthlyMargin *
+        multiplier;
+
+
+      document.getElementById(
+        "projectionDays"
+      ).textContent =
+        `${projectionDays} days`;
+
+
+      const element =
+        document.getElementById(
+          "projectionMargin"
+        );
+
+
+      element.textContent =
+        money(
+          projected
+        );
+
+
+      element.className =
+        "projection-big " +
+        (
+          projected >= 0
+
+            ? "positive-value"
+
+            : "negative-value"
+        );
+
+
+      document.getElementById(
+        "projectionCaption"
+      ).textContent =
+
+        `Approximate normalized margin if the current monthly plan continued for ${projectionDays} days. Actual timing can differ because bills and income do not occur evenly throughout the month.`;
+
+    }
+
+
+
+    // =====================================================
+    // RECOVERY
+    // =====================================================
+
+    function renderRecovery() {
+
+      const gap =
+        Number(
+          summary.current_bills_floor_gap ||
+          0
+        );
+
+
+      const margin =
+        Number(
+          summary.baseline_monthly_margin ||
+          0
+        );
+
+
+      document.getElementById(
+        "recoveryGap"
+      ).textContent =
+        money(
+          gap
+        );
+
+
+      document.getElementById(
+        "recoveryMargin"
+      ).textContent =
+        money(
+          margin
+        );
+
+
+      const calculateMonths =
+        percentOfMargin => {
+
+          const monthlyContribution =
+            margin *
+            percentOfMargin;
+
+
+          if (
+            gap <= 0
+          ) {
+
+            return 0;
+
+          }
+
+
+          if (
+            monthlyContribution <= 0
+          ) {
+
+            return Infinity;
+
+          }
+
+
+          return gap /
+            monthlyContribution;
+
+        };
+
+
+      document.getElementById(
+        "recovery25"
+      ).textContent =
+        monthsText(
+          calculateMonths(
+            0.25
+          )
+        );
+
+
+      document.getElementById(
+        "recovery50"
+      ).textContent =
+        monthsText(
+          calculateMonths(
+            0.50
+          )
+        );
+
+
+      document.getElementById(
+        "recovery75"
+      ).textContent =
+        monthsText(
+          calculateMonths(
+            0.75
+          )
+        );
+
+    }
+
+
+
+    // =====================================================
+    // SCENARIO
+    // =====================================================
+
+    function renderScenario() {
+
+      if (!summary) {
+
+        return;
+
+      }
+
+
+      const startingMargin =
+        Number(
+          summary.baseline_monthly_margin ||
+          0
+        );
+
+
+      const startingDebt =
+        Number(
+          summary.total_debt ||
+          0
+        );
+
+
+      const startingGap =
+        Number(
+          summary.current_bills_floor_gap ||
+          0
+        );
+
+
+      const extraIncome =
+        Number(
+          document.getElementById(
+            "scenarioExtraIncome"
+          ).value ||
+          0
+        );
+
+
+      const extraSpending =
+        Number(
+          document.getElementById(
+            "scenarioExtraSpending"
+          ).value ||
+          0
+        );
+
+
+      const debtPayment =
+        Number(
+          document.getElementById(
+            "scenarioDebtPayment"
+          ).value ||
+          0
+        );
+
+
+      const floorRebuild =
+        Number(
+          document.getElementById(
+            "scenarioFloorRebuild"
+          ).value ||
+          0
+        );
+
+
+      const endingMargin =
+        startingMargin
+        +
+        extraIncome
+        -
+        extraSpending
+        -
+        debtPayment
+        -
+        floorRebuild;
+
+
+      const endingDebt =
+        Math.max(
+          0,
+          startingDebt -
+          debtPayment
+        );
+
+
+      const endingGap =
+        Math.max(
+          0,
+          startingGap -
+          floorRebuild
+        );
+
+
+      document.getElementById(
+        "scenarioStartingMargin"
+      ).textContent =
+        money(
+          startingMargin
+        );
+
+
+      const endingMarginElement =
+        document.getElementById(
+          "scenarioEndingMargin"
+        );
+
+
+      endingMarginElement.textContent =
+        money(
+          endingMargin
+        );
+
+
+      endingMarginElement.className =
+        "scenario-result-value " +
+        (
+          endingMargin >= 0
+
+            ? "positive-value"
+
+            : "negative-value"
+        );
+
+
+      document.getElementById(
+        "scenarioDebtReduction"
+      ).textContent =
+        debtPayment > 0
+
+          ? `${money(debtPayment)} → debt about ${money(endingDebt)}`
+
+          : money(
+              0
+            );
+
+
+      document.getElementById(
+        "scenarioFloorGap"
+      ).textContent =
+        money(
+          endingGap
+        );
+
+
+      let explanation;
+
+
+      if (
+        endingMargin < 0
+      ) {
+
+        explanation =
+
+          `This combination would use approximately ${money(
+            Math.abs(
+              endingMargin
+            )
+          )} more than the current baseline monthly margin. That does not automatically make it impossible, but it would require existing cash, extra income, reduced spending elsewhere, or borrowing.`;
+
+      }
+
+
+      else {
+
+        explanation =
+
+          `After these hypothetical choices, approximately ${money(
+            endingMargin
+          )} of the current baseline monthly margin would remain unassigned. Nothing in this scenario has been saved to Home Finance.`;
+
+      }
+
+
+      document.getElementById(
+        "scenarioExplanation"
+      ).textContent =
+        explanation;
+
+    }
+
+
+
+    // =====================================================
+    // SAVE GROCERY SETTING
+    // =====================================================
+
+    async function saveGrocerySetting() {
+
+      const value =
+        Number(
+          document.getElementById(
+            "grocerySetting"
+          ).value
+        );
+
+
+      if (
+        !Number.isFinite(
+          value
+        )
+        ||
+        value < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid monthly grocery amount.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          `Change the Household Plan grocery assumption to ${money(value)} per month?`
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "household_plan_settings"
+          )
+          .update({
+
+            typical_monthly_groceries:
+              value,
+
+            updated_at:
+              new Date()
+                .toISOString()
+
+          })
+          .eq(
+            "household_id",
+            householdId
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      showMessage(
+        `Monthly grocery planning amount updated to ${money(value)}.`,
+        false
+      );
+
+
+      await loadSummary();
+
+      await loadCategories();
+
+    }
+
+
+
+    // =====================================================
+    // HTML ESCAPE
+    // =====================================================
+
+    function escapeHtml(value) {
+
+      return String(
+        value ??
+        ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "planMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ? "message-box error-message"
+
+          : "message-box success-message";
+
+
+      box.scrollIntoView({
+
+        behavior:
+          "smooth",
+
+        block:
+          "nearest"
+
+      });
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        5000
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document
+      .querySelectorAll(
+        ".horizon-btn"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              projectionDays =
+                Number(
+                  button.dataset.days
+                );
+
+
+              renderProjectionButtons();
+
+              renderProjection();
+
+            }
+          );
+
+        }
+      );
+
+
+
+    document.getElementById(
+      "saveGroceryBtn"
+    ).addEventListener(
+      "click",
+      saveGrocerySetting
+    );
+
+
+
+    [
+      "scenarioExtraIncome",
+      "scenarioExtraSpending",
+      "scenarioDebtPayment",
+      "scenarioFloorRebuild"
+    ].forEach(
+      id => {
+
+        document.getElementById(
+          id
+        ).addEventListener(
+          "input",
+          renderScenario
+        );
+
+      }
+    );
+
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      const loaded =
+        await loadSummary();
+
+
+      if (!loaded) {
+
+        return;
+
+      }
+
+
+      await loadCategories();
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
