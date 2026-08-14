@@ -1,0 +1,2936 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance - Financial Guidance
+  </title>
+
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .guidance-intro {
+
+      background: #f3f8ff;
+
+      border-left:
+        5px solid #2d7df6;
+
+      border-radius: 10px;
+
+      padding: 16px 18px;
+
+      margin-bottom: 24px;
+
+      line-height: 1.55;
+
+      color: #4f5c67;
+
+    }
+
+
+    .guidance-summary-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(210px, 1fr)
+        );
+
+      gap: 16px;
+
+      margin-bottom: 28px;
+
+    }
+
+
+    .guidance-card {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+
+    }
+
+
+    .guidance-card h3 {
+
+      margin:
+        0 0 10px 0;
+
+      font-size: 16px;
+
+      color: #596571;
+
+    }
+
+
+    .guidance-value {
+
+      font-size: 29px;
+
+      font-weight: 700;
+
+      color: #202a34;
+
+      margin-bottom: 7px;
+
+    }
+
+
+    .guidance-card p {
+
+      margin: 0;
+
+      color: #66737f;
+
+      line-height: 1.45;
+
+      font-size: 14px;
+
+    }
+
+
+    .guidance-good {
+
+      border-left:
+        6px solid #2e9d55;
+
+    }
+
+
+    .guidance-warning {
+
+      border-left:
+        6px solid #e0a620;
+
+    }
+
+
+    .guidance-danger {
+
+      border-left:
+        6px solid #c94646;
+
+    }
+
+
+    .guidance-info {
+
+      border-left:
+        6px solid #2d7df6;
+
+    }
+
+
+    .guidance-section {
+
+      margin-top: 30px;
+
+    }
+
+
+    .guidance-section h2 {
+
+      margin-bottom: 16px;
+
+    }
+
+
+    .advice-list {
+
+      display: grid;
+
+      gap: 14px;
+
+    }
+
+
+    .advice-item {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 18px;
+
+      box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.05);
+
+    }
+
+
+    .advice-item h3 {
+
+      margin:
+        0 0 7px 0;
+
+      font-size: 18px;
+
+    }
+
+
+    .advice-item p {
+
+      margin:
+        0;
+
+      line-height: 1.55;
+
+      color: #56616b;
+
+    }
+
+
+    .advice-danger {
+
+      border-left:
+        6px solid #c94646;
+
+    }
+
+
+    .advice-warning {
+
+      border-left:
+        6px solid #e0a620;
+
+    }
+
+
+    .advice-good {
+
+      border-left:
+        6px solid #2e9d55;
+
+    }
+
+
+    .advice-info {
+
+      border-left:
+        6px solid #2d7df6;
+
+    }
+
+
+    .priority-number {
+
+      display: inline-block;
+
+      min-width: 28px;
+
+      height: 28px;
+
+      line-height: 28px;
+
+      text-align: center;
+
+      border-radius: 50%;
+
+      background: #eef3f8;
+
+      font-weight: 700;
+
+      margin-right: 8px;
+
+    }
+
+
+    .guidance-footer-note {
+
+      margin-top: 28px;
+
+      background: #f7f9fb;
+
+      padding: 16px 18px;
+
+      border-radius: 10px;
+
+      color: #66737f;
+
+      line-height: 1.5;
+
+      font-size: 14px;
+
+    }
+
+
+    .refresh-row {
+
+      display: flex;
+
+      justify-content: flex-end;
+
+      margin-bottom: 18px;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      .guidance-summary-grid {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .refresh-row {
+
+        justify-content: stretch;
+
+      }
+
+
+      .refresh-row button {
+
+        width: 100%;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- ================================================= -->
+  <!-- HEADER -->
+  <!-- ================================================= -->
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Financial Guidance
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- ================================================= -->
+  <!-- MAIN -->
+  <!-- ================================================= -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Financial Guidance
+        </h2>
+
+        <p>
+          What the system sees, what may need attention,
+          and what you should consider doing next.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <div class="guidance-intro">
+
+      This page is an adviser only.
+
+      It does not move money or make financial decisions for you.
+
+      It examines your current account balances,
+      scheduled bills, scheduled income,
+      planned transfers, planned debt payments,
+      Protected Bills Balance and debt information.
+
+      <br><br>
+
+      The goal is to answer:
+
+      <strong>
+        “Is there anything we should be concerned about right now,
+        and what should we consider doing about it?”
+      </strong>
+
+    </div>
+
+
+
+    <div
+      id="guidanceMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <div class="refresh-row">
+
+      <button
+        id="refreshGuidanceBtn"
+        type="button"
+      >
+        Refresh Guidance
+      </button>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- SUMMARY -->
+    <!-- ================================================= -->
+
+    <section class="guidance-summary-grid">
+
+
+      <div
+        class="guidance-card"
+        id="positionCard"
+      >
+
+        <h3>
+          Overall Position
+        </h3>
+
+        <div
+          class="guidance-value"
+          id="positionValue"
+        >
+          Calculating...
+        </div>
+
+        <p id="positionText"></p>
+
+      </div>
+
+
+
+      <div
+        class="guidance-card"
+        id="availableCard"
+      >
+
+        <h3>
+          Available Funds to Transfer
+        </h3>
+
+        <div
+          class="guidance-value"
+          id="availableFunds"
+        >
+          $0
+        </div>
+
+        <p id="availableFundsText"></p>
+
+      </div>
+
+
+
+      <div
+        class="guidance-card"
+        id="shortfallCard"
+      >
+
+        <h3>
+          Protected Balance Shortfall
+        </h3>
+
+        <div
+          class="guidance-value"
+          id="shortfallValue"
+        >
+          $0
+        </div>
+
+        <p id="shortfallText"></p>
+
+      </div>
+
+
+
+      <div
+        class="guidance-card"
+        id="savingsCard"
+      >
+
+        <h3>
+          Savings Available
+        </h3>
+
+        <div
+          class="guidance-value"
+          id="savingsValue"
+        >
+          $0
+        </div>
+
+        <p id="savingsText"></p>
+
+      </div>
+
+
+
+      <div
+        class="guidance-card"
+        id="lowPointCard"
+      >
+
+        <h3>
+          Forecast Low Point
+        </h3>
+
+        <div
+          class="guidance-value"
+          id="lowPointValue"
+        >
+          $0
+        </div>
+
+        <p id="lowPointText"></p>
+
+      </div>
+
+
+
+      <div
+        class="guidance-card"
+        id="nextIncomeCard"
+      >
+
+        <h3>
+          Next Scheduled Income
+        </h3>
+
+        <div
+          class="guidance-value"
+          id="nextIncomeValue"
+        >
+          $0
+        </div>
+
+        <p id="nextIncomeText"></p>
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- WHAT NEEDS ATTENTION -->
+    <!-- ================================================= -->
+
+    <section class="guidance-section">
+
+      <h2>
+        What Needs Your Attention
+      </h2>
+
+      <div
+        id="attentionList"
+        class="advice-list"
+      ></div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- SUGGESTED ACTIONS -->
+    <!-- ================================================= -->
+
+    <section class="guidance-section">
+
+      <h2>
+        Suggested Actions
+      </h2>
+
+      <div
+        id="actionList"
+        class="advice-list"
+      ></div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- DEBT INFORMATION -->
+    <!-- ================================================= -->
+
+    <section class="guidance-section">
+
+      <h2>
+        Debt & Credit Information
+      </h2>
+
+      <div
+        id="debtAdviceList"
+        class="advice-list"
+      ></div>
+
+    </section>
+
+
+
+    <div class="guidance-footer-note">
+
+      <strong>
+        Important:
+      </strong>
+
+      Guidance is only as accurate as the information entered into
+      Home Finance.
+
+      Check-In should be used regularly to synchronize the recorded
+      balances with the actual bank balances.
+
+      Missing bill dates, outdated debt balances or unrecorded
+      transactions can change the recommendations.
+
+    </div>
+
+
+  </main>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style:
+            "currency",
+
+          currency:
+            "CAD"
+        }
+      );
+
+    }
+
+
+
+    function localISO(date) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+
+    function todayISO() {
+
+      return localISO(
+        new Date()
+      );
+
+    }
+
+
+
+    function futureISO(days) {
+
+      const date =
+        new Date();
+
+
+      date.setDate(
+        date.getDate() +
+        days
+      );
+
+
+      return localISO(
+        date
+      );
+
+    }
+
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+
+        return "—";
+
+      }
+
+
+      const date =
+        new Date(
+          value +
+          "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year:
+            "numeric",
+
+          month:
+            "short",
+
+          day:
+            "numeric"
+        }
+      );
+
+    }
+
+
+
+    function addDays(
+      dateString,
+      days
+    ) {
+
+      const date =
+        new Date(
+          dateString +
+          "T00:00:00"
+        );
+
+
+      date.setDate(
+        date.getDate() +
+        days
+      );
+
+
+      return localISO(
+        date
+      );
+
+    }
+
+
+
+    function addMonths(
+      dateString,
+      months,
+      dueDay
+    ) {
+
+      const original =
+        new Date(
+          dateString +
+          "T00:00:00"
+        );
+
+
+      let targetYear =
+        original.getFullYear();
+
+
+      let targetMonth =
+        original.getMonth() +
+        months;
+
+
+      targetYear +=
+        Math.floor(
+          targetMonth / 12
+        );
+
+
+      targetMonth =
+        (
+          targetMonth % 12 + 12
+        ) % 12;
+
+
+      const preferredDay =
+        Number(
+          dueDay ||
+          original.getDate()
+        );
+
+
+      const lastDay =
+        new Date(
+          targetYear,
+          targetMonth + 1,
+          0
+        ).getDate();
+
+
+      const finalDay =
+        Math.min(
+          preferredDay,
+          lastDay
+        );
+
+
+      return localISO(
+        new Date(
+          targetYear,
+          targetMonth,
+          finalDay
+        )
+      );
+
+    }
+
+
+
+    function addAdvice(
+      container,
+      level,
+      title,
+      text
+    ) {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        `advice-item advice-${level}`;
+
+
+      item.innerHTML = `
+
+        <h3>
+          ${title}
+        </h3>
+
+        <p>
+          ${text}
+        </p>
+
+      `;
+
+
+      container.appendChild(
+        item
+      );
+
+    }
+
+
+
+    // =====================================================
+    // BILL OCCURRENCES
+    // =====================================================
+
+    function buildBillOccurrences(
+      bill,
+      startDate,
+      endDate
+    ) {
+
+      const results =
+        [];
+
+
+      if (
+        !bill.active ||
+        !bill.next_due_date
+      ) {
+
+        return results;
+
+      }
+
+
+      let current =
+        bill.next_due_date;
+
+
+      let safety =
+        0;
+
+
+      while (
+        current <= endDate &&
+        safety < 150
+      ) {
+
+        safety++;
+
+
+        if (
+          current >= startDate &&
+          (
+            !bill.end_date ||
+            current <= bill.end_date
+          )
+        ) {
+
+          let amount =
+            Number(
+              bill.amount || 0
+            );
+
+
+          if (
+            bill.end_date &&
+            current ===
+              bill.end_date &&
+            bill.final_payment_amount !==
+              null
+          ) {
+
+            amount =
+              Number(
+                bill.final_payment_amount
+              );
+
+          }
+
+
+          results.push({
+
+            date:
+              current,
+
+            name:
+              bill.bill_name,
+
+            amount:
+              amount
+
+          });
+
+        }
+
+
+
+        if (
+          bill.end_date &&
+          current >= bill.end_date
+        ) {
+
+          break;
+
+        }
+
+
+
+        const frequency =
+          (
+            bill.frequency || ""
+          ).toLowerCase();
+
+
+
+        if (
+          frequency ===
+          "weekly"
+        ) {
+
+          current =
+            addDays(
+              current,
+              7
+            );
+
+        }
+
+
+        else if (
+          frequency ===
+          "biweekly"
+        ) {
+
+          current =
+            addDays(
+              current,
+              14
+            );
+
+        }
+
+
+        else if (
+          frequency ===
+          "semi-monthly"
+        ) {
+
+          current =
+            addDays(
+              current,
+              15
+            );
+
+        }
+
+
+        else if (
+          frequency ===
+          "monthly"
+        ) {
+
+          current =
+            addMonths(
+              current,
+              1,
+              bill.due_day
+            );
+
+        }
+
+
+        else if (
+          frequency ===
+          "quarterly"
+        ) {
+
+          current =
+            addMonths(
+              current,
+              3,
+              bill.due_day
+            );
+
+        }
+
+
+        else if (
+          frequency ===
+          "annual"
+        ) {
+
+          current =
+            addMonths(
+              current,
+              12,
+              bill.due_day
+            );
+
+        }
+
+
+        else {
+
+          break;
+
+        }
+
+      }
+
+
+      return results;
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD GUIDANCE
+    // =====================================================
+
+    async function loadGuidance() {
+
+
+      const today =
+        todayISO();
+
+
+      const endDate =
+        futureISO(
+          60
+        );
+
+
+
+      const [
+
+        accountsResult,
+        settingsResult,
+        billsResult,
+        incomeResult,
+        incomeSourcesResult,
+        transfersResult,
+        debtsResult
+
+      ] =
+        await Promise.all([
+
+
+          supabaseClient
+            .from(
+              "accounts"
+            )
+            .select(`
+              id,
+              account_name,
+              current_balance,
+              protected_floor,
+              active
+            `)
+            .eq(
+              "active",
+              true
+            ),
+
+
+
+          supabaseClient
+            .from(
+              "finance_settings"
+            )
+            .select(`
+              bills_account_floor,
+              weekly_spending_target
+            `)
+            .single(),
+
+
+
+          supabaseClient
+            .from(
+              "bills"
+            )
+            .select(`
+              bill_name,
+              amount,
+              frequency,
+              due_day,
+              next_due_date,
+              end_date,
+              final_payment_amount,
+              active
+            `)
+            .eq(
+              "active",
+              true
+            ),
+
+
+
+          supabaseClient
+            .from(
+              "income_occurrences"
+            )
+            .select(`
+              expected_date,
+              expected_amount,
+              actual_amount,
+              received,
+              income_source_id
+            `)
+            .gte(
+              "expected_date",
+              today
+            )
+            .lte(
+              "expected_date",
+              endDate
+            )
+            .order(
+              "expected_date",
+              {
+                ascending:
+                  true
+              }
+            ),
+
+
+
+          supabaseClient
+            .from(
+              "income_sources"
+            )
+            .select(`
+              id,
+              source_name
+            `),
+
+
+
+          supabaseClient
+            .from(
+              "account_transfers"
+            )
+            .select(`
+              id,
+              transfer_date,
+              from_account_id,
+              to_account_id,
+              debt_id,
+              transaction_type,
+              amount,
+              status
+            `)
+            .eq(
+              "status",
+              "planned"
+            )
+            .gte(
+              "transfer_date",
+              today
+            )
+            .lte(
+              "transfer_date",
+              endDate
+            ),
+
+
+
+          supabaseClient
+            .from(
+              "debts"
+            )
+            .select(`
+              id,
+              debt_name,
+              debt_type,
+              current_balance,
+              credit_limit,
+              interest_rate,
+              minimum_payment,
+              payment_frequency,
+              next_payment_date,
+              active,
+              last_confirmed_date
+            `)
+            .eq(
+              "active",
+              true
+            )
+
+        ]);
+
+
+
+      // ===================================================
+      // ERRORS
+      // ===================================================
+
+      const errors = [
+
+        accountsResult.error,
+        settingsResult.error,
+        billsResult.error,
+        incomeResult.error,
+        incomeSourcesResult.error,
+        transfersResult.error,
+        debtsResult.error
+
+      ].filter(
+        Boolean
+      );
+
+
+      if (
+        errors.length > 0
+      ) {
+
+        showMessage(
+          errors[0].message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      // ===================================================
+      // DATA
+      // ===================================================
+
+      const accounts =
+        accountsResult.data || [];
+
+
+      const settings =
+        settingsResult.data;
+
+
+      const bills =
+        billsResult.data || [];
+
+
+      const income =
+        incomeResult.data || [];
+
+
+      const incomeSources =
+        incomeSourcesResult.data || [];
+
+
+      const transfers =
+        transfersResult.data || [];
+
+
+      const debts =
+        debtsResult.data || [];
+
+
+
+      // ===================================================
+      // KEY ACCOUNTS
+      // ===================================================
+
+      const billsAccount =
+        accounts.find(
+          item =>
+            item.account_name ===
+            "Bills Account"
+        );
+
+
+      const spendingAccount =
+        accounts.find(
+          item =>
+            item.account_name ===
+            "Spending Account"
+        );
+
+
+      const savingsAccount =
+        accounts.find(
+          item =>
+            item.account_name ===
+            "Savings"
+        );
+
+
+      if (
+        !billsAccount
+      ) {
+
+        showMessage(
+          "Bills Account could not be found.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      // ===================================================
+      // SETTINGS / BALANCES
+      // ===================================================
+
+      const billsBalance =
+        Number(
+          billsAccount.current_balance || 0
+        );
+
+
+      const spendingBalance =
+        Number(
+          spendingAccount
+            ?.current_balance
+          ||
+          0
+        );
+
+
+      const savingsBalance =
+        Number(
+          savingsAccount
+            ?.current_balance
+          ||
+          0
+        );
+
+
+      const protectedFloor =
+        Number(
+          settings
+            ?.bills_account_floor
+          ??
+          billsAccount.protected_floor
+          ??
+          1500
+        );
+
+
+
+      // ===================================================
+      // MAPS
+      // ===================================================
+
+      const accountMap =
+        {};
+
+
+      accounts.forEach(
+        account => {
+
+          accountMap[
+            account.id
+          ] =
+            account.account_name;
+
+        }
+      );
+
+
+
+      const incomeMap =
+        {};
+
+
+      incomeSources.forEach(
+        source => {
+
+          incomeMap[
+            source.id
+          ] =
+            source.source_name;
+
+        }
+      );
+
+
+
+      // ===================================================
+      // BUILD CONSERVATIVE EVENTS
+      // ===================================================
+
+      const events =
+        [];
+
+
+      const missingBillDates =
+        [];
+
+
+
+      bills.forEach(
+        bill => {
+
+
+          if (
+            !bill.next_due_date
+          ) {
+
+            missingBillDates.push(
+              bill.bill_name
+            );
+
+
+            return;
+
+          }
+
+
+          const occurrences =
+            buildBillOccurrences(
+              bill,
+              today,
+              endDate
+            );
+
+
+          occurrences.forEach(
+            occurrence => {
+
+              events.push({
+
+                date:
+                  occurrence.date,
+
+                type:
+                  "Bill",
+
+                amount:
+                  -Number(
+                    occurrence.amount
+                  )
+
+              });
+
+            }
+          );
+
+        }
+      );
+
+
+
+      // ===================================================
+      // INCOME
+      // ===================================================
+
+      income
+        .filter(
+          item =>
+            !item.received
+        )
+        .forEach(
+          item => {
+
+            const amount =
+              Number(
+                item.actual_amount
+                ??
+                item.expected_amount
+                ??
+                0
+              );
+
+
+            events.push({
+
+              date:
+                item.expected_date,
+
+              type:
+                "Income",
+
+              amount:
+                amount
+
+            });
+
+          }
+        );
+
+
+
+      // ===================================================
+      // PLANNED TRANSACTIONS
+      // ===================================================
+
+      transfers.forEach(
+        transfer => {
+
+
+          const amount =
+            Number(
+              transfer.amount || 0
+            );
+
+
+          const type =
+            transfer.transaction_type
+            ||
+            "transfer";
+
+
+
+          // Money leaving Bills always counts.
+
+          if (
+            transfer.from_account_id ===
+            billsAccount.id
+          ) {
+
+            events.push({
+
+              date:
+                transfer.transfer_date,
+
+              type:
+                type ===
+                  "debt_payment"
+
+                  ?
+
+                  "Debt Payment"
+
+                  :
+
+                  "Transfer Out",
+
+              amount:
+                -amount
+
+            });
+
+
+          }
+
+
+
+          /*
+            Planned incoming transfers are deliberately
+            NOT counted in conservative guidance.
+
+            Once completed, they become part of the
+            actual Bills balance.
+          */
+
+        }
+      );
+
+
+
+      // ===================================================
+      // SORT
+      // ===================================================
+
+      events.sort(
+        (a, b) =>
+          a.date.localeCompare(
+            b.date
+          )
+      );
+
+
+
+      // ===================================================
+      // CONSERVATIVE FORECAST
+      // ===================================================
+
+      let running =
+        billsBalance;
+
+
+      let lowest =
+        billsBalance;
+
+
+      let lowestDate =
+        today;
+
+
+
+      events.forEach(
+        event => {
+
+
+          running +=
+            Number(
+              event.amount || 0
+            );
+
+
+          if (
+            running <
+            lowest
+          ) {
+
+            lowest =
+              running;
+
+
+            lowestDate =
+              event.date;
+
+          }
+
+        }
+      );
+
+
+
+      // ===================================================
+      // AVAILABLE / SHORTFALL
+      // ===================================================
+
+      const availableFunds =
+        Math.max(
+          0,
+          lowest -
+          protectedFloor
+        );
+
+
+      const protectedShortfall =
+        Math.max(
+          0,
+          protectedFloor -
+          lowest
+        );
+
+
+
+      // ===================================================
+      // NEXT INCOME
+      // ===================================================
+
+      const nextIncome =
+        income.find(
+          item =>
+            !item.received &&
+            item.expected_date >= today
+        );
+
+
+
+      // ===================================================
+      // SUMMARY CARDS
+      // ===================================================
+
+      document.getElementById(
+        "availableFunds"
+      ).textContent =
+        money(
+          availableFunds
+        );
+
+
+      document.getElementById(
+        "shortfallValue"
+      ).textContent =
+        money(
+          protectedShortfall
+        );
+
+
+      document.getElementById(
+        "savingsValue"
+      ).textContent =
+        money(
+          savingsBalance
+        );
+
+
+      document.getElementById(
+        "lowPointValue"
+      ).textContent =
+        money(
+          lowest
+        );
+
+
+      document.getElementById(
+        "lowPointText"
+      ).textContent =
+        `Projected low point: ${prettyDate(
+          lowestDate
+        )}`;
+
+
+
+      // ===================================================
+      // NEXT INCOME CARD
+      // ===================================================
+
+      if (
+        nextIncome
+      ) {
+
+        document.getElementById(
+          "nextIncomeValue"
+        ).textContent =
+          money(
+            nextIncome.actual_amount
+            ??
+            nextIncome.expected_amount
+          );
+
+
+        document.getElementById(
+          "nextIncomeText"
+        ).textContent =
+          `${
+            incomeMap[
+              nextIncome.income_source_id
+            ]
+            ||
+            "Income"
+          } on ${prettyDate(
+            nextIncome.expected_date
+          )}`;
+
+      }
+
+
+      else {
+
+        document.getElementById(
+          "nextIncomeValue"
+        ).textContent =
+          "$0.00";
+
+
+        document.getElementById(
+          "nextIncomeText"
+        ).textContent =
+          "No scheduled income found in the next 60 days.";
+
+      }
+
+
+
+      // ===================================================
+      // OVERALL POSITION
+      // ===================================================
+
+      const positionCard =
+        document.getElementById(
+          "positionCard"
+        );
+
+
+      if (
+        lowest <= 0
+      ) {
+
+        positionCard.className =
+          "guidance-card guidance-danger";
+
+
+        document.getElementById(
+          "positionValue"
+        ).textContent =
+          "High Risk";
+
+
+        document.getElementById(
+          "positionText"
+        ).textContent =
+          `Bills are projected to reach or pass $0 on ${prettyDate(
+            lowestDate
+          )}.`;
+
+      }
+
+
+      else if (
+        lowest <
+        protectedFloor
+      ) {
+
+        positionCard.className =
+          "guidance-card guidance-warning";
+
+
+        document.getElementById(
+          "positionValue"
+        ).textContent =
+          "Needs Attention";
+
+
+        document.getElementById(
+          "positionText"
+        ).textContent =
+          "Bills remain above $0 but fall below the Protected Bills Balance.";
+
+      }
+
+
+      else {
+
+        positionCard.className =
+          "guidance-card guidance-good";
+
+
+        document.getElementById(
+          "positionValue"
+        ).textContent =
+          "Protected";
+
+
+        document.getElementById(
+          "positionText"
+        ).textContent =
+          "The conservative forecast remains above the Protected Bills Balance.";
+
+      }
+
+
+
+      // ===================================================
+      // AVAILABLE CARD
+      // ===================================================
+
+      const availableCard =
+        document.getElementById(
+          "availableCard"
+        );
+
+
+      if (
+        availableFunds > 0
+      ) {
+
+        availableCard.className =
+          "guidance-card guidance-good";
+
+
+        document.getElementById(
+          "availableFundsText"
+        ).textContent =
+          "This amount could leave Bills today while preserving the protected balance.";
+
+      }
+
+
+      else {
+
+        availableCard.className =
+          "guidance-card guidance-danger";
+
+
+        document.getElementById(
+          "availableFundsText"
+        ).textContent =
+          "No discretionary money should currently leave the Bills Account.";
+
+      }
+
+
+
+      // ===================================================
+      // SHORTFALL CARD
+      // ===================================================
+
+      const shortfallCard =
+        document.getElementById(
+          "shortfallCard"
+        );
+
+
+      if (
+        protectedShortfall > 0
+      ) {
+
+        shortfallCard.className =
+          "guidance-card guidance-danger";
+
+
+        document.getElementById(
+          "shortfallText"
+        ).textContent =
+          `Additional money required to keep Bills at or above ${money(
+            protectedFloor
+          )} through the forecast low point.`;
+
+      }
+
+
+      else {
+
+        shortfallCard.className =
+          "guidance-card guidance-good";
+
+
+        document.getElementById(
+          "shortfallText"
+        ).textContent =
+          "The protected balance is currently maintained.";
+
+      }
+
+
+
+      // ===================================================
+      // SAVINGS CARD
+      // ===================================================
+
+      const savingsCard =
+        document.getElementById(
+          "savingsCard"
+        );
+
+
+      if (
+        protectedShortfall > 0
+        &&
+        savingsBalance >=
+          protectedShortfall
+      ) {
+
+        savingsCard.className =
+          "guidance-card guidance-warning";
+
+
+        document.getElementById(
+          "savingsText"
+        ).textContent =
+          "Savings could cover the entire projected protected-balance shortfall if you decide that transfer is necessary.";
+
+      }
+
+
+      else if (
+        protectedShortfall > 0
+        &&
+        savingsBalance > 0
+      ) {
+
+        savingsCard.className =
+          "guidance-card guidance-warning";
+
+
+        document.getElementById(
+          "savingsText"
+        ).textContent =
+          "Savings could cover part, but not all, of the projected protected-balance shortfall.";
+
+      }
+
+
+      else {
+
+        savingsCard.className =
+          "guidance-card guidance-info";
+
+
+        document.getElementById(
+          "savingsText"
+        ).textContent =
+          "Current recorded Savings balance.";
+
+      }
+
+
+
+      // ===================================================
+      // LOW POINT CARD
+      // ===================================================
+
+      const lowPointCard =
+        document.getElementById(
+          "lowPointCard"
+        );
+
+
+      if (
+        lowest <= 0
+      ) {
+
+        lowPointCard.className =
+          "guidance-card guidance-danger";
+
+      }
+
+
+      else if (
+        lowest <
+        protectedFloor
+      ) {
+
+        lowPointCard.className =
+          "guidance-card guidance-warning";
+
+      }
+
+
+      else {
+
+        lowPointCard.className =
+          "guidance-card guidance-good";
+
+      }
+
+
+
+      // ===================================================
+      // ATTENTION LIST
+      // ===================================================
+
+      const attentionList =
+        document.getElementById(
+          "attentionList"
+        );
+
+
+      attentionList.innerHTML =
+        "";
+
+
+
+      if (
+        lowest <= 0
+      ) {
+
+        addAdvice(
+
+          attentionList,
+
+          "danger",
+
+          "Bills Account is projected to run out of available cash",
+
+          `The conservative 60-day forecast reaches ${money(
+            lowest
+          )} on ${prettyDate(
+            lowestDate
+          )}. This occurs before considering your overdraft as usable money.`
+
+        );
+
+      }
+
+
+
+      else if (
+        lowest <
+        protectedFloor
+      ) {
+
+        addAdvice(
+
+          attentionList,
+
+          "warning",
+
+          "Protected Bills Balance is not maintained",
+
+          `The Bills Account is projected to fall to ${money(
+            lowest
+          )} on ${prettyDate(
+            lowestDate
+          )}, below the ${money(
+            protectedFloor
+          )} Protected Bills Balance.`
+
+        );
+
+      }
+
+
+
+      if (
+        missingBillDates.length > 0
+      ) {
+
+        addAdvice(
+
+          attentionList,
+
+          "warning",
+
+          "Some bills are missing forecast dates",
+
+          `${missingBillDates.join(
+            ", "
+          )} ${
+            missingBillDates.length === 1
+
+              ?
+
+              "is"
+
+              :
+
+              "are"
+          } active but ${
+            missingBillDates.length === 1
+
+              ?
+
+              "does"
+
+              :
+
+              "do"
+          } not have a Next Due Date. ${
+            missingBillDates.length === 1
+
+              ?
+
+              "It is"
+
+              :
+
+              "They are"
+          } therefore excluded from the forecast.`
+
+        );
+
+      }
+
+
+
+      const plannedOutTotal =
+        transfers
+          .filter(
+            transfer =>
+              transfer.from_account_id ===
+              billsAccount.id
+          )
+          .reduce(
+            (
+              total,
+              transfer
+            ) =>
+              total +
+              Number(
+                transfer.amount || 0
+              ),
+            0
+          );
+
+
+
+      if (
+        plannedOutTotal > 0
+      ) {
+
+        addAdvice(
+
+          attentionList,
+
+          "info",
+
+          "Money is already committed to leave Bills",
+
+          `${money(
+            plannedOutTotal
+          )} of planned account transfers and/or debt payments from Bills is already included in this guidance.`
+
+        );
+
+      }
+
+
+
+      if (
+        attentionList.children.length ===
+        0
+      ) {
+
+        addAdvice(
+
+          attentionList,
+
+          "good",
+
+          "No major cash-flow warnings found",
+
+          "Based on the information currently entered, the Bills Account remains protected throughout the forecast."
+
+        );
+
+      }
+
+
+
+      // ===================================================
+      // ACTION LIST
+      // ===================================================
+
+      const actionList =
+        document.getElementById(
+          "actionList"
+        );
+
+
+      actionList.innerHTML =
+        "";
+
+
+
+      if (
+        protectedShortfall > 0
+      ) {
+
+
+        if (
+          savingsBalance >=
+          protectedShortfall
+        ) {
+
+          addAdvice(
+
+            actionList,
+
+            "warning",
+
+            "Consider whether Savings should reinforce Bills",
+
+            `The projected Protected Balance shortfall is ${money(
+              protectedShortfall
+            )}. Savings currently contains ${money(
+              savingsBalance
+            )}, which is enough to cover the entire shortfall. This does not mean you must transfer it, but moving up to ${money(
+              protectedShortfall
+            )} from Savings to Bills would restore the protected forecast if all other data remains unchanged.`
+
+          );
+
+        }
+
+
+        else if (
+          savingsBalance > 0
+        ) {
+
+          const remaining =
+            protectedShortfall -
+            savingsBalance;
+
+
+          addAdvice(
+
+            actionList,
+
+            "danger",
+
+            "Savings alone cannot restore the Protected Bills Balance",
+
+            `The projected shortfall is ${money(
+              protectedShortfall
+            )}, while Savings contains ${money(
+              savingsBalance
+            )}. Even transferring all recorded Savings would leave approximately ${money(
+              remaining
+            )} of the protected shortfall unresolved.`
+
+          );
+
+        }
+
+
+        else {
+
+          addAdvice(
+
+            actionList,
+
+            "danger",
+
+            "No Savings reserve is currently recorded",
+
+            `The forecast requires approximately ${money(
+              protectedShortfall
+            )} of additional Bills protection, but there is no recorded Savings balance available to help cover it.`
+
+          );
+
+        }
+
+      }
+
+
+
+      if (
+        availableFunds === 0
+      ) {
+
+        addAdvice(
+
+          actionList,
+
+          "danger",
+
+          "Do not make discretionary transfers from Bills",
+
+          "Available Funds to Transfer is currently $0. Keep money in Bills until the forecast improves."
+
+        );
+
+      }
+
+
+
+      if (
+        nextIncome
+      ) {
+
+        addAdvice(
+
+          actionList,
+
+          "info",
+
+          "Watch the timing of the next income deposit",
+
+          `The next scheduled income is ${money(
+            nextIncome.actual_amount
+            ??
+            nextIncome.expected_amount
+          )} from ${
+            incomeMap[
+              nextIncome.income_source_id
+            ]
+            ||
+            "scheduled income"
+          } on ${prettyDate(
+            nextIncome.expected_date
+          )}. The important question is whether Bills remain adequately funded before that date.`
+
+        );
+
+      }
+
+
+
+      if (
+        spendingBalance < 0
+      ) {
+
+        addAdvice(
+
+          actionList,
+
+          "warning",
+
+          "Spending Account is below $0",
+
+          `The recorded Spending Account balance is ${money(
+            spendingBalance
+          )}. Reconcile this with the actual bank balance at your next Check-In.`
+
+        );
+
+      }
+
+
+
+      if (
+        protectedShortfall === 0
+        &&
+        availableFunds > 0
+      ) {
+
+        addAdvice(
+
+          actionList,
+
+          "good",
+
+          "There is currently safe transfer capacity",
+
+          `Up to ${money(
+            availableFunds
+          )} could leave Bills while preserving the Protected Bills Balance. You do not need to transfer this amount; it may remain in Bills and accumulate.`
+
+        );
+
+      }
+
+
+
+      // ===================================================
+      // DEBT GUIDANCE
+      // ===================================================
+
+      const debtAdviceList =
+        document.getElementById(
+          "debtAdviceList"
+        );
+
+
+      debtAdviceList.innerHTML =
+        "";
+
+
+
+      const incompleteDebts =
+        debts.filter(
+          debt => {
+
+            const balance =
+              Number(
+                debt.current_balance || 0
+              );
+
+
+            if (
+              balance === 0
+            ) {
+
+              return false;
+
+            }
+
+
+            return (
+              debt.interest_rate === null
+              ||
+              debt.interest_rate === undefined
+            );
+
+          }
+        );
+
+
+
+      if (
+        incompleteDebts.length > 0
+      ) {
+
+        addAdvice(
+
+          debtAdviceList,
+
+          "warning",
+
+          "Some active debts are missing interest rates",
+
+          `${incompleteDebts
+            .map(
+              debt =>
+                debt.debt_name
+            )
+            .join(
+              ", "
+            )}. Debt payoff recommendations will be more useful once their actual rates are entered.`
+
+        );
+
+      }
+
+
+
+      const positiveDebts =
+        debts.filter(
+          debt =>
+            Number(
+              debt.current_balance || 0
+            ) > 0
+        );
+
+
+
+      const debtsWithRates =
+        positiveDebts
+          .filter(
+            debt =>
+              debt.interest_rate !== null
+              &&
+              debt.interest_rate !== undefined
+          )
+          .sort(
+            (a, b) =>
+              Number(
+                b.interest_rate || 0
+              )
+              -
+              Number(
+                a.interest_rate || 0
+              )
+          );
+
+
+
+      if (
+        debtsWithRates.length > 0
+      ) {
+
+        const highest =
+          debtsWithRates[0];
+
+
+        addAdvice(
+
+          debtAdviceList,
+
+          "info",
+
+          "Highest recorded interest rate",
+
+          `${highest.debt_name} currently has the highest recorded rate at ${Number(
+            highest.interest_rate
+          ).toFixed(
+            2
+          )}% with a recorded balance of ${money(
+            highest.current_balance
+          )}. Once cash flow and the Protected Bills Balance are stable, this may be a sensible place to direct extra debt payments.`
+
+        );
+
+      }
+
+
+
+      const creditBalances =
+        debts.filter(
+          debt =>
+            Number(
+              debt.current_balance || 0
+            ) < 0
+        );
+
+
+
+      if (
+        creditBalances.length > 0
+      ) {
+
+        addAdvice(
+
+          debtAdviceList,
+
+          "good",
+
+          "Prepaid credit-card balances detected",
+
+          `${creditBalances
+            .map(
+              debt =>
+                `${debt.debt_name}: ${money(
+                  Math.abs(
+                    debt.current_balance
+                  )
+                )} credit`
+            )
+            .join(
+              "; "
+            )}. These negative balances represent money already prepaid to those cards.`
+
+        );
+
+      }
+
+
+
+      if (
+        positiveDebts.length > 0
+      ) {
+
+        const totalDebt =
+          positiveDebts.reduce(
+            (
+              total,
+              debt
+            ) =>
+              total +
+              Number(
+                debt.current_balance || 0
+              ),
+            0
+          );
+
+
+        addAdvice(
+
+          debtAdviceList,
+
+          "info",
+
+          "Recorded outstanding debt",
+
+          `The currently entered positive debt balances total approximately ${money(
+            totalDebt
+          )}. This total is only reliable if all debt balances have been updated recently.`
+
+        );
+
+      }
+
+
+
+      if (
+        debtAdviceList.children.length ===
+        0
+      ) {
+
+        addAdvice(
+
+          debtAdviceList,
+
+          "good",
+
+          "No debt data warnings",
+
+          "The current debt records do not produce any immediate data-quality warnings."
+
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "guidanceMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ?
+
+          "message-box error-message"
+
+          :
+
+          "message-box success-message";
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document.getElementById(
+      "refreshGuidanceBtn"
+    ).addEventListener(
+      "click",
+      loadGuidance
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      await loadGuidance();
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
