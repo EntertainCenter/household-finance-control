@@ -1,0 +1,3672 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance - Transfers & Payments
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .transfer-summary-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(210px, 1fr)
+        );
+
+      gap: 16px;
+
+      margin-bottom: 24px;
+
+    }
+
+
+    .account-balance-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(180px, 1fr)
+        );
+
+      gap: 12px;
+
+      margin-top: 16px;
+
+    }
+
+
+    .account-balance-card {
+
+      background: #f7f9fb;
+
+      border-radius: 10px;
+
+      padding: 15px;
+
+    }
+
+
+    .account-balance-card h3 {
+
+      margin:
+        0 0 6px 0;
+
+      font-size: 15px;
+
+      color: #66737f;
+
+    }
+
+
+    .account-balance-value {
+
+      font-size: 24px;
+
+      font-weight: 700;
+
+    }
+
+
+    .transfer-in {
+
+      color: #287a46;
+
+      font-weight: 700;
+
+    }
+
+
+    .transfer-out {
+
+      color: #b93434;
+
+      font-weight: 700;
+
+    }
+
+
+    .status-planned {
+
+      color: #a36a00;
+
+      font-weight: 700;
+
+      text-transform: capitalize;
+
+    }
+
+
+    .status-completed {
+
+      color: #287a46;
+
+      font-weight: 700;
+
+      text-transform: capitalize;
+
+    }
+
+
+    .status-cancelled {
+
+      color: #6d7781;
+
+      font-weight: 700;
+
+      text-transform: capitalize;
+
+    }
+
+
+    .instruction-box {
+
+      border-left:
+        5px solid #2d7df6;
+
+      background: #f3f8ff;
+
+      padding: 16px 18px;
+
+      border-radius: 8px;
+
+      margin-bottom: 22px;
+
+      line-height: 1.5;
+
+    }
+
+
+    .payment-info {
+
+      background: #f4fbf6;
+
+      border-left:
+        5px solid #2e9d55;
+
+      border-radius: 8px;
+
+      padding: 14px 16px;
+
+      margin-top: 15px;
+
+      line-height: 1.5;
+
+      color: #4d5a65;
+
+    }
+
+
+    .field-help {
+
+      color: #66737f;
+
+      font-size: 13px;
+
+      margin-top: 5px;
+
+      line-height: 1.4;
+
+    }
+
+
+    .destination-block {
+
+      margin-top: 14px;
+
+    }
+
+
+    .transaction-type-badge {
+
+      display: inline-block;
+
+      padding: 4px 9px;
+
+      border-radius: 999px;
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+      background: #eef3f8;
+
+      color: #45515c;
+
+      white-space: nowrap;
+
+    }
+
+
+    .transaction-type-payment {
+
+      background: #edf8f0;
+
+      color: #287a46;
+
+    }
+
+
+    .transaction-type-transfer {
+
+      background: #eef4ff;
+
+      color: #235fa8;
+
+    }
+
+
+    .debt-balance-preview {
+
+      margin-top: 8px;
+
+      background: #f7f9fb;
+
+      padding: 10px 12px;
+
+      border-radius: 8px;
+
+      color: #596571;
+
+      line-height: 1.45;
+
+    }
+
+
+    .warning-box {
+
+      background: #fff8e8;
+
+      border-left:
+        5px solid #e0a620;
+
+      border-radius: 8px;
+
+      padding: 12px 14px;
+
+      margin-top: 15px;
+
+      line-height: 1.45;
+
+      color: #5f5a4b;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      .transfer-summary-grid,
+      .account-balance-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .modal-card {
+
+        max-height: 92vh;
+
+        overflow-y: auto;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- ================================================= -->
+  <!-- HEADER -->
+  <!-- ================================================= -->
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Transfers, Credit Card Payments & Activity
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- ================================================= -->
+  <!-- MAIN -->
+  <!-- ================================================= -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Transfers & Payments
+        </h2>
+
+        <p>
+          Record movement between household accounts
+          and payments made to credit cards or other debts.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <div
+      id="transferMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <div class="instruction-box">
+
+      <strong>
+        Normal procedure:
+      </strong>
+
+      Create the transaction as
+      <strong>Planned</strong> first.
+
+      After you actually move the money at the bank,
+      open it and press
+      <strong>Complete</strong>.
+
+      <br><br>
+
+      An
+      <strong>Account Transfer</strong>
+      moves money between two bank/savings accounts.
+
+      A
+      <strong>Credit Card / Debt Payment</strong>
+      removes money from a bank account and records that
+      payment against the selected credit card or debt.
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- SUMMARY -->
+    <!-- ================================================= -->
+
+    <section class="transfer-summary-grid">
+
+
+      <div class="card highlight">
+
+        <h3>
+          Planned Transactions
+        </h3>
+
+        <div
+          class="big-number"
+          id="plannedTotal"
+        >
+          $0
+        </div>
+
+        <p>
+          Planned but not yet completed.
+        </p>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <h3>
+          Completed This Month
+        </h3>
+
+        <div
+          class="big-number"
+          id="completedMonth"
+        >
+          $0
+        </div>
+
+        <p>
+          Transfers and debt payments completed this month.
+        </p>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <h3>
+          Active Accounts
+        </h3>
+
+        <div
+          class="big-number"
+          id="activeAccountCount"
+        >
+          0
+        </div>
+
+        <p>
+          Accounts available as payment sources.
+        </p>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <h3>
+          Active Debts / Cards
+        </h3>
+
+        <div
+          class="big-number"
+          id="activeDebtCount"
+        >
+          0
+        </div>
+
+        <p>
+          Available as payment destinations.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- BALANCES -->
+    <!-- ================================================= -->
+
+    <section class="card">
+
+      <h2>
+        Current Account Balances
+      </h2>
+
+      <p>
+        These are the balances currently recorded in the system.
+        Use Check-In to synchronize them with the actual bank.
+      </p>
+
+      <div
+        id="accountBalanceGrid"
+        class="account-balance-grid"
+      ></div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- TRANSACTIONS -->
+    <!-- ================================================= -->
+
+    <section
+      class="section"
+      style="margin-top:28px;"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Transfers & Payments
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <div
+          style="
+            margin-bottom:18px;
+          "
+        >
+
+          <button
+            id="addTransferBtn"
+            type="button"
+          >
+            New Transfer / Payment
+          </button>
+
+        </div>
+
+
+        <div class="table-scroll">
+
+          <table class="finance-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Date
+                </th>
+
+                <th>
+                  Type
+                </th>
+
+                <th>
+                  From
+                </th>
+
+                <th>
+                  To
+                </th>
+
+                <th>
+                  Amount
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                  Notes
+                </th>
+
+                <th>
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody
+              id="transferTableBody"
+            ></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- ACTIVITY -->
+    <!-- ================================================= -->
+
+    <section
+      class="section"
+      style="margin-top:28px;"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Running Activity Log
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="table-scroll">
+
+          <table class="finance-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Date
+                </th>
+
+                <th>
+                  Account
+                </th>
+
+                <th>
+                  Activity
+                </th>
+
+                <th>
+                  Description
+                </th>
+
+                <th>
+                  Amount
+                </th>
+
+                <th>
+                  Before
+                </th>
+
+                <th>
+                  After
+                </th>
+
+                <th>
+                  Notes
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody
+              id="activityTableBody"
+            ></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- ================================================= -->
+  <!-- TRANSFER / PAYMENT MODAL -->
+  <!-- ================================================= -->
+
+  <div
+    id="transferModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card">
+
+
+      <div class="modal-header">
+
+        <h2 id="transferModalTitle">
+          New Transfer / Payment
+        </h2>
+
+        <button
+          id="closeTransferModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+
+      <input
+        id="transferId"
+        type="hidden"
+      />
+
+
+
+      <!-- TRANSACTION TYPE -->
+
+      <label for="transactionType">
+        Transaction Type
+      </label>
+
+      <select id="transactionType">
+
+        <option value="transfer">
+          Account Transfer
+        </option>
+
+        <option value="debt_payment">
+          Credit Card / Debt Payment
+        </option>
+
+      </select>
+
+
+      <div
+        id="transactionTypeHelp"
+        class="field-help"
+      >
+        Move money between two household accounts.
+      </div>
+
+
+
+      <!-- DATE -->
+
+      <label for="transferDate">
+        Date
+      </label>
+
+      <input
+        id="transferDate"
+        type="date"
+      />
+
+
+
+      <!-- FROM -->
+
+      <label for="fromAccount">
+        Paid / Transferred From
+      </label>
+
+      <select id="fromAccount">
+      </select>
+
+
+      <div
+        id="fromAccountPreview"
+        class="field-help"
+      ></div>
+
+
+
+      <!-- ACCOUNT TRANSFER DESTINATION -->
+
+      <div
+        id="accountDestinationBlock"
+        class="destination-block"
+      >
+
+        <label for="toAccount">
+          Transfer To
+        </label>
+
+        <select id="toAccount">
+        </select>
+
+      </div>
+
+
+
+      <!-- DEBT PAYMENT DESTINATION -->
+
+      <div
+        id="debtDestinationBlock"
+        class="destination-block hidden"
+      >
+
+        <label for="debtDestination">
+          Credit Card / Debt
+        </label>
+
+        <select id="debtDestination">
+        </select>
+
+
+        <div
+          id="debtBalancePreview"
+          class="debt-balance-preview"
+        >
+          Select a debt or credit card.
+        </div>
+
+      </div>
+
+
+
+      <!-- AMOUNT -->
+
+      <label for="transferAmount">
+        Amount
+      </label>
+
+      <input
+        id="transferAmount"
+        type="number"
+        min="0.01"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="0.00"
+      />
+
+
+
+      <!-- NOTES -->
+
+      <label for="transferNotes">
+        Notes
+      </label>
+
+      <textarea
+        id="transferNotes"
+        rows="4"
+        placeholder="Example: Grocery card funding"
+      ></textarea>
+
+
+
+      <div
+        id="paymentInformation"
+        class="payment-info hidden"
+      >
+
+        A completed credit-card/debt payment will reduce
+        the selected bank account balance and reduce the
+        recorded balance of the selected debt/card.
+
+      </div>
+
+
+
+      <div class="warning-box">
+
+        <strong>
+          Important:
+        </strong>
+
+        Only press Complete after the money has actually
+        moved at your bank.
+
+        A planned transaction affects forecasting,
+        but account balances are not changed until it is completed.
+
+      </div>
+
+
+
+      <div class="modal-actions">
+
+        <button
+          id="completeTransferBtn"
+          class="hidden"
+          type="button"
+        >
+          Complete
+        </button>
+
+
+        <button
+          id="cancelPlannedTransferBtn"
+          class="secondary-btn hidden"
+          type="button"
+        >
+          Cancel Transaction
+        </button>
+
+
+        <button
+          id="closeModalBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Close
+        </button>
+
+
+        <button
+          id="saveTransferBtn"
+          type="button"
+        >
+          Save Planned Transaction
+        </button>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // DATA
+    // =====================================================
+
+    let householdId =
+      null;
+
+
+    let accounts =
+      [];
+
+
+    let accountMap =
+      {};
+
+
+    let debts =
+      [];
+
+
+    let debtMap =
+      {};
+
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style:
+            "currency",
+
+          currency:
+            "CAD"
+        }
+      );
+
+    }
+
+
+
+    function localISO(date) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+
+    function todayISO() {
+
+      return localISO(
+        new Date()
+      );
+
+    }
+
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+
+        return "—";
+
+      }
+
+
+      const date =
+        new Date(
+          value +
+          "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year:
+            "numeric",
+
+          month:
+            "short",
+
+          day:
+            "numeric"
+        }
+      );
+
+    }
+
+
+
+    function transactionTypeName(type) {
+
+      if (
+        type ===
+        "debt_payment"
+      ) {
+
+        return "Debt / Card Payment";
+
+      }
+
+
+      return "Account Transfer";
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // HOUSEHOLD
+    // =====================================================
+
+    async function loadHousehold() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "households"
+          )
+          .select(
+            "id"
+          )
+          .eq(
+            "name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      householdId =
+        data.id;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // ACCOUNTS
+    // =====================================================
+
+    async function loadAccounts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "accounts"
+          )
+          .select(`
+            id,
+            account_name,
+            current_balance,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .order(
+            "account_name",
+            {
+              ascending:
+                true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      accounts =
+        data || [];
+
+
+      accountMap =
+        {};
+
+
+      accounts.forEach(
+        account => {
+
+          accountMap[
+            account.id
+          ] =
+            account;
+
+        }
+      );
+
+
+      document.getElementById(
+        "activeAccountCount"
+      ).textContent =
+        accounts.length;
+
+
+      renderAccountBalances();
+
+
+      populateAccountDropdowns();
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // DEBTS / CREDIT CARDS
+    // =====================================================
+
+    async function loadDebts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debts"
+          )
+          .select(`
+            id,
+            debt_name,
+            debt_type,
+            current_balance,
+            credit_limit,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .order(
+            "priority_order",
+            {
+              ascending:
+                true
+            }
+          )
+          .order(
+            "debt_name",
+            {
+              ascending:
+                true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      debts =
+        data || [];
+
+
+      debtMap =
+        {};
+
+
+      debts.forEach(
+        debt => {
+
+          debtMap[
+            debt.id
+          ] =
+            debt;
+
+        }
+      );
+
+
+      document.getElementById(
+        "activeDebtCount"
+      ).textContent =
+        debts.length;
+
+
+      populateDebtDropdown();
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // BALANCE CARDS
+    // =====================================================
+
+    function renderAccountBalances() {
+
+      const grid =
+        document.getElementById(
+          "accountBalanceGrid"
+        );
+
+
+      grid.innerHTML =
+        "";
+
+
+      accounts.forEach(
+        account => {
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "account-balance-card";
+
+
+          card.innerHTML = `
+
+            <h3>
+              ${account.account_name}
+            </h3>
+
+            <div
+              class="account-balance-value"
+            >
+              ${money(
+                account.current_balance
+              )}
+            </div>
+
+          `;
+
+
+          grid.appendChild(
+            card
+          );
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // ACCOUNT DROPDOWNS
+    // =====================================================
+
+    function populateAccountDropdowns() {
+
+      const from =
+        document.getElementById(
+          "fromAccount"
+        );
+
+
+      const to =
+        document.getElementById(
+          "toAccount"
+        );
+
+
+      from.innerHTML =
+        "";
+
+
+      to.innerHTML =
+        "";
+
+
+      accounts.forEach(
+        account => {
+
+          const fromOption =
+            document.createElement(
+              "option"
+            );
+
+
+          fromOption.value =
+            account.id;
+
+
+          fromOption.textContent =
+            `${account.account_name} — ${money(
+              account.current_balance
+            )}`;
+
+
+          from.appendChild(
+            fromOption
+          );
+
+
+
+          const toOption =
+            document.createElement(
+              "option"
+            );
+
+
+          toOption.value =
+            account.id;
+
+
+          toOption.textContent =
+            `${account.account_name} — ${money(
+              account.current_balance
+            )}`;
+
+
+          to.appendChild(
+            toOption
+          );
+
+        }
+      );
+
+
+      const bills =
+        accounts.find(
+          account =>
+            account.account_name ===
+            "Bills Account"
+        );
+
+
+      const spending =
+        accounts.find(
+          account =>
+            account.account_name ===
+            "Spending Account"
+        );
+
+
+      if (bills) {
+
+        from.value =
+          bills.id;
+
+      }
+
+
+      if (spending) {
+
+        to.value =
+          spending.id;
+
+      }
+
+
+      updateFromAccountPreview();
+
+    }
+
+
+
+    // =====================================================
+    // DEBT DROPDOWN
+    // =====================================================
+
+    function populateDebtDropdown() {
+
+      const select =
+        document.getElementById(
+          "debtDestination"
+        );
+
+
+      select.innerHTML =
+        "";
+
+
+      if (
+        debts.length ===
+        0
+      ) {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+
+        option.value =
+          "";
+
+
+        option.textContent =
+          "No active debts or credit cards";
+
+
+        select.appendChild(
+          option
+        );
+
+
+        updateDebtPreview();
+
+
+        return;
+
+      }
+
+
+      debts.forEach(
+        debt => {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+
+          option.value =
+            debt.id;
+
+
+          option.textContent =
+            `${debt.debt_name} — ${money(
+              debt.current_balance
+            )}`;
+
+
+          select.appendChild(
+            option
+          );
+
+        }
+      );
+
+
+      updateDebtPreview();
+
+    }
+
+
+
+    // =====================================================
+    // TYPE UI
+    // =====================================================
+
+    function updateTransactionTypeUI() {
+
+      const type =
+        document.getElementById(
+          "transactionType"
+        ).value;
+
+
+      const accountBlock =
+        document.getElementById(
+          "accountDestinationBlock"
+        );
+
+
+      const debtBlock =
+        document.getElementById(
+          "debtDestinationBlock"
+        );
+
+
+      const paymentInfo =
+        document.getElementById(
+          "paymentInformation"
+        );
+
+
+      const help =
+        document.getElementById(
+          "transactionTypeHelp"
+        );
+
+
+      if (
+        type ===
+        "debt_payment"
+      ) {
+
+        accountBlock.classList.add(
+          "hidden"
+        );
+
+
+        debtBlock.classList.remove(
+          "hidden"
+        );
+
+
+        paymentInfo.classList.remove(
+          "hidden"
+        );
+
+
+        help.textContent =
+          "Use this when money leaves a bank account to pay a credit card, line of credit, loan or other debt.";
+
+      }
+
+
+      else {
+
+        accountBlock.classList.remove(
+          "hidden"
+        );
+
+
+        debtBlock.classList.add(
+          "hidden"
+        );
+
+
+        paymentInfo.classList.add(
+          "hidden"
+        );
+
+
+        help.textContent =
+          "Move money between two household bank, spending or savings accounts.";
+
+      }
+
+
+      updateDebtPreview();
+
+    }
+
+
+
+    function updateFromAccountPreview() {
+
+      const id =
+        document.getElementById(
+          "fromAccount"
+        ).value;
+
+
+      const account =
+        accountMap[
+          id
+        ];
+
+
+      const box =
+        document.getElementById(
+          "fromAccountPreview"
+        );
+
+
+      if (!account) {
+
+        box.textContent =
+          "";
+
+
+        return;
+
+      }
+
+
+      box.textContent =
+        `Current recorded balance: ${money(
+          account.current_balance
+        )}`;
+
+    }
+
+
+
+    function updateDebtPreview() {
+
+      const debtId =
+        document.getElementById(
+          "debtDestination"
+        ).value;
+
+
+      const debt =
+        debtMap[
+          debtId
+        ];
+
+
+      const box =
+        document.getElementById(
+          "debtBalancePreview"
+        );
+
+
+      if (!debt) {
+
+        box.textContent =
+          "Select a debt or credit card.";
+
+
+        return;
+
+      }
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "transferAmount"
+          ).value || 0
+        );
+
+
+      const currentBalance =
+        Number(
+          debt.current_balance || 0
+        );
+
+
+      const after =
+        currentBalance -
+        amount;
+
+
+      let text =
+        `Recorded balance: ${money(
+          currentBalance
+        )}`;
+
+
+      if (
+        amount > 0
+      ) {
+
+        text +=
+          ` → After payment: ${money(
+            after
+          )}`;
+
+      }
+
+
+      box.textContent =
+        text;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD TRANSFERS / PAYMENTS
+    // =====================================================
+
+    async function loadTransfers() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_transfers"
+          )
+          .select(`
+            id,
+            transfer_date,
+            from_account_id,
+            to_account_id,
+            debt_id,
+            transaction_type,
+            amount,
+            status,
+            notes,
+            completed_at,
+            created_at
+          `)
+          .order(
+            "transfer_date",
+            {
+              ascending:
+                false
+            }
+          )
+          .order(
+            "created_at",
+            {
+              ascending:
+                false
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const rows =
+        data || [];
+
+
+      const tbody =
+        document.getElementById(
+          "transferTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      let plannedTotal =
+        0;
+
+
+      let completedMonth =
+        0;
+
+
+      const now =
+        new Date();
+
+
+      const currentYear =
+        now.getFullYear();
+
+
+      const currentMonth =
+        now.getMonth();
+
+
+
+      rows.forEach(
+        transaction => {
+
+
+          const type =
+            transaction.transaction_type
+            ||
+            "transfer";
+
+
+          if (
+            transaction.status ===
+            "planned"
+          ) {
+
+            plannedTotal +=
+              Number(
+                transaction.amount || 0
+              );
+
+          }
+
+
+          if (
+            transaction.status ===
+            "completed"
+          ) {
+
+            const date =
+              new Date(
+                transaction.transfer_date +
+                "T00:00:00"
+              );
+
+
+            if (
+              date.getFullYear() ===
+                currentYear
+              &&
+              date.getMonth() ===
+                currentMonth
+            ) {
+
+              completedMonth +=
+                Number(
+                  transaction.amount || 0
+                );
+
+            }
+
+          }
+
+
+
+          const fromName =
+            accountMap[
+              transaction.from_account_id
+            ]
+              ?.account_name
+            ||
+            "Unknown";
+
+
+
+          let destinationName =
+            "Unknown";
+
+
+          if (
+            type ===
+            "debt_payment"
+          ) {
+
+            destinationName =
+              debtMap[
+                transaction.debt_id
+              ]
+                ?.debt_name
+              ||
+              "Debt / Credit Card";
+
+          }
+
+
+          else {
+
+            destinationName =
+              accountMap[
+                transaction.to_account_id
+              ]
+                ?.account_name
+              ||
+              "Unknown";
+
+          }
+
+
+
+          let statusClass =
+            "status-planned";
+
+
+          if (
+            transaction.status ===
+            "completed"
+          ) {
+
+            statusClass =
+              "status-completed";
+
+          }
+
+
+          else if (
+            transaction.status ===
+            "cancelled"
+          ) {
+
+            statusClass =
+              "status-cancelled";
+
+          }
+
+
+
+          const typeClass =
+            type ===
+            "debt_payment"
+
+              ?
+
+              "transaction-type-badge transaction-type-payment"
+
+              :
+
+              "transaction-type-badge transaction-type-transfer";
+
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          row.innerHTML = `
+
+            <td>
+              ${prettyDate(
+                transaction.transfer_date
+              )}
+            </td>
+
+            <td>
+              <span
+                class="${typeClass}"
+              >
+                ${transactionTypeName(
+                  type
+                )}
+              </span>
+            </td>
+
+            <td>
+              ${fromName}
+            </td>
+
+            <td>
+              ${destinationName}
+            </td>
+
+            <td>
+              ${money(
+                transaction.amount
+              )}
+            </td>
+
+            <td>
+
+              <span
+                class="${statusClass}"
+              >
+                ${transaction.status}
+              </span>
+
+            </td>
+
+            <td>
+              ${transaction.notes || ""}
+            </td>
+
+            <td>
+
+              <button
+                class="small-btn"
+                type="button"
+              >
+                View / Edit
+              </button>
+
+            </td>
+
+          `;
+
+
+          row
+            .querySelector(
+              "button"
+            )
+            .addEventListener(
+              "click",
+              () => {
+
+                editTransfer(
+                  transaction
+                );
+
+              }
+            );
+
+
+          tbody.appendChild(
+            row
+          );
+
+        }
+      );
+
+
+
+      if (
+        rows.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="8">
+              No transfers or payments recorded yet.
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+
+
+      document.getElementById(
+        "plannedTotal"
+      ).textContent =
+        money(
+          plannedTotal
+        );
+
+
+      document.getElementById(
+        "completedMonth"
+      ).textContent =
+        money(
+          completedMonth
+        );
+
+    }
+
+
+
+    // =====================================================
+    // ACTIVITY LOG
+    // =====================================================
+
+    async function loadActivity() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_activity"
+          )
+          .select(`
+            id,
+            account_id,
+            activity_date,
+            activity_type,
+            description,
+            amount,
+            balance_before,
+            balance_after,
+            notes,
+            created_at
+          `)
+          .order(
+            "activity_date",
+            {
+              ascending:
+                false
+            }
+          )
+          .order(
+            "created_at",
+            {
+              ascending:
+                false
+            }
+          )
+          .limit(
+            100
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "activityTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      const activity =
+        data || [];
+
+
+      activity.forEach(
+        item => {
+
+          const accountName =
+            accountMap[
+              item.account_id
+            ]
+              ?.account_name
+            ||
+            "Account";
+
+
+          let amountClass =
+            "";
+
+
+          if (
+            Number(
+              item.amount
+            ) > 0
+          ) {
+
+            amountClass =
+              "transfer-in";
+
+          }
+
+
+          else if (
+            Number(
+              item.amount
+            ) < 0
+          ) {
+
+            amountClass =
+              "transfer-out";
+
+          }
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          row.innerHTML = `
+
+            <td>
+              ${prettyDate(
+                item.activity_date
+              )}
+            </td>
+
+            <td>
+              ${accountName}
+            </td>
+
+            <td>
+              ${item.activity_type}
+            </td>
+
+            <td>
+              ${item.description || ""}
+            </td>
+
+            <td
+              class="${amountClass}"
+            >
+              ${
+                item.amount === null
+
+                  ?
+
+                  "—"
+
+                  :
+
+                  money(
+                    item.amount
+                  )
+              }
+            </td>
+
+            <td>
+              ${
+                item.balance_before === null
+
+                  ?
+
+                  "—"
+
+                  :
+
+                  money(
+                    item.balance_before
+                  )
+              }
+            </td>
+
+            <td>
+              ${
+                item.balance_after === null
+
+                  ?
+
+                  "—"
+
+                  :
+
+                  money(
+                    item.balance_after
+                  )
+              }
+            </td>
+
+            <td>
+              ${item.notes || ""}
+            </td>
+
+          `;
+
+
+          tbody.appendChild(
+            row
+          );
+
+        }
+      );
+
+
+      if (
+        activity.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="8">
+              No account activity has been recorded yet.
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // OPEN NEW
+    // =====================================================
+
+    function openAddTransfer() {
+
+      document.getElementById(
+        "transferModalTitle"
+      ).textContent =
+        "New Transfer / Payment";
+
+
+      document.getElementById(
+        "transferId"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "transactionType"
+      ).value =
+        "transfer";
+
+
+      document.getElementById(
+        "transferDate"
+      ).value =
+        todayISO();
+
+
+      document.getElementById(
+        "transferAmount"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "transferNotes"
+      ).value =
+        "";
+
+
+      populateAccountDropdowns();
+
+
+      populateDebtDropdown();
+
+
+      setFieldsDisabled(
+        false
+      );
+
+
+      updateTransactionTypeUI();
+
+
+      document.getElementById(
+        "saveTransferBtn"
+      ).classList.remove(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "completeTransferBtn"
+      ).classList.add(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "cancelPlannedTransferBtn"
+      ).classList.add(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "transferModal"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EDIT EXISTING
+    // =====================================================
+
+    function editTransfer(
+      transaction
+    ) {
+
+      const type =
+        transaction.transaction_type
+        ||
+        "transfer";
+
+
+      document.getElementById(
+        "transferId"
+      ).value =
+        transaction.id;
+
+
+      document.getElementById(
+        "transactionType"
+      ).value =
+        type;
+
+
+      document.getElementById(
+        "transferDate"
+      ).value =
+        transaction.transfer_date;
+
+
+      document.getElementById(
+        "fromAccount"
+      ).value =
+        transaction.from_account_id;
+
+
+      if (
+        type ===
+        "debt_payment"
+      ) {
+
+        document.getElementById(
+          "debtDestination"
+        ).value =
+          transaction.debt_id
+          ||
+          "";
+
+      }
+
+
+      else {
+
+        document.getElementById(
+          "toAccount"
+        ).value =
+          transaction.to_account_id
+          ||
+          "";
+
+      }
+
+
+      document.getElementById(
+        "transferAmount"
+      ).value =
+        transaction.amount;
+
+
+      document.getElementById(
+        "transferNotes"
+      ).value =
+        transaction.notes
+        ||
+        "";
+
+
+      document.getElementById(
+        "transferModalTitle"
+      ).textContent =
+        transaction.status ===
+        "planned"
+
+          ?
+
+          "Edit Planned Transaction"
+
+          :
+
+          "Transaction Details";
+
+
+      updateTransactionTypeUI();
+
+
+      updateFromAccountPreview();
+
+
+      updateDebtPreview();
+
+
+
+      if (
+        transaction.status ===
+        "planned"
+      ) {
+
+        setFieldsDisabled(
+          false
+        );
+
+
+        document.getElementById(
+          "saveTransferBtn"
+        ).classList.remove(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "completeTransferBtn"
+        ).classList.remove(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "cancelPlannedTransferBtn"
+        ).classList.remove(
+          "hidden"
+        );
+
+      }
+
+
+      else {
+
+        setFieldsDisabled(
+          true
+        );
+
+
+        document.getElementById(
+          "saveTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "completeTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "cancelPlannedTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+      }
+
+
+      document.getElementById(
+        "transferModal"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+
+    // =====================================================
+    // DISABLE FIELDS
+    // =====================================================
+
+    function setFieldsDisabled(
+      disabled
+    ) {
+
+      document.getElementById(
+        "transactionType"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "transferDate"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "fromAccount"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "toAccount"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "debtDestination"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "transferAmount"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "transferNotes"
+      ).disabled =
+        disabled;
+
+    }
+
+
+
+    // =====================================================
+    // BUILD RECORD
+    // =====================================================
+
+    function buildTransactionRecord() {
+
+      const transactionType =
+        document.getElementById(
+          "transactionType"
+        ).value;
+
+
+      const transferDate =
+        document.getElementById(
+          "transferDate"
+        ).value;
+
+
+      const fromAccount =
+        document.getElementById(
+          "fromAccount"
+        ).value;
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "transferAmount"
+          ).value
+        );
+
+
+      const notes =
+        document.getElementById(
+          "transferNotes"
+        ).value.trim();
+
+
+
+      if (!transferDate) {
+
+        throw new Error(
+          "Please enter a date."
+        );
+
+      }
+
+
+
+      if (!fromAccount) {
+
+        throw new Error(
+          "Please select the account the money is leaving."
+        );
+
+      }
+
+
+
+      if (
+        !Number.isFinite(
+          amount
+        )
+        ||
+        amount <= 0
+      ) {
+
+        throw new Error(
+          "Please enter a valid amount."
+        );
+
+      }
+
+
+
+      const record = {
+
+        household_id:
+          householdId,
+
+        transfer_date:
+          transferDate,
+
+        from_account_id:
+          fromAccount,
+
+        amount:
+          amount,
+
+        transaction_type:
+          transactionType,
+
+        status:
+          "planned",
+
+        notes:
+          notes || null
+
+      };
+
+
+
+      if (
+        transactionType ===
+        "transfer"
+      ) {
+
+        const toAccount =
+          document.getElementById(
+            "toAccount"
+          ).value;
+
+
+        if (!toAccount) {
+
+          throw new Error(
+            "Please select the destination account."
+          );
+
+        }
+
+
+        if (
+          fromAccount ===
+          toAccount
+        ) {
+
+          throw new Error(
+            "The From and To accounts must be different."
+          );
+
+        }
+
+
+        record.to_account_id =
+          toAccount;
+
+
+        record.debt_id =
+          null;
+
+      }
+
+
+
+      else if (
+        transactionType ===
+        "debt_payment"
+      ) {
+
+        const debtId =
+          document.getElementById(
+            "debtDestination"
+          ).value;
+
+
+        if (!debtId) {
+
+          throw new Error(
+            "Please select the credit card or debt being paid."
+          );
+
+        }
+
+
+        record.to_account_id =
+          null;
+
+
+        record.debt_id =
+          debtId;
+
+      }
+
+
+      return record;
+
+    }
+
+
+
+    // =====================================================
+    // SAVE PLANNED
+    // =====================================================
+
+    async function saveTransfer() {
+
+      try {
+
+        const id =
+          document.getElementById(
+            "transferId"
+          ).value;
+
+
+        const record =
+          buildTransactionRecord();
+
+
+        let result;
+
+
+        if (id) {
+
+          result =
+            await supabaseClient
+              .from(
+                "account_transfers"
+              )
+              .update(
+                record
+              )
+              .eq(
+                "id",
+                id
+              )
+              .eq(
+                "status",
+                "planned"
+              );
+
+        }
+
+
+        else {
+
+          result =
+            await supabaseClient
+              .from(
+                "account_transfers"
+              )
+              .insert(
+                record
+              );
+
+        }
+
+
+        if (
+          result.error
+        ) {
+
+          showMessage(
+            result.error.message,
+            true
+          );
+
+
+          return;
+
+        }
+
+
+        closeTransferModal();
+
+
+        showMessage(
+          record.transaction_type ===
+          "debt_payment"
+
+            ?
+
+            "Planned credit card / debt payment saved."
+
+            :
+
+            "Planned account transfer saved.",
+          false
+        );
+
+
+        await refreshPage();
+
+      }
+
+
+      catch (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // SAVE EDITS BEFORE COMPLETION
+    // =====================================================
+
+    async function saveTransferBeforeCompletion(
+      id
+    ) {
+
+      const record =
+        buildTransactionRecord();
+
+
+      delete record.status;
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_transfers"
+          )
+          .update(
+            record
+          )
+          .eq(
+            "id",
+            id
+          )
+          .eq(
+            "status",
+            "planned"
+          );
+
+
+      if (error) {
+
+        throw new Error(
+          error.message
+        );
+
+      }
+
+
+      return record;
+
+    }
+
+
+
+    // =====================================================
+    // COMPLETE
+    // =====================================================
+
+    async function completeTransfer() {
+
+      const id =
+        document.getElementById(
+          "transferId"
+        ).value;
+
+
+      if (!id) {
+
+        showMessage(
+          "Save the transaction before completing it.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      try {
+
+        const record =
+          buildTransactionRecord();
+
+
+        const fromName =
+          accountMap[
+            record.from_account_id
+          ]
+            ?.account_name
+          ||
+          "Source Account";
+
+
+        let destinationName =
+          "";
+
+
+        if (
+          record.transaction_type ===
+          "debt_payment"
+        ) {
+
+          destinationName =
+            debtMap[
+              record.debt_id
+            ]
+              ?.debt_name
+            ||
+            "Debt / Credit Card";
+
+        }
+
+
+        else {
+
+          destinationName =
+            accountMap[
+              record.to_account_id
+            ]
+              ?.account_name
+            ||
+            "Destination Account";
+
+        }
+
+
+
+        const question =
+          record.transaction_type ===
+          "debt_payment"
+
+            ?
+
+            `Have you actually paid ${money(
+              record.amount
+            )} from ${fromName} to ${destinationName}?`
+
+            :
+
+            `Have you actually transferred ${money(
+              record.amount
+            )} from ${fromName} to ${destinationName} at the bank?`;
+
+
+
+        const confirmed =
+          confirm(
+            question
+          );
+
+
+        if (!confirmed) {
+
+          return;
+
+        }
+
+
+
+        await saveTransferBeforeCompletion(
+          id
+        );
+
+
+
+        let result;
+
+
+        if (
+          record.transaction_type ===
+          "debt_payment"
+        ) {
+
+          result =
+            await supabaseClient
+              .rpc(
+                "complete_debt_payment",
+                {
+                  p_transfer_id:
+                    id
+                }
+              );
+
+        }
+
+
+        else {
+
+          result =
+            await supabaseClient
+              .rpc(
+                "complete_account_transfer",
+                {
+                  p_transfer_id:
+                    id
+                }
+              );
+
+        }
+
+
+
+        if (
+          result.error
+        ) {
+
+          showMessage(
+            result.error.message,
+            true
+          );
+
+
+          return;
+
+        }
+
+
+
+        closeTransferModal();
+
+
+
+        showMessage(
+
+          record.transaction_type ===
+          "debt_payment"
+
+            ?
+
+            `Payment completed: ${money(
+              record.amount
+            )} from ${fromName} to ${destinationName}.`
+
+            :
+
+            `Transfer completed: ${money(
+              record.amount
+            )} from ${fromName} to ${destinationName}.`,
+
+          false
+
+        );
+
+
+        await refreshPage();
+
+      }
+
+
+      catch (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // CANCEL
+    // =====================================================
+
+    async function cancelTransfer() {
+
+      const id =
+        document.getElementById(
+          "transferId"
+        ).value;
+
+
+      if (!id) {
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          "Cancel this planned transaction?"
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_transfers"
+          )
+          .update({
+            status:
+              "cancelled"
+          })
+          .eq(
+            "id",
+            id
+          )
+          .eq(
+            "status",
+            "planned"
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      closeTransferModal();
+
+
+      showMessage(
+        "Planned transaction cancelled.",
+        false
+      );
+
+
+      await refreshPage();
+
+    }
+
+
+
+    // =====================================================
+    // MODAL
+    // =====================================================
+
+    function closeTransferModal() {
+
+      document.getElementById(
+        "transferModal"
+      ).classList.add(
+        "hidden"
+      );
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGES
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "transferMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ?
+
+          "message-box error-message"
+
+          :
+
+          "message-box success-message";
+
+
+      box.scrollIntoView({
+        behavior:
+          "smooth",
+
+        block:
+          "nearest"
+      });
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        5000
+      );
+
+    }
+
+
+
+    // =====================================================
+    // REFRESH
+    // =====================================================
+
+    async function refreshPage() {
+
+      await loadAccounts();
+
+      await loadDebts();
+
+      await loadTransfers();
+
+      await loadActivity();
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document.getElementById(
+      "addTransferBtn"
+    ).addEventListener(
+      "click",
+      openAddTransfer
+    );
+
+
+    document.getElementById(
+      "transactionType"
+    ).addEventListener(
+      "change",
+      updateTransactionTypeUI
+    );
+
+
+    document.getElementById(
+      "fromAccount"
+    ).addEventListener(
+      "change",
+      updateFromAccountPreview
+    );
+
+
+    document.getElementById(
+      "debtDestination"
+    ).addEventListener(
+      "change",
+      updateDebtPreview
+    );
+
+
+    document.getElementById(
+      "transferAmount"
+    ).addEventListener(
+      "input",
+      updateDebtPreview
+    );
+
+
+    document.getElementById(
+      "saveTransferBtn"
+    ).addEventListener(
+      "click",
+      saveTransfer
+    );
+
+
+    document.getElementById(
+      "completeTransferBtn"
+    ).addEventListener(
+      "click",
+      completeTransfer
+    );
+
+
+    document.getElementById(
+      "cancelPlannedTransferBtn"
+    ).addEventListener(
+      "click",
+      cancelTransfer
+    );
+
+
+    document.getElementById(
+      "closeModalBtn"
+    ).addEventListener(
+      "click",
+      closeTransferModal
+    );
+
+
+    document.getElementById(
+      "closeTransferModalBtn"
+    ).addEventListener(
+      "click",
+      closeTransferModal
+    );
+
+
+    document.getElementById(
+      "transferModal"
+    ).addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.id ===
+          "transferModal"
+        ) {
+
+          closeTransferModal();
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      const householdLoaded =
+        await loadHousehold();
+
+
+      if (!householdLoaded) {
+
+        return;
+
+      }
+
+
+      await refreshPage();
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
