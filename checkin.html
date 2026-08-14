@@ -1,0 +1,3700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Weekly Check-In
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .checkin-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(220px, 1fr)
+        );
+
+      gap: 18px;
+
+      margin-bottom: 25px;
+
+    }
+
+
+    .checkin-field label {
+
+      display: block;
+
+      font-weight: 600;
+
+      margin-bottom: 7px;
+
+    }
+
+
+    .checkin-field input,
+    .checkin-field textarea {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+    }
+
+
+    .balance-entry-card {
+
+      background: #f7f9fb;
+
+      border-radius: 10px;
+
+      padding: 16px;
+
+    }
+
+
+    .balance-entry-card h3 {
+
+      margin: 0 0 4px 0;
+
+      font-size: 16px;
+
+    }
+
+
+    .balance-meta {
+
+      color: #66737f;
+
+      font-size: 13px;
+
+      line-height: 1.45;
+
+      margin-bottom: 12px;
+
+    }
+
+
+    .balance-entry-card input {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+      font-size: 17px;
+
+      font-weight: 600;
+
+    }
+
+
+    .debt-card {
+
+      border-left: 4px solid #d97706;
+
+    }
+
+
+    .account-card {
+
+      border-left: 4px solid #2d7df6;
+
+    }
+
+
+    .debt-change {
+
+      margin-top: 8px;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+    }
+
+
+    .improved {
+
+      color: #287a46;
+
+    }
+
+
+    .worsened {
+
+      color: #b93434;
+
+    }
+
+
+    .unchanged {
+
+      color: #66737f;
+
+    }
+
+
+    .attention-row {
+
+      background: #fffaf0;
+
+    }
+
+
+    .overdue-row {
+
+      background: #fff2f2;
+
+    }
+
+
+    .income-amount {
+
+      font-weight: 700;
+
+    }
+
+
+    .checkin-success {
+
+      border-left:
+        6px solid #2e9d55;
+
+    }
+
+
+    .checkin-note {
+
+      margin-top: 10px;
+
+      color: #66737f;
+
+      line-height: 1.5;
+
+    }
+
+
+    .small-action-btn {
+
+      padding: 7px 12px;
+
+      font-size: 14px;
+
+      cursor: pointer;
+
+    }
+
+
+    .overdue-text {
+
+      color: #b93434;
+
+      font-weight: 700;
+
+    }
+
+
+    .activity-note {
+
+      background: #f3f8ff;
+
+      border-left:
+        5px solid #2d7df6;
+
+      border-radius: 8px;
+
+      padding: 15px 18px;
+
+      margin-bottom: 24px;
+
+      line-height: 1.5;
+
+    }
+
+
+    .debt-note {
+
+      background: #fff8e8;
+
+      border-left:
+        5px solid #d97706;
+
+      border-radius: 8px;
+
+      padding: 15px 18px;
+
+      margin-bottom: 20px;
+
+      line-height: 1.5;
+
+    }
+
+
+    .save-panel {
+
+      position: sticky;
+
+      bottom: 12px;
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 14px;
+
+      margin-top: 20px;
+
+      box-shadow:
+        0 4px 18px
+        rgba(0,0,0,0.12);
+
+      z-index: 5;
+
+    }
+
+
+    .save-panel button {
+
+      width: 100%;
+
+      padding: 13px 18px;
+
+      font-size: 16px;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      .checkin-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="topbar">
+
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Weekly Check-In
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Weekly Financial Check-In
+        </h2>
+
+        <p>
+          Synchronize Home Finance with your actual bank
+          accounts and debt balances.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <div
+      id="checkinMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <div class="activity-note">
+
+      <strong>
+        The financial institutions are the source of truth.
+      </strong>
+
+      <br><br>
+
+      Enter the balances actually shown by your bank,
+      credit-card company and lenders.
+
+      <br><br>
+
+      Marking income Received or a bill Paid / Cleared records
+      what happened, but does not change an account balance a
+      second time.
+
+    </div>
+
+
+
+    <!-- ===================================================
+         CHECK-IN DATE
+    ==================================================== -->
+
+    <section class="card">
+
+      <h2>
+        Check-In Details
+      </h2>
+
+
+      <div class="checkin-grid">
+
+
+        <div class="checkin-field">
+
+          <label for="checkinDate">
+            Check-In Date
+          </label>
+
+          <input
+            id="checkinDate"
+            type="date"
+          />
+
+        </div>
+
+
+        <div class="checkin-field">
+
+          <label for="checkinNotes">
+            Notes
+          </label>
+
+          <textarea
+            id="checkinNotes"
+            rows="2"
+            placeholder="Optional note about this check-in"
+          ></textarea>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         ACCOUNTS
+    ==================================================== -->
+
+    <section
+      class="card"
+      style="margin-top:24px;"
+    >
+
+      <h2>
+        Actual Bank Account Balances
+      </h2>
+
+      <p class="checkin-note">
+
+        Every active account marked
+        <strong>Include in Check-In</strong>
+        appears automatically.
+
+        Add or remove accounts from the Manage area —
+        no code changes are required.
+
+      </p>
+
+
+      <div
+        id="accountCheckinGrid"
+        class="checkin-grid"
+        style="margin-top:20px;"
+      >
+      </div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         DEBTS
+    ==================================================== -->
+
+    <section
+      class="card"
+      style="margin-top:24px;"
+    >
+
+      <h2>
+        Debt & Credit Balances
+      </h2>
+
+
+      <div class="debt-note">
+
+        <strong>
+          Enter the actual outstanding balance today.
+        </strong>
+
+        <br><br>
+
+        This does not create a payment or expense.
+        It simply reconciles Home Finance with what the lender says
+        you currently owe.
+
+        Over time this will let us see whether each debt is moving
+        up or down.
+
+      </div>
+
+
+      <div
+        id="debtCheckinGrid"
+        class="checkin-grid"
+      >
+      </div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         SAVE
+    ==================================================== -->
+
+    <div class="save-panel">
+
+      <button
+        id="saveBalancesBtn"
+        type="button"
+      >
+        Save Complete Check-In
+      </button>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         INCOME
+    ==================================================== -->
+
+    <section
+      class="section"
+      style="margin-top:30px;"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Income Requiring Attention
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <p class="checkin-note">
+
+          Shows overdue income and income expected within
+          the next 14 days.
+
+          When the money actually appears in the bank,
+          click <strong>Received</strong>.
+
+        </p>
+
+
+        <div class="table-scroll">
+
+          <table class="finance-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Date
+                </th>
+
+                <th>
+                  Income
+                </th>
+
+                <th>
+                  Expected
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody
+              id="incomeTableBody"
+            ></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         BILLS
+    ==================================================== -->
+
+    <section
+      class="section"
+      style="margin-top:30px;"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Bills Requiring Attention
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <p class="checkin-note">
+
+          Shows overdue bills and bills due within
+          the next 14 days.
+
+          Click <strong>Paid / Cleared</strong> only after
+          the payment has actually happened.
+
+        </p>
+
+
+        <div class="table-scroll">
+
+          <table class="finance-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Due Date
+                </th>
+
+                <th>
+                  Bill
+                </th>
+
+                <th>
+                  Amount
+                </th>
+
+                <th>
+                  Frequency
+                </th>
+
+                <th>
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody
+              id="billTableBody"
+            ></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         LAST CHECK-IN
+    ==================================================== -->
+
+    <section
+      class="section"
+      style="margin-top:30px;"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          Last Check-In
+        </h2>
+
+      </div>
+
+
+      <div
+        id="lastCheckinCard"
+        class="card"
+      >
+        No check-in recorded yet.
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // GLOBAL DATA
+    // =====================================================
+
+    let householdId =
+      null;
+
+
+    let accounts =
+      [];
+
+
+    let debts =
+      [];
+
+
+    let accountMap =
+      {};
+
+
+    let debtMap =
+      {};
+
+
+    let latestDebtCheckinMap =
+      {};
+
+
+    let incomeSourceMap =
+      {};
+
+
+    let billsAccount =
+      null;
+
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // DATES
+    // =====================================================
+
+    function prettyDate(value) {
+
+      if (!value) {
+
+        return "—";
+
+      }
+
+
+      const date =
+        new Date(
+          value +
+          "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+
+    function localISO(date) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+
+    function todayISO() {
+
+      return localISO(
+        new Date()
+      );
+
+    }
+
+
+
+    function futureISO(days) {
+
+      const date =
+        new Date();
+
+
+      date.setDate(
+        date.getDate() +
+        days
+      );
+
+
+      return localISO(
+        date
+      );
+
+    }
+
+
+
+    function addDays(
+      dateString,
+      days
+    ) {
+
+      const date =
+        new Date(
+          dateString +
+          "T00:00:00"
+        );
+
+
+      date.setDate(
+        date.getDate() +
+        days
+      );
+
+
+      return localISO(
+        date
+      );
+
+    }
+
+
+
+    function addMonths(
+      dateString,
+      months
+    ) {
+
+      const original =
+        new Date(
+          dateString +
+          "T00:00:00"
+        );
+
+
+      const originalDay =
+        original.getDate();
+
+
+      const target =
+        new Date(
+          original.getFullYear(),
+          original.getMonth() +
+            months,
+          1
+        );
+
+
+      const lastDay =
+        new Date(
+          target.getFullYear(),
+          target.getMonth() + 1,
+          0
+        ).getDate();
+
+
+      target.setDate(
+        Math.min(
+          originalDay,
+          lastDay
+        )
+      );
+
+
+      return localISO(
+        target
+      );
+
+    }
+
+
+
+    function calculateNextDueDate(
+      currentDate,
+      frequency
+    ) {
+
+      const value =
+        (
+          frequency ||
+          ""
+        ).toLowerCase();
+
+
+      if (
+        value ===
+        "weekly"
+      ) {
+
+        return addDays(
+          currentDate,
+          7
+        );
+
+      }
+
+
+      if (
+        value ===
+        "biweekly"
+      ) {
+
+        return addDays(
+          currentDate,
+          14
+        );
+
+      }
+
+
+      if (
+        value ===
+        "semi-monthly"
+      ) {
+
+        return addDays(
+          currentDate,
+          15
+        );
+
+      }
+
+
+      if (
+        value ===
+        "monthly"
+      ) {
+
+        return addMonths(
+          currentDate,
+          1
+        );
+
+      }
+
+
+      if (
+        value ===
+        "quarterly"
+      ) {
+
+        return addMonths(
+          currentDate,
+          3
+        );
+
+      }
+
+
+      if (
+        value ===
+        "annual"
+      ) {
+
+        return addMonths(
+          currentDate,
+          12
+        );
+
+      }
+
+
+      return null;
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // HOUSEHOLD
+    // =====================================================
+
+    async function loadHousehold() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "households"
+          )
+          .select(
+            "id"
+          )
+          .eq(
+            "name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      householdId =
+        data.id;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // ACTIVITY LOG
+    // =====================================================
+
+    async function logActivity({
+
+      accountId,
+      activityDate,
+      activityType,
+      description,
+      amount = null,
+      balanceBefore = null,
+      balanceAfter = null,
+      notes = null
+
+    }) {
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_activity"
+          )
+          .insert({
+
+            household_id:
+              householdId,
+
+            account_id:
+              accountId ||
+              null,
+
+            activity_date:
+              activityDate ||
+              todayISO(),
+
+            activity_type:
+              activityType,
+
+            description:
+              description ||
+              null,
+
+            amount:
+              amount,
+
+            balance_before:
+              balanceBefore,
+
+            balance_after:
+              balanceAfter,
+
+            notes:
+              notes ||
+              null
+
+          });
+
+
+      if (error) {
+
+        console.error(
+          "Activity Log error:",
+          error
+        );
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD DYNAMIC ACCOUNTS
+    // =====================================================
+
+    async function loadAccounts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "accounts"
+          )
+          .select(`
+            id,
+            account_name,
+            account_type,
+            account_role,
+            current_balance,
+            protected_floor,
+            include_in_checkin,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .eq(
+            "include_in_checkin",
+            true
+          )
+          .order(
+            "account_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      accounts =
+        data || [];
+
+
+      accountMap =
+        {};
+
+
+      accounts.forEach(
+        account => {
+
+          accountMap[
+            account.id
+          ] =
+            account;
+
+        }
+      );
+
+
+      billsAccount =
+        accounts.find(
+          account =>
+            account.account_role ===
+            "bills"
+        )
+        ||
+        null;
+
+
+      renderAccountInputs();
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // RENDER ACCOUNT INPUTS
+    // =====================================================
+
+    function renderAccountInputs() {
+
+      const grid =
+        document.getElementById(
+          "accountCheckinGrid"
+        );
+
+
+      grid.innerHTML =
+        "";
+
+
+      if (
+        accounts.length ===
+        0
+      ) {
+
+        grid.innerHTML = `
+
+          <div class="balance-entry-card">
+
+            No accounts are currently included
+            in Check-In.
+
+          </div>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      accounts.forEach(
+        account => {
+
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "balance-entry-card account-card";
+
+
+          card.innerHTML = `
+
+            <h3>
+
+              ${escapeHtml(
+                account.account_name
+              )}
+
+            </h3>
+
+
+            <div class="balance-meta">
+
+              ${escapeHtml(
+                account.account_type ||
+                "Account"
+              )}
+
+              ${
+                account.account_role
+
+                  ? ` · ${escapeHtml(account.account_role)}`
+
+                  : ""
+              }
+
+              <br>
+
+              Current system balance:
+
+              <strong>
+
+                ${money(
+                  account.current_balance
+                )}
+
+              </strong>
+
+              ${
+                Number(
+                  account.protected_floor ||
+                  0
+                ) > 0
+
+                  ? `<br>Protected floor: <strong>${money(account.protected_floor)}</strong>`
+
+                  : ""
+              }
+
+            </div>
+
+
+            <label
+              for="account-${account.id}"
+            >
+              Actual Balance Today
+            </label>
+
+
+            <input
+              id="account-${account.id}"
+              class="account-balance-input"
+              data-account-id="${account.id}"
+              type="number"
+              step="0.01"
+              inputmode="decimal"
+              value="${Number(
+                account.current_balance ||
+                0
+              ).toFixed(2)}"
+            />
+
+          `;
+
+
+          grid.appendChild(
+            card
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // LOAD DEBTS
+    // =====================================================
+
+    async function loadDebts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debts"
+          )
+          .select(`
+            id,
+            debt_name,
+            debt_type,
+            current_balance,
+            interest_rate,
+            minimum_payment,
+            usable_for_purchases,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .order(
+            "debt_type",
+            {
+              ascending: true
+            }
+          )
+          .order(
+            "debt_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      debts =
+        data || [];
+
+
+      debtMap =
+        {};
+
+
+      debts.forEach(
+        debt => {
+
+          debtMap[
+            debt.id
+          ] =
+            debt;
+
+        }
+      );
+
+
+      await loadLatestDebtCheckins();
+
+
+      renderDebtInputs();
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // DEBT HISTORY
+    // =====================================================
+
+    async function loadLatestDebtCheckins() {
+
+      latestDebtCheckinMap =
+        {};
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debt_checkins"
+          )
+          .select(`
+            debt_id,
+            checkin_date,
+            balance,
+            previous_balance,
+            created_at
+          `)
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Debt history error:",
+          error
+        );
+
+
+        return;
+
+      }
+
+
+      (
+        data ||
+        []
+      ).forEach(
+        row => {
+
+          if (
+            !latestDebtCheckinMap[
+              row.debt_id
+            ]
+          ) {
+
+            latestDebtCheckinMap[
+              row.debt_id
+            ] =
+              row;
+
+          }
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // RENDER DEBT INPUTS
+    // =====================================================
+
+    function renderDebtInputs() {
+
+      const grid =
+        document.getElementById(
+          "debtCheckinGrid"
+        );
+
+
+      grid.innerHTML =
+        "";
+
+
+      if (
+        debts.length ===
+        0
+      ) {
+
+        grid.innerHTML = `
+
+          <div class="balance-entry-card">
+
+            No active debts are currently recorded.
+
+          </div>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      debts.forEach(
+        debt => {
+
+
+          const last =
+            latestDebtCheckinMap[
+              debt.id
+            ];
+
+
+          let comparisonHtml =
+            "";
+
+
+          if (
+            last &&
+            last.previous_balance !==
+            null
+          ) {
+
+            const difference =
+              Number(
+                last.balance
+              )
+              -
+              Number(
+                last.previous_balance
+              );
+
+
+            if (
+              difference < 0
+            ) {
+
+              comparisonHtml = `
+
+                <div class="debt-change improved">
+
+                  ↓ ${money(
+                    Math.abs(
+                      difference
+                    )
+                  )} since previous check-in
+
+                </div>
+
+              `;
+
+            }
+
+
+            else if (
+              difference > 0
+            ) {
+
+              comparisonHtml = `
+
+                <div class="debt-change worsened">
+
+                  ↑ ${money(
+                    difference
+                  )} since previous check-in
+
+                </div>
+
+              `;
+
+            }
+
+
+            else {
+
+              comparisonHtml = `
+
+                <div class="debt-change unchanged">
+
+                  No change since previous check-in
+
+                </div>
+
+              `;
+
+            }
+
+          }
+
+
+
+          const interestText =
+            debt.interest_rate ===
+            null
+
+              ? "Interest rate not entered"
+
+              : `Interest: ${Number(
+                  debt.interest_rate
+                ).toFixed(2)}%`;
+
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "balance-entry-card debt-card";
+
+
+          card.innerHTML = `
+
+            <h3>
+
+              ${escapeHtml(
+                debt.debt_name
+              )}
+
+            </h3>
+
+
+            <div class="balance-meta">
+
+              ${escapeHtml(
+                debt.debt_type ||
+                "Debt"
+              )}
+
+              <br>
+
+              Current system balance:
+
+              <strong>
+
+                ${money(
+                  debt.current_balance
+                )}
+
+              </strong>
+
+              <br>
+
+              ${escapeHtml(
+                interestText
+              )}
+
+              ${
+                debt.minimum_payment !==
+                null
+
+                  ? `<br>Regular / minimum payment: <strong>${money(debt.minimum_payment)}</strong>`
+
+                  : ""
+              }
+
+              ${comparisonHtml}
+
+            </div>
+
+
+            <label
+              for="debt-${debt.id}"
+            >
+              Actual Balance Today
+            </label>
+
+
+            <input
+              id="debt-${debt.id}"
+              class="debt-balance-input"
+              data-debt-id="${debt.id}"
+              type="number"
+              step="0.01"
+              inputmode="decimal"
+              value="${Number(
+                debt.current_balance ||
+                0
+              ).toFixed(2)}"
+            />
+
+          `;
+
+
+          grid.appendChild(
+            card
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // INCOME SOURCES
+    // =====================================================
+
+    async function loadIncomeSources() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "income_sources"
+          )
+          .select(`
+            id,
+            source_name
+          `);
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      incomeSourceMap =
+        {};
+
+
+      (
+        data ||
+        []
+      ).forEach(
+        source => {
+
+          incomeSourceMap[
+            source.id
+          ] =
+            source.source_name;
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // INCOME REQUIRING ATTENTION
+    // =====================================================
+
+    async function loadIncomeOccurrences() {
+
+      const endDate =
+        futureISO(
+          14
+        );
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "income_occurrences"
+          )
+          .select(`
+            id,
+            income_source_id,
+            expected_date,
+            expected_amount,
+            actual_amount,
+            received
+          `)
+          .eq(
+            "received",
+            false
+          )
+          .lte(
+            "expected_date",
+            endDate
+          )
+          .order(
+            "expected_date",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "incomeTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      if (
+        !data ||
+        data.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="5">
+              No income requires attention.
+            </td>
+
+          </tr>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      const today =
+        todayISO();
+
+
+      data.forEach(
+        item => {
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          const overdue =
+            item.expected_date <
+            today;
+
+
+          row.classList.add(
+            overdue
+
+              ? "overdue-row"
+
+              : "attention-row"
+          );
+
+
+          const sourceName =
+            incomeSourceMap[
+              item.income_source_id
+            ]
+            ||
+            "Income";
+
+
+          const button =
+            document.createElement(
+              "button"
+            );
+
+
+          button.type =
+            "button";
+
+
+          button.className =
+            "small-action-btn";
+
+
+          button.textContent =
+            "Received";
+
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              markIncomeReceived(
+                item.id,
+                Number(
+                  item.expected_amount ||
+                  0
+                ),
+                sourceName
+              );
+
+            }
+          );
+
+
+          row.innerHTML = `
+
+            <td>
+
+              ${
+                overdue
+
+                  ? '<span class="overdue-text">Overdue — </span>'
+
+                  : ""
+              }
+
+              ${prettyDate(
+                item.expected_date
+              )}
+
+            </td>
+
+            <td>
+              ${escapeHtml(
+                sourceName
+              )}
+            </td>
+
+            <td class="income-amount">
+
+              ${money(
+                item.expected_amount
+              )}
+
+            </td>
+
+            <td>
+              Expected
+            </td>
+
+            <td>
+            </td>
+
+          `;
+
+
+          row
+            .lastElementChild
+            .appendChild(
+              button
+            );
+
+
+          tbody.appendChild(
+            row
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // MARK INCOME RECEIVED
+    // =====================================================
+
+    async function markIncomeReceived(
+      id,
+      expectedAmount,
+      sourceName
+    ) {
+
+      const amountText =
+        prompt(
+          `Actual amount received from ${sourceName}:`,
+          Number(
+            expectedAmount ||
+            0
+          ).toFixed(
+            2
+          )
+        );
+
+
+      if (
+        amountText ===
+        null
+      ) {
+
+        return;
+
+      }
+
+
+      const actualAmount =
+        Number(
+          amountText
+        );
+
+
+      if (
+        !Number.isFinite(
+          actualAmount
+        )
+        ||
+        actualAmount < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid amount.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          `Mark ${sourceName} income of ${money(actualAmount)} as received?`
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "income_occurrences"
+          )
+          .update({
+
+            received:
+              true,
+
+            actual_amount:
+              actualAmount
+
+          })
+          .eq(
+            "id",
+            id
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      await logActivity({
+
+        accountId:
+          billsAccount
+            ? billsAccount.id
+            : null,
+
+        activityDate:
+          todayISO(),
+
+        activityType:
+          "Income Received",
+
+        description:
+          sourceName,
+
+        amount:
+          actualAmount,
+
+        balanceBefore:
+          null,
+
+        balanceAfter:
+          null,
+
+        notes:
+          "Income confirmed as received. Actual account balance is reconciled through Check-In."
+
+      });
+
+
+      showMessage(
+        `${sourceName} marked Received.`,
+        false
+      );
+
+
+      await loadIncomeOccurrences();
+
+    }
+
+
+
+    // =====================================================
+    // LOAD BILLS
+    // =====================================================
+
+    async function loadBills() {
+
+      const endDate =
+        futureISO(
+          14
+        );
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "bills"
+          )
+          .select(`
+            id,
+            bill_name,
+            amount,
+            frequency,
+            next_due_date,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .not(
+            "next_due_date",
+            "is",
+            null
+          )
+          .lte(
+            "next_due_date",
+            endDate
+          )
+          .order(
+            "next_due_date",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "billTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      if (
+        !data ||
+        data.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="5">
+              No bills require attention.
+            </td>
+
+          </tr>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      const today =
+        todayISO();
+
+
+      data.forEach(
+        bill => {
+
+
+          const overdue =
+            bill.next_due_date <
+            today;
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          if (overdue) {
+
+            row.classList.add(
+              "overdue-row"
+            );
+
+          }
+
+
+          row.innerHTML = `
+
+            <td>
+
+              ${
+                overdue
+
+                  ? '<span class="overdue-text">Overdue — </span>'
+
+                  : ""
+              }
+
+              ${prettyDate(
+                bill.next_due_date
+              )}
+
+            </td>
+
+            <td>
+
+              ${escapeHtml(
+                bill.bill_name
+              )}
+
+            </td>
+
+            <td>
+
+              ${money(
+                bill.amount
+              )}
+
+            </td>
+
+            <td>
+
+              ${escapeHtml(
+                bill.frequency ||
+                "—"
+              )}
+
+            </td>
+
+            <td>
+            </td>
+
+          `;
+
+
+          const button =
+            document.createElement(
+              "button"
+            );
+
+
+          button.type =
+            "button";
+
+
+          button.className =
+            "small-action-btn";
+
+
+          button.textContent =
+            "Paid / Cleared";
+
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              clearBill(
+                bill.id,
+                bill.next_due_date,
+                Number(
+                  bill.amount ||
+                  0
+                ),
+                bill.frequency ||
+                "",
+                bill.bill_name
+              );
+
+            }
+          );
+
+
+          row
+            .lastElementChild
+            .appendChild(
+              button
+            );
+
+
+          tbody.appendChild(
+            row
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // CLEAR BILL
+    // =====================================================
+
+    async function clearBill(
+      billId,
+      scheduledDate,
+      expectedAmount,
+      frequency,
+      billName
+    ) {
+
+      const amountText =
+        prompt(
+          `Actual amount cleared for ${billName}:`,
+          Number(
+            expectedAmount ||
+            0
+          ).toFixed(
+            2
+          )
+        );
+
+
+      if (
+        amountText ===
+        null
+      ) {
+
+        return;
+
+      }
+
+
+      const actualAmount =
+        Number(
+          amountText
+        );
+
+
+      if (
+        !Number.isFinite(
+          actualAmount
+        )
+        ||
+        actualAmount < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid payment amount.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const nextDueDate =
+        calculateNextDueDate(
+          scheduledDate,
+          frequency
+        );
+
+
+      if (!nextDueDate) {
+
+        showMessage(
+          `I can't automatically advance the frequency "${frequency}".`,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          `Mark ${billName} as cleared for ${money(actualAmount)} and move its next due date to ${prettyDate(nextDueDate)}?`
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+      const paymentResult =
+        await supabaseClient
+          .from(
+            "bill_payments"
+          )
+          .upsert({
+
+            household_id:
+              householdId,
+
+            bill_id:
+              billId,
+
+            scheduled_date:
+              scheduledDate,
+
+            amount:
+              actualAmount,
+
+            cleared:
+              true,
+
+            cleared_date:
+              todayISO()
+
+          }, {
+
+            onConflict:
+              "bill_id,scheduled_date"
+
+          });
+
+
+      if (
+        paymentResult.error
+      ) {
+
+        showMessage(
+          paymentResult.error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const billUpdate =
+        await supabaseClient
+          .from(
+            "bills"
+          )
+          .update({
+
+            next_due_date:
+              nextDueDate,
+
+            last_confirmed_date:
+              todayISO()
+
+          })
+          .eq(
+            "id",
+            billId
+          );
+
+
+      if (
+        billUpdate.error
+      ) {
+
+        showMessage(
+          billUpdate.error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      await logActivity({
+
+        accountId:
+          billsAccount
+            ? billsAccount.id
+            : null,
+
+        activityDate:
+          todayISO(),
+
+        activityType:
+          "Bill Cleared",
+
+        description:
+          billName,
+
+        amount:
+          -actualAmount,
+
+        balanceBefore:
+          null,
+
+        balanceAfter:
+          null,
+
+        notes:
+          `Scheduled ${prettyDate(scheduledDate)}. Next due ${prettyDate(nextDueDate)}. Actual account balance is reconciled through Check-In.`
+
+      });
+
+
+      showMessage(
+        `${billName} marked cleared.`,
+        false
+      );
+
+
+      await loadBills();
+
+    }
+
+
+
+    // =====================================================
+    // SAVE COMPLETE CHECK-IN
+    // =====================================================
+
+    async function saveCheckin() {
+
+      const checkinDate =
+        document.getElementById(
+          "checkinDate"
+        ).value;
+
+
+      const notes =
+        document.getElementById(
+          "checkinNotes"
+        ).value.trim();
+
+
+      if (!checkinDate) {
+
+        showMessage(
+          "Please select a Check-In date.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      // ===================================================
+      // COLLECT ACCOUNT VALUES
+      // ===================================================
+
+      const accountValues =
+        [];
+
+
+      const accountInputs =
+        document.querySelectorAll(
+          ".account-balance-input"
+        );
+
+
+      for (
+        const input of accountInputs
+      ) {
+
+        const accountId =
+          input.dataset.accountId;
+
+
+        const value =
+          Number(
+            input.value
+          );
+
+
+        if (
+          !Number.isFinite(
+            value
+          )
+        ) {
+
+          showMessage(
+            "Please enter valid bank account balances.",
+            true
+          );
+
+
+          return;
+
+        }
+
+
+        accountValues.push({
+
+          accountId:
+            accountId,
+
+          oldBalance:
+            Number(
+              accountMap[
+                accountId
+              ]
+                ?.current_balance
+              ||
+              0
+            ),
+
+          newBalance:
+            value
+
+        });
+
+      }
+
+
+
+      // ===================================================
+      // COLLECT DEBT VALUES
+      // ===================================================
+
+      const debtValues =
+        [];
+
+
+      const debtInputs =
+        document.querySelectorAll(
+          ".debt-balance-input"
+        );
+
+
+      for (
+        const input of debtInputs
+      ) {
+
+        const debtId =
+          input.dataset.debtId;
+
+
+        const value =
+          Number(
+            input.value
+          );
+
+
+        if (
+          !Number.isFinite(
+            value
+          )
+        ) {
+
+          showMessage(
+            "Please enter valid debt balances.",
+            true
+          );
+
+
+          return;
+
+        }
+
+
+        debtValues.push({
+
+          debtId:
+            debtId,
+
+          oldBalance:
+            Number(
+              debtMap[
+                debtId
+              ]
+                ?.current_balance
+              ||
+              0
+            ),
+
+          newBalance:
+            value
+
+        });
+
+      }
+
+
+
+      const totalDebt =
+        debtValues.reduce(
+          (
+            sum,
+            item
+          ) =>
+            sum +
+            item.newBalance,
+          0
+        );
+
+
+      const confirmed =
+        confirm(
+
+          `Save this Check-In?\n\n` +
+
+          `${accountValues.length} bank account balance(s)\n` +
+
+          `${debtValues.length} debt balance(s)\n\n` +
+
+          `Total debt currently entered: ${money(totalDebt)}`
+
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+
+      const button =
+        document.getElementById(
+          "saveBalancesBtn"
+        );
+
+
+      button.disabled =
+        true;
+
+
+      button.textContent =
+        "Saving Check-In...";
+
+
+
+      try {
+
+
+        // ===============================================
+        // UPDATE ACCOUNTS
+        // ===============================================
+
+        for (
+          const item of accountValues
+        ) {
+
+          const {
+            error
+          } =
+            await supabaseClient
+              .from(
+                "accounts"
+              )
+              .update({
+
+                current_balance:
+                  item.newBalance
+
+              })
+              .eq(
+                "id",
+                item.accountId
+              );
+
+
+          if (error) {
+
+            throw new Error(
+              error.message
+            );
+
+          }
+
+
+
+          await logActivity({
+
+            accountId:
+              item.accountId,
+
+            activityDate:
+              checkinDate,
+
+            activityType:
+              "Check-In",
+
+            description:
+              `${accountMap[item.accountId]?.account_name || "Account"} balance confirmed`,
+
+            amount:
+              item.newBalance -
+              item.oldBalance,
+
+            balanceBefore:
+              item.oldBalance,
+
+            balanceAfter:
+              item.newBalance,
+
+            notes:
+              notes ||
+              null
+
+          });
+
+        }
+
+
+
+        // ===============================================
+        // UPDATE DEBTS + HISTORY
+        // ===============================================
+
+        for (
+          const item of debtValues
+        ) {
+
+          const {
+            error:
+              debtUpdateError
+          } =
+            await supabaseClient
+              .from(
+                "debts"
+              )
+              .update({
+
+                current_balance:
+                  item.newBalance
+
+              })
+              .eq(
+                "id",
+                item.debtId
+              );
+
+
+          if (
+            debtUpdateError
+          ) {
+
+            throw new Error(
+              debtUpdateError.message
+            );
+
+          }
+
+
+
+          const {
+            error:
+              debtHistoryError
+          } =
+            await supabaseClient
+              .from(
+                "debt_checkins"
+              )
+              .insert({
+
+                household_id:
+                  householdId,
+
+                debt_id:
+                  item.debtId,
+
+                checkin_date:
+                  checkinDate,
+
+                balance:
+                  item.newBalance,
+
+                previous_balance:
+                  item.oldBalance,
+
+                notes:
+                  notes ||
+                  null
+
+              });
+
+
+          if (
+            debtHistoryError
+          ) {
+
+            throw new Error(
+              debtHistoryError.message
+            );
+
+          }
+
+        }
+
+
+
+        // ===============================================
+        // LEGACY ACCOUNT_CHECKINS RECORD
+        //
+        // We keep this because the Dashboard / existing
+        // app still uses Bills / Spending / Savings
+        // check-in history.
+        // ===============================================
+
+        const bills =
+          accounts.find(
+            account =>
+              account.account_role ===
+              "bills"
+          );
+
+
+        const spending =
+          accounts.find(
+            account =>
+              account.account_role ===
+              "spending"
+          );
+
+
+        const savings =
+          accounts.find(
+            account =>
+              account.account_role ===
+              "savings"
+          );
+
+
+        const valueForAccount =
+          accountId => {
+
+            const item =
+              accountValues.find(
+                value =>
+                  value.accountId ===
+                  accountId
+              );
+
+
+            return item
+              ? item.newBalance
+              : null;
+
+          };
+
+
+        if (
+          bills &&
+          spending
+        ) {
+
+          const {
+            error
+          } =
+            await supabaseClient
+              .from(
+                "account_checkins"
+              )
+              .insert({
+
+                household_id:
+                  householdId,
+
+                checkin_date:
+                  checkinDate,
+
+                bills_balance:
+                  valueForAccount(
+                    bills.id
+                  ),
+
+                spending_balance:
+                  valueForAccount(
+                    spending.id
+                  ),
+
+                savings_balance:
+                  savings
+
+                    ? valueForAccount(
+                        savings.id
+                      )
+
+                    : null,
+
+                notes:
+                  notes ||
+                  null
+
+              });
+
+
+          if (error) {
+
+            throw new Error(
+              error.message
+            );
+
+          }
+
+        }
+
+
+
+        document.getElementById(
+          "checkinNotes"
+        ).value =
+          "";
+
+
+        showMessage(
+          "Complete Check-In saved. Bank accounts and debt balances are now synchronized.",
+          false
+        );
+
+
+        await loadAccounts();
+
+        await loadDebts();
+
+        await loadLastCheckin();
+
+
+      }
+
+
+      catch (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+      }
+
+
+      finally {
+
+        button.disabled =
+          false;
+
+
+        button.textContent =
+          "Save Complete Check-In";
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // LAST CHECK-IN
+    // =====================================================
+
+    async function loadLastCheckin() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_checkins"
+          )
+          .select(`
+            checkin_date,
+            bills_balance,
+            spending_balance,
+            savings_balance,
+            notes,
+            created_at
+          `)
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          )
+          .limit(
+            1
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const card =
+        document.getElementById(
+          "lastCheckinCard"
+        );
+
+
+      if (
+        !data ||
+        data.length ===
+        0
+      ) {
+
+        card.textContent =
+          "No check-in recorded yet.";
+
+
+        return;
+
+      }
+
+
+      const item =
+        data[0];
+
+
+      const totalDebt =
+        debts.reduce(
+          (
+            sum,
+            debt
+          ) =>
+            sum +
+            Number(
+              debt.current_balance ||
+              0
+            ),
+          0
+        );
+
+
+      card.className =
+        "card checkin-success";
+
+
+      card.innerHTML = `
+
+        <h3>
+
+          ${prettyDate(
+            item.checkin_date
+          )}
+
+        </h3>
+
+
+        <p>
+
+          <strong>
+            Bills:
+          </strong>
+
+          ${money(
+            item.bills_balance
+          )}
+
+        </p>
+
+
+        <p>
+
+          <strong>
+            Spending:
+          </strong>
+
+          ${money(
+            item.spending_balance
+          )}
+
+        </p>
+
+
+        <p>
+
+          <strong>
+            Savings:
+          </strong>
+
+          ${money(
+            item.savings_balance
+          )}
+
+        </p>
+
+
+        <p>
+
+          <strong>
+            Current recorded total debt:
+          </strong>
+
+          ${money(
+            totalDebt
+          )}
+
+        </p>
+
+
+        ${
+          item.notes
+
+            ? `
+
+              <p>
+
+                <strong>
+                  Notes:
+                </strong>
+
+                ${escapeHtml(
+                  item.notes
+                )}
+
+              </p>
+
+            `
+
+            : ""
+        }
+
+      `;
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "checkinMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ? "message-box error-message"
+
+          : "message-box success-message";
+
+
+      box.scrollIntoView({
+
+        behavior:
+          "smooth",
+
+        block:
+          "nearest"
+
+      });
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        6000
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document.getElementById(
+      "saveBalancesBtn"
+    ).addEventListener(
+      "click",
+      saveCheckin
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      document.getElementById(
+        "checkinDate"
+      ).value =
+        todayISO();
+
+
+      const householdLoaded =
+        await loadHousehold();
+
+
+      if (!householdLoaded) {
+
+        return;
+
+      }
+
+
+      await loadIncomeSources();
+
+
+      const accountsLoaded =
+        await loadAccounts();
+
+
+      if (!accountsLoaded) {
+
+        return;
+
+      }
+
+
+      await loadDebts();
+
+      await loadIncomeOccurrences();
+
+      await loadBills();
+
+      await loadLastCheckin();
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
