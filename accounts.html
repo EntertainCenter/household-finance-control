@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Accounts
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .page-heading-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+
+    .add-btn {
+      background: #2e9d55;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+
+    .add-btn:hover {
+      opacity: 0.92;
+    }
+
+
+    .account-edit-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    .account-edit-card .small-btn {
+      margin-top: auto;
+    }
+
+
+    .account-role {
+      font-size: 13px;
+      color: #66737f;
+      margin-top: -5px;
+      margin-bottom: 12px;
+    }
+
+
+    .account-flags {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #66737f;
+    }
+
+
+    .form-note {
+      background: #f3f8ff;
+      border-left: 5px solid #2d7df6;
+      border-radius: 8px;
+      padding: 13px 15px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+
+    .warning-note {
+      background: #fff8e8;
+      border-left: 5px solid #e0a620;
+      border-radius: 8px;
+      padding: 13px 15px;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
+
+    .required {
+      color: #b93434;
+    }
+
+
+    .field-note {
+      font-size: 12px;
+      color: #7a858f;
+      font-weight: normal;
+    }
+
+
+    .modal-card select,
+    .modal-card input,
+    .modal-card textarea {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+
+    .checkbox-row input {
+      width: auto;
+    }
+
+
+    @media (max-width: 700px) {
+
+      .page-heading-actions {
+        width: 100%;
+      }
+
+
+      .page-heading-actions button {
+        width: 100%;
+      }
+
+
+      .modal-card {
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Manage Accounts
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- MAIN -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Household Accounts
+        </h2>
+
+        <p>
+          Add and maintain the real bank accounts used by
+          Home Finance.
+        </p>
+
+      </div>
+
+
+      <div class="page-heading-actions">
+
+        <button
+          id="addAccountBtn"
+          class="add-btn"
+          type="button"
+        >
+          + Add New Account
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <div class="form-note">
+
+      <strong>
+        These are real financial accounts.
+      </strong>
+
+      <br><br>
+
+      Virtual savings envelopes such as Christmas,
+      Car Repairs or Vacation will be created separately later.
+      They should not be entered here as bank accounts.
+
+    </div>
+
+
+
+    <div
+      id="accountMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <section
+      id="accountsGrid"
+      class="dashboard-grid"
+    >
+    </section>
+
+
+  </main>
+
+
+
+  <!-- ADD / EDIT ACCOUNT MODAL -->
+
+  <div
+    id="accountModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card">
+
+
+      <div class="modal-header">
+
+        <h2 id="accountModalTitle">
+          Edit Account
+        </h2>
+
+        <button
+          id="closeModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+
+      <div class="form-note">
+
+        Account Role tells Home Finance what purpose the
+        account serves.
+
+        <br><br>
+
+        Normally there should be one primary
+        <strong>Bills</strong> account and one primary
+        <strong>Spending</strong> account.
+
+        Additional accounts can use Savings or Other.
+
+      </div>
+
+
+
+      <input
+        type="hidden"
+        id="accountId"
+      />
+
+
+
+      <!-- NAME -->
+
+      <label for="accountName">
+
+        Account Name
+        <span class="required">*</span>
+
+      </label>
+
+      <input
+        id="accountName"
+        type="text"
+        placeholder="Example: RBC Chequing"
+      />
+
+
+
+      <!-- TYPE -->
+
+      <label for="accountType">
+
+        Account Type
+        <span class="required">*</span>
+
+      </label>
+
+      <select id="accountType">
+
+        <option value="Chequing">
+          Chequing
+        </option>
+
+        <option value="Savings">
+          Savings
+        </option>
+
+        <option value="Cash">
+          Cash
+        </option>
+
+        <option value="Investment">
+          Investment
+        </option>
+
+        <option value="Other">
+          Other
+        </option>
+
+      </select>
+
+
+
+      <!-- ROLE -->
+
+      <label for="accountRole">
+
+        Account Role
+        <span class="required">*</span>
+
+      </label>
+
+      <select id="accountRole">
+
+        <option value="bills">
+          Bills
+        </option>
+
+        <option value="spending">
+          Spending
+        </option>
+
+        <option value="savings">
+          Savings
+        </option>
+
+        <option
+          value="other"
+          selected
+        >
+          Other
+        </option>
+
+      </select>
+
+
+
+      <!-- BALANCE -->
+
+      <label for="accountBalance">
+
+        Current Balance
+        <span class="required">*</span>
+
+      </label>
+
+      <input
+        id="accountBalance"
+        type="number"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="0.00"
+      />
+
+
+
+      <!-- PROTECTED FLOOR -->
+
+      <label for="protectedFloor">
+
+        Protected Floor
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <input
+        id="protectedFloor"
+        type="number"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+        value="0"
+      />
+
+
+
+      <!-- AVAILABLE CASH -->
+
+      <label class="checkbox-row">
+
+        <input
+          id="includeAvailableCash"
+          type="checkbox"
+          checked
+        />
+
+        Include in available cash calculations
+
+      </label>
+
+
+
+      <!-- CHECK-IN -->
+
+      <label class="checkbox-row">
+
+        <input
+          id="includeCheckin"
+          type="checkbox"
+          checked
+        />
+
+        Include in regular Check-In
+
+      </label>
+
+
+
+      <!-- ACTIVE -->
+
+      <label class="checkbox-row">
+
+        <input
+          id="accountActive"
+          type="checkbox"
+          checked
+        />
+
+        Active
+
+      </label>
+
+
+
+      <!-- NOTES -->
+
+      <label for="accountNotes">
+
+        Notes
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <textarea
+        id="accountNotes"
+        rows="4"
+        placeholder="Optional notes about this account"
+      ></textarea>
+
+
+
+      <div class="warning-note">
+
+        <strong>
+          Closing an account?
+        </strong>
+
+        <br><br>
+
+        Mark it Inactive rather than deleting it.
+        This allows previous transfers and activity to remain
+        connected to the historical account.
+
+      </div>
+
+
+
+      <div class="modal-actions">
+
+        <button
+          id="cancelAccountBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="saveAccountBtn"
+          type="button"
+        >
+          Save Account
+        </button>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // HOUSEHOLD
+    // =====================================================
+
+    let householdId =
+      null;
+
+
+
+    // =====================================================
+    // MONEY
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // ROLE DISPLAY
+    // =====================================================
+
+    function roleDisplay(value) {
+
+      const map = {
+
+        bills:
+          "Bills",
+
+        spending:
+          "Spending",
+
+        savings:
+          "Savings",
+
+        other:
+          "Other"
+
+      };
+
+
+      return map[value] || value || "Other";
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD HOUSEHOLD
+    // =====================================================
+
+    async function loadHousehold() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "households"
+          )
+          .select(
+            "id"
+          )
+          .eq(
+            "name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return false;
+
+      }
+
+
+      householdId =
+        data.id;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD ACCOUNTS
+    // =====================================================
+
+    async function loadAccounts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "accounts"
+          )
+          .select(`
+            id,
+            account_name,
+            account_type,
+            account_role,
+            current_balance,
+            protected_floor,
+            include_in_available_cash,
+            include_in_checkin,
+            active,
+            notes
+          `)
+          .order(
+            "active",
+            {
+              ascending: false
+            }
+          )
+          .order(
+            "account_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      const grid =
+        document.getElementById(
+          "accountsGrid"
+        );
+
+
+      grid.innerHTML =
+        "";
+
+
+      if (
+        !data ||
+        data.length === 0
+      ) {
+
+        grid.innerHTML = `
+
+          <div class="card">
+
+            <h3>
+              No Accounts
+            </h3>
+
+            <p>
+              No household accounts have been entered yet.
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+
+      data.forEach(
+        account => {
+
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "card account-edit-card";
+
+
+          if (!account.active) {
+
+            card.style.opacity =
+              "0.65";
+
+          }
+
+
+          const aboveFloor =
+
+            Number(
+              account.current_balance || 0
+            )
+
+            -
+
+            Number(
+              account.protected_floor || 0
+            );
+
+
+
+          card.innerHTML = `
+
+            <h3>
+              ${escapeHtml(account.account_name)}
+            </h3>
+
+
+            <div class="account-role">
+
+              ${escapeHtml(
+                roleDisplay(
+                  account.account_role
+                )
+              )}
+
+              ·
+
+              ${escapeHtml(
+                account.account_type || ""
+              )}
+
+            </div>
+
+
+            <div class="big-number">
+
+              ${money(
+                account.current_balance
+              )}
+
+            </div>
+
+
+            <p>
+
+              Protected floor:
+
+              <strong>
+                ${money(
+                  account.protected_floor
+                )}
+              </strong>
+
+            </p>
+
+
+            <p>
+
+              Above floor:
+
+              <strong>
+                ${money(
+                  aboveFloor
+                )}
+              </strong>
+
+            </p>
+
+
+            <p>
+
+              ${
+                account.active
+
+                  ? '<span class="status-chip active-chip">Active</span>'
+
+                  : '<span class="status-chip inactive-chip">Inactive</span>'
+              }
+
+            </p>
+
+
+            <div class="account-flags">
+
+              ${
+                account.include_in_available_cash
+
+                  ? "✓ Included in available cash"
+
+                  : "— Excluded from available cash"
+              }
+
+              <br>
+
+              ${
+                account.include_in_checkin
+
+                  ? "✓ Included in Check-In"
+
+                  : "— Excluded from Check-In"
+              }
+
+            </div>
+
+
+            <br>
+
+          `;
+
+
+
+          const editButton =
+            document.createElement(
+              "button"
+            );
+
+
+          editButton.type =
+            "button";
+
+
+          editButton.className =
+            "small-btn";
+
+
+          editButton.textContent =
+            "Edit Account";
+
+
+          editButton.addEventListener(
+            "click",
+            () => {
+
+              editAccount(
+                account
+              );
+
+            }
+          );
+
+
+          card.appendChild(
+            editButton
+          );
+
+
+          grid.appendChild(
+            card
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // NEW ACCOUNT
+    // =====================================================
+
+    function newAccount() {
+
+
+      document.getElementById(
+        "accountModalTitle"
+      ).textContent =
+        "Add New Account";
+
+
+      document.getElementById(
+        "saveAccountBtn"
+      ).textContent =
+        "Add Account";
+
+
+      document.getElementById(
+        "accountId"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "accountName"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "accountType"
+      ).value =
+        "Chequing";
+
+
+      document.getElementById(
+        "accountRole"
+      ).value =
+        "other";
+
+
+      document.getElementById(
+        "accountBalance"
+      ).value =
+        "0";
+
+
+      document.getElementById(
+        "protectedFloor"
+      ).value =
+        "0";
+
+
+      document.getElementById(
+        "includeAvailableCash"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "includeCheckin"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "accountActive"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "accountNotes"
+      ).value =
+        "";
+
+
+      document
+        .getElementById(
+          "accountModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+
+      setTimeout(
+        () => {
+
+          document.getElementById(
+            "accountName"
+          ).focus();
+
+        },
+        100
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EDIT ACCOUNT
+    // =====================================================
+
+    function editAccount(account) {
+
+
+      document.getElementById(
+        "accountModalTitle"
+      ).textContent =
+        "Edit Account";
+
+
+      document.getElementById(
+        "saveAccountBtn"
+      ).textContent =
+        "Save Changes";
+
+
+      document.getElementById(
+        "accountId"
+      ).value =
+        account.id;
+
+
+      document.getElementById(
+        "accountName"
+      ).value =
+        account.account_name || "";
+
+
+      document.getElementById(
+        "accountType"
+      ).value =
+        account.account_type || "Other";
+
+
+      document.getElementById(
+        "accountRole"
+      ).value =
+        account.account_role || "other";
+
+
+      document.getElementById(
+        "accountBalance"
+      ).value =
+        account.current_balance ?? 0;
+
+
+      document.getElementById(
+        "protectedFloor"
+      ).value =
+        account.protected_floor ?? 0;
+
+
+      document.getElementById(
+        "includeAvailableCash"
+      ).checked =
+        Boolean(
+          account.include_in_available_cash
+        );
+
+
+      document.getElementById(
+        "includeCheckin"
+      ).checked =
+        Boolean(
+          account.include_in_checkin
+        );
+
+
+      document.getElementById(
+        "accountActive"
+      ).checked =
+        Boolean(
+          account.active
+        );
+
+
+      document.getElementById(
+        "accountNotes"
+      ).value =
+        account.notes || "";
+
+
+      document
+        .getElementById(
+          "accountModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // CLOSE MODAL
+    // =====================================================
+
+    function closeModal() {
+
+      document
+        .getElementById(
+          "accountModal"
+        )
+        .classList
+        .add(
+          "hidden"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // SAVE ACCOUNT
+    // =====================================================
+
+    async function saveAccount() {
+
+
+      const id =
+        document.getElementById(
+          "accountId"
+        ).value;
+
+
+      const accountName =
+        document.getElementById(
+          "accountName"
+        ).value.trim();
+
+
+      const accountType =
+        document.getElementById(
+          "accountType"
+        ).value;
+
+
+      const accountRole =
+        document.getElementById(
+          "accountRole"
+        ).value;
+
+
+      const balance =
+        Number(
+          document.getElementById(
+            "accountBalance"
+          ).value
+        );
+
+
+      const floor =
+        Number(
+          document.getElementById(
+            "protectedFloor"
+          ).value || 0
+        );
+
+
+      const notes =
+        document.getElementById(
+          "accountNotes"
+        ).value.trim();
+
+
+
+      // VALIDATION
+
+      if (!accountName) {
+
+        showMessage(
+          "Please enter an account name.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (!accountType) {
+
+        showMessage(
+          "Please select an account type.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (!accountRole) {
+
+        showMessage(
+          "Please select an account role.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !Number.isFinite(
+          balance
+        )
+      ) {
+
+        showMessage(
+          "Please enter a valid account balance.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !Number.isFinite(
+          floor
+        )
+        ||
+        floor < 0
+      ) {
+
+        showMessage(
+          "Please enter a valid protected floor.",
+          true
+        );
+
+        return;
+
+      }
+
+
+
+      const accountData = {
+
+        account_name:
+          accountName,
+
+        account_type:
+          accountType,
+
+        account_role:
+          accountRole,
+
+        current_balance:
+          balance,
+
+        protected_floor:
+          floor,
+
+        include_in_available_cash:
+          document.getElementById(
+            "includeAvailableCash"
+          ).checked,
+
+        include_in_checkin:
+          document.getElementById(
+            "includeCheckin"
+          ).checked,
+
+        active:
+          document.getElementById(
+            "accountActive"
+          ).checked,
+
+        notes:
+          notes || null
+
+      };
+
+
+
+      // UPDATE EXISTING
+
+      if (id) {
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from(
+              "accounts"
+            )
+            .update(
+              accountData
+            )
+            .eq(
+              "id",
+              id
+            );
+
+
+        if (error) {
+
+          showMessage(
+            error.message,
+            true
+          );
+
+          return;
+
+        }
+
+
+        closeModal();
+
+
+        showMessage(
+          "Account updated successfully.",
+          false
+        );
+
+
+        await loadAccounts();
+
+
+        return;
+
+      }
+
+
+
+      // ADD NEW
+
+      if (!householdId) {
+
+        showMessage(
+          "Household information could not be loaded.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      const newAccountData = {
+
+        ...accountData,
+
+        household_id:
+          householdId
+
+      };
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "accounts"
+          )
+          .insert(
+            newAccountData
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      closeModal();
+
+
+      showMessage(
+        "New account added successfully.",
+        false
+      );
+
+
+      await loadAccounts();
+
+
+      if (
+        window.location.search
+      ) {
+
+        window.history.replaceState(
+          {},
+          "",
+          "accounts.html"
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "accountMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ? "message-box error-message"
+
+          : "message-box success-message";
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        4000
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document
+      .getElementById(
+        "addAccountBtn"
+      )
+      .addEventListener(
+        "click",
+        newAccount
+      );
+
+
+    document
+      .getElementById(
+        "saveAccountBtn"
+      )
+      .addEventListener(
+        "click",
+        saveAccount
+      );
+
+
+    document
+      .getElementById(
+        "cancelAccountBtn"
+      )
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+
+    document
+      .getElementById(
+        "closeModalBtn"
+      )
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+
+    document
+      .getElementById(
+        "accountModal"
+      )
+      .addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target.id ===
+            "accountModal"
+          ) {
+
+            closeModal();
+
+          }
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        "logoutBtn"
+      )
+      .addEventListener(
+        "click",
+        async () => {
+
+          await supabaseClient
+            .auth
+            .signOut();
+
+
+          window.location.href =
+            "login.html";
+
+        }
+      );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      const householdLoaded =
+        await loadHousehold();
+
+
+      if (!householdLoaded) {
+
+        return;
+
+      }
+
+
+      await loadAccounts();
+
+
+
+      // Future direct link:
+      // accounts.html?new=1
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+
+      if (
+        params.get(
+          "new"
+        ) === "1"
+      ) {
+
+        newAccount();
+
+      }
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
