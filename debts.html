@@ -1,0 +1,3822 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance Management - Debts
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .page-heading-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+
+    .add-btn {
+      background: #2e9d55;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+
+    .add-btn:hover {
+      opacity: 0.92;
+    }
+
+
+    .small-text {
+      color: #6b7680;
+      font-size: 12px;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+
+    .credit-balance {
+      color: #287a46;
+      font-weight: 700;
+    }
+
+
+    .debt-balance {
+      font-weight: 600;
+    }
+
+
+    .balance-help {
+      margin-top: 7px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #f7f9fb;
+      color: #5e6a75;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+
+    .balance-help.credit-allowed {
+      background: #f2faf4;
+      border-left: 4px solid #2e9d55;
+    }
+
+
+    .balance-help.no-credit {
+      background: #fff8e8;
+      border-left: 4px solid #e0a620;
+    }
+
+
+    .debt-info-box {
+      background: #f3f8ff;
+      border-left: 5px solid #2d7df6;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      color: #4f5c67;
+    }
+
+
+    .manage-warning {
+      background: #fff8e8;
+      border-left: 5px solid #e0a620;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+
+    .purchase-chip {
+      display: inline-block;
+      background: #e8f3ff;
+      color: #1d5ea8;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+
+    .debt-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+
+    .history-summary {
+      background: #f7f9fb;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+    }
+
+
+    .history-summary-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(150px, 1fr)
+        );
+      gap: 12px;
+    }
+
+
+    .history-summary-item {
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+
+    .history-summary-label {
+      color: #66737f;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+
+    .history-summary-value {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+
+    .history-positive {
+      color: #b93434;
+      font-weight: 700;
+    }
+
+
+    .history-negative {
+      color: #287a46;
+      font-weight: 700;
+    }
+
+
+    .history-neutral {
+      color: #66737f;
+    }
+
+
+    .history-section-title {
+      margin-top: 24px;
+      margin-bottom: 10px;
+    }
+
+
+    .field-note {
+      color: #7a858f;
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+
+    .checkbox-row input {
+      width: auto;
+    }
+
+
+    .modal-card input,
+    .modal-card select,
+    .modal-card textarea {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+
+    .activity-modal-card {
+      max-width: 1000px;
+    }
+
+
+    @media (max-width: 700px) {
+
+      .page-heading-actions {
+        width: 100%;
+      }
+
+
+      .page-heading-actions button {
+        width: 100%;
+      }
+
+
+      .modal-card {
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+
+      .debt-actions {
+        flex-direction: column;
+      }
+
+
+      .debt-actions button {
+        width: 100%;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="topbar">
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Manage Debts & Credit Cards
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+      <a
+        href="transfers.html"
+        class="nav-btn"
+      >
+        Transfers
+      </a>
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Debt Management
+        </h2>
+
+        <p>
+          Maintain credit cards, lines of credit, loans,
+          financing and mortgages.
+        </p>
+
+      </div>
+
+
+      <div class="page-heading-actions">
+
+        <button
+          id="addDebtBtn"
+          class="add-btn"
+          type="button"
+        >
+          + Add New Debt
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <div
+      id="debtMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <div class="debt-info-box">
+
+      <strong>
+        Balance rule:
+      </strong>
+
+      A normal positive balance means money is owed.
+
+      Credit cards and store-financing accounts may also
+      show a negative balance when the account has been prepaid.
+
+      For example,
+      <strong>-$150</strong>
+      means the card has a
+      <strong>$150 credit</strong>.
+
+    </div>
+
+
+
+    <div class="manage-warning">
+
+      <strong>
+        Check-In is the normal place to reconcile balances.
+      </strong>
+
+      <br><br>
+
+      You can correct a debt balance here when necessary, but routine
+      weekly balance updates should be done through Check-In so the
+      balance history is preserved consistently.
+
+    </div>
+
+
+
+    <!-- ===================================================
+         DEBT TABLE
+    ==================================================== -->
+
+    <section class="card table-scroll">
+
+      <table class="finance-table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Debt
+            </th>
+
+            <th>
+              Balance
+            </th>
+
+            <th>
+              Available
+            </th>
+
+            <th>
+              Rate
+            </th>
+
+            <th>
+              Payment
+            </th>
+
+            <th>
+              Ends
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody
+          id="debtTableBody"
+        >
+        </tbody>
+
+      </table>
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =====================================================
+       ADD / EDIT DEBT MODAL
+  ====================================================== -->
+
+  <div
+    id="debtModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card">
+
+
+      <div class="modal-header">
+
+        <h2 id="debtModalTitle">
+          Edit Debt / Credit Account
+        </h2>
+
+        <button
+          id="closeModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+
+      <input
+        type="hidden"
+        id="debtId"
+      />
+
+
+
+      <!-- NAME -->
+
+      <label for="debtName">
+        Debt Name
+      </label>
+
+      <input
+        id="debtName"
+        type="text"
+        placeholder="Example: Scotia Visa"
+      />
+
+
+
+      <!-- TYPE -->
+
+      <label for="debtType">
+        Debt Type
+      </label>
+
+      <input
+        id="debtType"
+        type="text"
+        list="debtTypeOptions"
+        placeholder="Example: Credit Card"
+      />
+
+
+      <datalist id="debtTypeOptions">
+
+        <option value="Credit Card"></option>
+        <option value="Line of Credit"></option>
+        <option value="Loan"></option>
+        <option value="Vehicle Loan"></option>
+        <option value="Mortgage"></option>
+        <option value="Store Financing"></option>
+        <option value="Financing"></option>
+        <option value="Other"></option>
+
+      </datalist>
+
+
+
+      <!-- BALANCE -->
+
+      <label for="debtBalance">
+        Current Balance
+      </label>
+
+      <input
+        id="debtBalance"
+        type="number"
+        step="0.01"
+        inputmode="decimal"
+      />
+
+
+      <div
+        id="balanceHelp"
+        class="balance-help"
+      >
+        Positive balance = amount owed.
+      </div>
+
+
+
+      <!-- CREDIT LIMIT -->
+
+      <label for="creditLimit">
+
+        Credit Limit
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <input
+        id="creditLimit"
+        type="number"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+      />
+
+
+
+      <!-- PURCHASE USE -->
+
+      <label class="checkbox-row">
+
+        <input
+          id="usableForPurchases"
+          type="checkbox"
+        />
+
+        Can be used to make purchases
+
+      </label>
+
+
+      <div class="small-text">
+
+        Turn this on for credit cards or other revolving credit
+        that may be used to pay groceries, bills or other purchases.
+
+      </div>
+
+
+
+      <!-- INTEREST -->
+
+      <label for="interestRate">
+
+        Interest Rate %
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <input
+        id="interestRate"
+        type="number"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+      />
+
+
+
+      <!-- PAYMENT -->
+
+      <label for="minimumPayment">
+        Minimum / Regular Payment
+      </label>
+
+      <input
+        id="minimumPayment"
+        type="number"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+      />
+
+
+
+      <!-- FREQUENCY -->
+
+      <label for="paymentFrequency">
+        Payment Frequency
+      </label>
+
+      <select id="paymentFrequency">
+
+        <option value="weekly">
+          Weekly
+        </option>
+
+        <option value="biweekly">
+          Biweekly
+        </option>
+
+        <option value="semi-monthly">
+          Semi-monthly
+        </option>
+
+        <option
+          value="monthly"
+          selected
+        >
+          Monthly
+        </option>
+
+        <option value="quarterly">
+          Quarterly
+        </option>
+
+        <option value="annual">
+          Annual
+        </option>
+
+      </select>
+
+
+
+      <!-- NEXT PAYMENT -->
+
+      <label for="nextPaymentDate">
+        Next Payment Date
+      </label>
+
+      <input
+        id="nextPaymentDate"
+        type="date"
+      />
+
+
+
+      <!-- END DATE -->
+
+      <label for="debtEndDate">
+
+        End Date
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <input
+        id="debtEndDate"
+        type="date"
+      />
+
+
+
+      <!-- FINAL PAYMENT -->
+
+      <label for="finalPaymentAmount">
+
+        Final Payment Amount
+
+        <span class="field-note">
+          optional
+        </span>
+
+      </label>
+
+      <input
+        id="finalPaymentAmount"
+        type="number"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+      />
+
+
+
+      <!-- PRIORITY -->
+
+      <label for="priorityOrder">
+        Payoff Priority
+      </label>
+
+      <input
+        id="priorityOrder"
+        type="number"
+        min="1"
+        step="1"
+      />
+
+
+
+      <!-- ACTIVE -->
+
+      <label class="checkbox-row">
+
+        <input
+          id="debtActive"
+          type="checkbox"
+        />
+
+        Active
+
+      </label>
+
+
+
+      <!-- NOTES -->
+
+      <label for="debtNotes">
+        Notes
+      </label>
+
+      <textarea
+        id="debtNotes"
+        rows="4"
+      ></textarea>
+
+
+
+      <div class="balance-help">
+
+        <strong>
+          Paid something off?
+        </strong>
+
+        Mark it Inactive instead of deleting it.
+
+        This preserves its history and removes it from normal
+        Check-In and current planning.
+
+      </div>
+
+
+
+      <div class="modal-actions">
+
+        <button
+          id="cancelDebtBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="saveDebtBtn"
+          type="button"
+        >
+          Save Changes
+        </button>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       HISTORY MODAL
+  ====================================================== -->
+
+  <div
+    id="historyModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-card activity-modal-card">
+
+
+      <div class="modal-header">
+
+        <h2 id="historyTitle">
+          Debt Activity
+        </h2>
+
+        <button
+          id="closeHistoryBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+
+      <div
+        id="historySummary"
+        class="history-summary"
+      >
+      </div>
+
+
+
+      <h3 class="history-section-title">
+        Activity
+      </h3>
+
+
+      <div class="table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Type
+              </th>
+
+              <th>
+                Description
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Before
+              </th>
+
+              <th>
+                After
+              </th>
+
+              <th>
+                Notes
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody
+            id="activityHistoryBody"
+          >
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+
+      <h3 class="history-section-title">
+        Balance Check-Ins
+      </h3>
+
+
+      <div class="table-scroll">
+
+        <table class="finance-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Previous
+              </th>
+
+              <th>
+                Confirmed Balance
+              </th>
+
+              <th>
+                Change
+              </th>
+
+              <th>
+                Notes
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody
+            id="checkinHistoryBody"
+          >
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+
+      <div class="modal-actions">
+
+        <button
+          id="historyDoneBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Close
+        </button>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // GLOBAL DATA
+    // =====================================================
+
+    let householdId =
+      null;
+
+
+    let debts =
+      [];
+
+
+    let debtMap =
+      {};
+
+
+
+    // =====================================================
+    // MONEY
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style:
+            "currency",
+
+          currency:
+            "CAD"
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // HTML ESCAPE
+    // =====================================================
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // DATE
+    // =====================================================
+
+    function prettyDate(value) {
+
+      if (!value) {
+
+        return "—";
+
+      }
+
+
+      const date =
+        new Date(
+          value +
+          "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year:
+            "numeric",
+
+          month:
+            "short",
+
+          day:
+            "numeric"
+        }
+      );
+
+    }
+
+
+
+    function todayISO() {
+
+      const date =
+        new Date();
+
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+
+    // =====================================================
+    // CREDIT BALANCE RULE
+    // =====================================================
+
+    function allowsCreditBalance(
+      debtType
+    ) {
+
+      const type =
+        String(
+          debtType || ""
+        )
+          .trim()
+          .toLowerCase();
+
+
+      return (
+
+        type ===
+          "credit card"
+
+        ||
+
+        type ===
+          "store financing"
+
+      );
+
+    }
+
+
+
+    // =====================================================
+    // BALANCE DISPLAY
+    // =====================================================
+
+    function balanceDisplay(
+      debt
+    ) {
+
+      const balance =
+        Number(
+          debt.current_balance ||
+          0
+        );
+
+
+      if (
+        balance < 0
+        &&
+        allowsCreditBalance(
+          debt.debt_type
+        )
+      ) {
+
+        return `
+
+          <div class="credit-balance">
+
+            ${money(
+              Math.abs(
+                balance
+              )
+            )}
+            Credit
+
+          </div>
+
+          <div class="small-text">
+            Account is prepaid
+          </div>
+
+        `;
+
+      }
+
+
+      return `
+
+        <div class="debt-balance">
+
+          ${money(
+            balance
+          )}
+
+        </div>
+
+      `;
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // HOUSEHOLD
+    // =====================================================
+
+    async function loadHousehold() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "households"
+          )
+          .select(
+            "id"
+          )
+          .eq(
+            "name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      householdId =
+        data.id;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD DEBTS
+    // =====================================================
+
+    async function loadDebts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debts"
+          )
+          .select(`
+            id,
+            household_id,
+            debt_name,
+            debt_type,
+            current_balance,
+            credit_limit,
+            interest_rate,
+            minimum_payment,
+            payment_frequency,
+            next_payment_date,
+            priority_order,
+            usable_for_purchases,
+            active,
+            notes,
+            end_date,
+            final_payment_amount,
+            last_confirmed_date
+          `)
+          .order(
+            "active",
+            {
+              ascending:
+                false
+            }
+          )
+          .order(
+            "priority_order",
+            {
+              ascending:
+                true
+            }
+          )
+          .order(
+            "debt_name",
+            {
+              ascending:
+                true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      debts =
+        data || [];
+
+
+      debtMap =
+        {};
+
+
+      debts.forEach(
+        debt => {
+
+          debtMap[
+            debt.id
+          ] =
+            debt;
+
+        }
+      );
+
+
+      renderDebtTable();
+
+    }
+
+
+
+    // =====================================================
+    // RENDER TABLE
+    // =====================================================
+
+    function renderDebtTable() {
+
+      const tbody =
+        document.getElementById(
+          "debtTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      debts.forEach(
+        debt => {
+
+
+          const tr =
+            document.createElement(
+              "tr"
+            );
+
+
+          if (
+            !debt.active
+          ) {
+
+            tr.classList.add(
+              "inactive-row"
+            );
+
+          }
+
+
+
+          // AVAILABLE CREDIT
+
+          let available =
+            "—";
+
+
+          if (
+            debt.credit_limit !==
+            null
+          ) {
+
+            available =
+              money(
+
+                Number(
+                  debt.credit_limit ||
+                  0
+                )
+
+                -
+
+                Number(
+                  debt.current_balance ||
+                  0
+                )
+
+              );
+
+          }
+
+
+
+          // INTEREST RATE
+
+          const rate =
+            debt.interest_rate !==
+            null
+
+              ?
+
+                `${Number(
+                  debt.interest_rate
+                ).toFixed(
+                  2
+                )}%`
+
+              :
+
+                "—";
+
+
+
+          // PAYMENT
+
+          const payment =
+            debt.minimum_payment !==
+            null
+
+              ?
+
+                `${money(
+                  debt.minimum_payment
+                )} ${
+                  debt.payment_frequency
+                  ||
+                  ""
+                }`
+
+              :
+
+                "—";
+
+
+
+          tr.innerHTML = `
+
+            <td>
+
+              <strong>
+
+                ${escapeHtml(
+                  debt.debt_name
+                )}
+
+              </strong>
+
+              <div class="small-text">
+
+                ${escapeHtml(
+                  debt.debt_type ||
+                  ""
+                )}
+
+              </div>
+
+              ${
+                debt.usable_for_purchases
+
+                  ?
+
+                    '<span class="purchase-chip">Purchase Method</span>'
+
+                  :
+
+                    ""
+              }
+
+            </td>
+
+
+            <td>
+
+              ${balanceDisplay(
+                debt
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${available}
+
+            </td>
+
+
+            <td>
+
+              ${rate}
+
+            </td>
+
+
+            <td>
+
+              ${payment}
+
+            </td>
+
+
+            <td>
+
+              ${prettyDate(
+                debt.end_date
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${
+                debt.active
+
+                  ?
+
+                    '<span class="status-chip active-chip">Active</span>'
+
+                  :
+
+                    '<span class="status-chip inactive-chip">Inactive</span>'
+              }
+
+            </td>
+
+
+            <td>
+              <div class="debt-actions"></div>
+            </td>
+
+          `;
+
+
+
+          const actions =
+            tr.querySelector(
+              ".debt-actions"
+            );
+
+
+
+          // EDIT BUTTON
+
+          const editButton =
+            document.createElement(
+              "button"
+            );
+
+
+          editButton.className =
+            "small-btn";
+
+
+          editButton.type =
+            "button";
+
+
+          editButton.textContent =
+            "Edit";
+
+
+          editButton.addEventListener(
+            "click",
+            () => {
+
+              editDebt(
+                debt
+              );
+
+            }
+          );
+
+
+          actions.appendChild(
+            editButton
+          );
+
+
+
+          // HISTORY BUTTON
+
+          const historyButton =
+            document.createElement(
+              "button"
+            );
+
+
+          historyButton.className =
+            "small-btn";
+
+
+          historyButton.type =
+            "button";
+
+
+          historyButton.textContent =
+            "Activity";
+
+
+          historyButton.addEventListener(
+            "click",
+            () => {
+
+              openHistory(
+                debt
+              );
+
+            }
+          );
+
+
+          actions.appendChild(
+            historyButton
+          );
+
+
+          tbody.appendChild(
+            tr
+          );
+
+        }
+      );
+
+
+
+      if (
+        debts.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="8">
+
+              No debts or credit accounts found.
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // NEW DEBT
+    // =====================================================
+
+    function newDebt() {
+
+      document.getElementById(
+        "debtModalTitle"
+      ).textContent =
+        "Add New Debt / Credit Account";
+
+
+      document.getElementById(
+        "saveDebtBtn"
+      ).textContent =
+        "Add Debt";
+
+
+      document.getElementById(
+        "debtId"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "debtName"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "debtType"
+      ).value =
+        "Credit Card";
+
+
+      document.getElementById(
+        "debtBalance"
+      ).value =
+        "0";
+
+
+      document.getElementById(
+        "creditLimit"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "usableForPurchases"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "interestRate"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "minimumPayment"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "paymentFrequency"
+      ).value =
+        "monthly";
+
+
+      document.getElementById(
+        "nextPaymentDate"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "debtEndDate"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "finalPaymentAmount"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "priorityOrder"
+      ).value =
+        "1";
+
+
+      document.getElementById(
+        "debtActive"
+      ).checked =
+        true;
+
+
+      document.getElementById(
+        "debtNotes"
+      ).value =
+        "";
+
+
+      updateBalanceRules();
+
+
+      document
+        .getElementById(
+          "debtModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+
+      setTimeout(
+        () => {
+
+          document.getElementById(
+            "debtName"
+          ).focus();
+
+        },
+        100
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EDIT DEBT
+    // =====================================================
+
+    function editDebt(
+      debt
+    ) {
+
+      document.getElementById(
+        "debtModalTitle"
+      ).textContent =
+        "Edit Debt / Credit Account";
+
+
+      document.getElementById(
+        "saveDebtBtn"
+      ).textContent =
+        "Save Changes";
+
+
+      document.getElementById(
+        "debtId"
+      ).value =
+        debt.id;
+
+
+      document.getElementById(
+        "debtName"
+      ).value =
+        debt.debt_name ||
+        "";
+
+
+      document.getElementById(
+        "debtType"
+      ).value =
+        debt.debt_type ||
+        "";
+
+
+      document.getElementById(
+        "debtBalance"
+      ).value =
+        debt.current_balance ??
+        "";
+
+
+      document.getElementById(
+        "creditLimit"
+      ).value =
+        debt.credit_limit ??
+        "";
+
+
+      document.getElementById(
+        "usableForPurchases"
+      ).checked =
+        Boolean(
+          debt.usable_for_purchases
+        );
+
+
+      document.getElementById(
+        "interestRate"
+      ).value =
+        debt.interest_rate ??
+        "";
+
+
+      document.getElementById(
+        "minimumPayment"
+      ).value =
+        debt.minimum_payment ??
+        "";
+
+
+      document.getElementById(
+        "paymentFrequency"
+      ).value =
+        debt.payment_frequency ||
+        "monthly";
+
+
+      document.getElementById(
+        "nextPaymentDate"
+      ).value =
+        debt.next_payment_date ||
+        "";
+
+
+      document.getElementById(
+        "debtEndDate"
+      ).value =
+        debt.end_date ||
+        "";
+
+
+      document.getElementById(
+        "finalPaymentAmount"
+      ).value =
+        debt.final_payment_amount ??
+        "";
+
+
+      document.getElementById(
+        "priorityOrder"
+      ).value =
+        debt.priority_order ??
+        1;
+
+
+      document.getElementById(
+        "debtActive"
+      ).checked =
+        Boolean(
+          debt.active
+        );
+
+
+      document.getElementById(
+        "debtNotes"
+      ).value =
+        debt.notes ||
+        "";
+
+
+      updateBalanceRules();
+
+
+      document
+        .getElementById(
+          "debtModal"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // BALANCE RULE DISPLAY
+    // =====================================================
+
+    function updateBalanceRules() {
+
+      const type =
+        document.getElementById(
+          "debtType"
+        ).value;
+
+
+      const balanceInput =
+        document.getElementById(
+          "debtBalance"
+        );
+
+
+      const help =
+        document.getElementById(
+          "balanceHelp"
+        );
+
+
+      if (
+        allowsCreditBalance(
+          type
+        )
+      ) {
+
+        balanceInput.removeAttribute(
+          "min"
+        );
+
+
+        help.className =
+          "balance-help credit-allowed";
+
+
+        help.innerHTML = `
+
+          <strong>
+            Credit balance allowed.
+          </strong>
+
+          Positive = amount owed.
+
+          Negative = prepaid credit.
+
+          Example:
+          <strong>-$150</strong>
+          means you have
+          <strong>$150 credit</strong>.
+
+        `;
+
+      }
+
+
+      else {
+
+        balanceInput.setAttribute(
+          "min",
+          "0"
+        );
+
+
+        help.className =
+          "balance-help no-credit";
+
+
+        help.innerHTML = `
+
+          This debt type cannot have a negative balance.
+
+          Enter
+          <strong>$0</strong>
+          when nothing is owed.
+
+        `;
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // CLOSE EDIT MODAL
+    // =====================================================
+
+    function closeModal() {
+
+      document
+        .getElementById(
+          "debtModal"
+        )
+        .classList
+        .add(
+          "hidden"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // SAVE DEBT
+    // =====================================================
+
+    async function saveDebt() {
+
+      const id =
+        document.getElementById(
+          "debtId"
+        ).value;
+
+
+      const debtName =
+        document.getElementById(
+          "debtName"
+        ).value.trim();
+
+
+      const debtType =
+        document.getElementById(
+          "debtType"
+        ).value.trim();
+
+
+      const balance =
+        Number(
+          document.getElementById(
+            "debtBalance"
+          ).value
+        );
+
+
+      if (!debtName) {
+
+        showMessage(
+          "Please enter a debt/account name.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      if (!debtType) {
+
+        showMessage(
+          "Please enter a debt type.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      if (
+        !Number.isFinite(
+          balance
+        )
+      ) {
+
+        showMessage(
+          "Please enter a valid balance.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      // NEGATIVE BALANCE VALIDATION
+
+      if (
+        balance < 0
+        &&
+        !allowsCreditBalance(
+          debtType
+        )
+      ) {
+
+        showMessage(
+          "Negative balances are only allowed for Credit Card or Store Financing accounts.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      const creditLimitValue =
+        document.getElementById(
+          "creditLimit"
+        ).value;
+
+
+      const interestRateValue =
+        document.getElementById(
+          "interestRate"
+        ).value;
+
+
+      const minimumPaymentValue =
+        document.getElementById(
+          "minimumPayment"
+        ).value;
+
+
+      const finalPaymentValue =
+        document.getElementById(
+          "finalPaymentAmount"
+        ).value;
+
+
+      const priorityValue =
+        Number(
+          document.getElementById(
+            "priorityOrder"
+          ).value ||
+          1
+        );
+
+
+
+      if (
+        creditLimitValue !== ""
+        &&
+        Number(
+          creditLimitValue
+        ) < 0
+      ) {
+
+        showMessage(
+          "Credit limit cannot be negative.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      if (
+        interestRateValue !== ""
+        &&
+        Number(
+          interestRateValue
+        ) < 0
+      ) {
+
+        showMessage(
+          "Interest rate cannot be negative.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      if (
+        minimumPaymentValue !== ""
+        &&
+        Number(
+          minimumPaymentValue
+        ) < 0
+      ) {
+
+        showMessage(
+          "Minimum payment cannot be negative.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      if (
+        finalPaymentValue !== ""
+        &&
+        Number(
+          finalPaymentValue
+        ) < 0
+      ) {
+
+        showMessage(
+          "Final payment cannot be negative.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      if (
+        !Number.isFinite(
+          priorityValue
+        )
+        ||
+        priorityValue < 1
+      ) {
+
+        showMessage(
+          "Payoff priority must be 1 or greater.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      const updateData = {
+
+        debt_name:
+          debtName,
+
+        debt_type:
+          debtType,
+
+        current_balance:
+          balance,
+
+        credit_limit:
+          creditLimitValue !== ""
+
+            ? Number(
+                creditLimitValue
+              )
+
+            : null,
+
+        usable_for_purchases:
+          document.getElementById(
+            "usableForPurchases"
+          ).checked,
+
+        interest_rate:
+          interestRateValue !== ""
+
+            ? Number(
+                interestRateValue
+              )
+
+            : null,
+
+        minimum_payment:
+          minimumPaymentValue !== ""
+
+            ? Number(
+                minimumPaymentValue
+              )
+
+            : null,
+
+        payment_frequency:
+          document.getElementById(
+            "paymentFrequency"
+          ).value,
+
+        next_payment_date:
+          document.getElementById(
+            "nextPaymentDate"
+          ).value ||
+          null,
+
+        end_date:
+          document.getElementById(
+            "debtEndDate"
+          ).value ||
+          null,
+
+        final_payment_amount:
+          finalPaymentValue !== ""
+
+            ? Number(
+                finalPaymentValue
+              )
+
+            : null,
+
+        priority_order:
+          priorityValue,
+
+        active:
+          document.getElementById(
+            "debtActive"
+          ).checked,
+
+        notes:
+          document.getElementById(
+            "debtNotes"
+          ).value.trim() ||
+          null,
+
+        last_confirmed_date:
+          todayISO()
+
+      };
+
+
+
+      // ===================================================
+      // UPDATE EXISTING
+      // ===================================================
+
+      if (id) {
+
+        const oldDebt =
+          debtMap[
+            id
+          ];
+
+
+        const oldBalance =
+          Number(
+            oldDebt
+              ?.current_balance ||
+            0
+          );
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from(
+              "debts"
+            )
+            .update(
+              updateData
+            )
+            .eq(
+              "id",
+              id
+            );
+
+
+        if (error) {
+
+          showMessage(
+            error.message,
+            true
+          );
+
+
+          return;
+
+        }
+
+
+
+        // LOG BALANCE CHANGE IF MANUALLY CHANGED
+
+        if (
+          oldBalance !==
+          balance
+        ) {
+
+          const {
+            error:
+              activityError
+          } =
+            await supabaseClient
+              .from(
+                "debt_activity"
+              )
+              .insert({
+
+                household_id:
+                  householdId,
+
+                debt_id:
+                  id,
+
+                activity_date:
+                  todayISO(),
+
+                activity_type:
+                  "Manual Balance Adjustment",
+
+                description:
+                  `${debtName} balance changed from Manage`,
+
+                amount:
+                  balance -
+                  oldBalance,
+
+                balance_before:
+                  oldBalance,
+
+                balance_after:
+                  balance,
+
+                notes:
+                  "Manual balance correction from Debt Management. Routine reconciliation should normally be done through Check-In."
+
+              });
+
+
+          if (
+            activityError
+          ) {
+
+            console.error(
+              "Debt activity logging failed:",
+              activityError
+            );
+
+          }
+
+        }
+
+
+        closeModal();
+
+
+        showMessage(
+          "Debt updated successfully.",
+          false
+        );
+
+
+        await loadDebts();
+
+
+        return;
+
+      }
+
+
+
+      // ===================================================
+      // ADD NEW
+      // ===================================================
+
+      if (!householdId) {
+
+        showMessage(
+          "Household information could not be loaded.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const {
+        data:
+          insertedDebt,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debts"
+          )
+          .insert({
+
+            household_id:
+              householdId,
+
+            ...updateData
+
+          })
+          .select(
+            "id"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      // INITIAL ACTIVITY
+
+      const {
+        error:
+          activityError
+      } =
+        await supabaseClient
+          .from(
+            "debt_activity"
+          )
+          .insert({
+
+            household_id:
+              householdId,
+
+            debt_id:
+              insertedDebt.id,
+
+            activity_date:
+              todayISO(),
+
+            activity_type:
+              "Debt Added",
+
+            description:
+              `${debtName} added to Home Finance`,
+
+            amount:
+              balance,
+
+            balance_before:
+              null,
+
+            balance_after:
+              balance,
+
+            notes:
+              "Initial balance when debt was added."
+
+          });
+
+
+      if (
+        activityError
+      ) {
+
+        console.error(
+          "Initial debt activity failed:",
+          activityError
+        );
+
+      }
+
+
+      closeModal();
+
+
+      showMessage(
+        "New debt added successfully.",
+        false
+      );
+
+
+      await loadDebts();
+
+
+      if (
+        window.location.search
+      ) {
+
+        window.history.replaceState(
+          {},
+          "",
+          "debts.html"
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // OPEN HISTORY
+    // =====================================================
+
+    async function openHistory(
+      debt
+    ) {
+
+      document.getElementById(
+        "historyTitle"
+      ).textContent =
+        `${debt.debt_name} — Activity`;
+
+
+      document.getElementById(
+        "historyModal"
+      ).classList.remove(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "activityHistoryBody"
+      ).innerHTML = `
+
+        <tr>
+
+          <td colspan="7">
+            Loading activity...
+          </td>
+
+        </tr>
+
+      `;
+
+
+      document.getElementById(
+        "checkinHistoryBody"
+      ).innerHTML = `
+
+        <tr>
+
+          <td colspan="5">
+            Loading check-ins...
+          </td>
+
+        </tr>
+
+      `;
+
+
+      await loadDebtActivity(
+        debt
+      );
+
+
+      await loadDebtCheckins(
+        debt
+      );
+
+    }
+
+
+
+    // =====================================================
+    // LOAD DEBT ACTIVITY
+    // =====================================================
+
+    async function loadDebtActivity(
+      debt
+    ) {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debt_activity"
+          )
+          .select(`
+            id,
+            activity_date,
+            activity_type,
+            description,
+            amount,
+            balance_before,
+            balance_after,
+            notes,
+            created_at
+          `)
+          .eq(
+            "debt_id",
+            debt.id
+          )
+          .order(
+            "activity_date",
+            {
+              ascending:
+                false
+            }
+          )
+          .order(
+            "created_at",
+            {
+              ascending:
+                false
+            }
+          );
+
+
+      const tbody =
+        document.getElementById(
+          "activityHistoryBody"
+        );
+
+
+      if (error) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="7">
+
+              ${escapeHtml(
+                error.message
+              )}
+
+            </td>
+
+          </tr>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      const activity =
+        data || [];
+
+
+      tbody.innerHTML =
+        "";
+
+
+      if (
+        activity.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="7">
+              No debt activity recorded yet.
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+
+
+      activity.forEach(
+        item => {
+
+
+          const amount =
+            item.amount ===
+            null
+
+              ? null
+
+              : Number(
+                  item.amount
+                );
+
+
+          let amountClass =
+            "history-neutral";
+
+
+          if (
+            amount !==
+            null
+          ) {
+
+            if (
+              amount > 0
+            ) {
+
+              amountClass =
+                "history-positive";
+
+            }
+
+
+            else if (
+              amount < 0
+            ) {
+
+              amountClass =
+                "history-negative";
+
+            }
+
+          }
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          row.innerHTML = `
+
+            <td>
+
+              ${prettyDate(
+                item.activity_date
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${escapeHtml(
+                item.activity_type ||
+                ""
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${escapeHtml(
+                item.description ||
+                ""
+              )}
+
+            </td>
+
+
+            <td class="${amountClass}">
+
+              ${
+                amount ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      amount
+                    )
+              }
+
+            </td>
+
+
+            <td>
+
+              ${
+                item.balance_before ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      item.balance_before
+                    )
+              }
+
+            </td>
+
+
+            <td>
+
+              ${
+                item.balance_after ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      item.balance_after
+                    )
+              }
+
+            </td>
+
+
+            <td>
+
+              ${escapeHtml(
+                item.notes ||
+                ""
+              )}
+
+            </td>
+
+          `;
+
+
+          tbody.appendChild(
+            row
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // LOAD CHECK-IN HISTORY
+    // =====================================================
+
+    async function loadDebtCheckins(
+      debt
+    ) {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debt_checkins"
+          )
+          .select(`
+            id,
+            checkin_date,
+            balance,
+            previous_balance,
+            notes,
+            created_at
+          `)
+          .eq(
+            "debt_id",
+            debt.id
+          )
+          .order(
+            "checkin_date",
+            {
+              ascending:
+                false
+            }
+          )
+          .order(
+            "created_at",
+            {
+              ascending:
+                false
+            }
+          );
+
+
+      const tbody =
+        document.getElementById(
+          "checkinHistoryBody"
+        );
+
+
+      if (error) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="5">
+
+              ${escapeHtml(
+                error.message
+              )}
+
+            </td>
+
+          </tr>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      const checkins =
+        data || [];
+
+
+      tbody.innerHTML =
+        "";
+
+
+      if (
+        checkins.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="5">
+              No balance Check-In history yet.
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+
+
+      let totalChange =
+        null;
+
+
+      if (
+        checkins.length > 0
+      ) {
+
+        const newest =
+          Number(
+            checkins[0]
+              .balance ||
+            0
+          );
+
+
+        const oldestRecord =
+          checkins[
+            checkins.length - 1
+          ];
+
+
+        const oldest =
+          oldestRecord
+            .previous_balance !==
+            null
+
+              ? Number(
+                  oldestRecord
+                    .previous_balance
+                )
+
+              : Number(
+                  oldestRecord
+                    .balance ||
+                  0
+                );
+
+
+        totalChange =
+          newest -
+          oldest;
+
+      }
+
+
+
+      document.getElementById(
+        "historySummary"
+      ).innerHTML = `
+
+        <div class="history-summary-grid">
+
+
+          <div class="history-summary-item">
+
+            <div class="history-summary-label">
+              Current Balance
+            </div>
+
+            <div class="history-summary-value">
+
+              ${money(
+                debt.current_balance
+              )}
+
+            </div>
+
+          </div>
+
+
+          <div class="history-summary-item">
+
+            <div class="history-summary-label">
+              Interest Rate
+            </div>
+
+            <div class="history-summary-value">
+
+              ${
+                debt.interest_rate ===
+                null
+
+                  ? "—"
+
+                  : `${Number(
+                      debt.interest_rate
+                    ).toFixed(
+                      2
+                    )}%`
+              }
+
+            </div>
+
+          </div>
+
+
+          <div class="history-summary-item">
+
+            <div class="history-summary-label">
+              Regular Payment
+            </div>
+
+            <div class="history-summary-value">
+
+              ${
+                debt.minimum_payment ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      debt.minimum_payment
+                    )
+              }
+
+            </div>
+
+          </div>
+
+
+          <div class="history-summary-item">
+
+            <div class="history-summary-label">
+              Change Across Check-Ins
+            </div>
+
+            <div
+              class="history-summary-value
+              ${
+                totalChange ===
+                null
+
+                  ? ""
+
+                  : totalChange < 0
+
+                    ? "history-negative"
+
+                    : totalChange > 0
+
+                      ? "history-positive"
+
+                      : "history-neutral"
+              }"
+            >
+
+              ${
+                totalChange ===
+                null
+
+                  ? "No history yet"
+
+                  : totalChange < 0
+
+                    ? `↓ ${money(Math.abs(totalChange))}`
+
+                    : totalChange > 0
+
+                      ? `↑ ${money(totalChange)}`
+
+                      : "No change"
+              }
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      `;
+
+
+
+      checkins.forEach(
+        item => {
+
+
+          const previous =
+            item.previous_balance;
+
+
+          const current =
+            Number(
+              item.balance ||
+              0
+            );
+
+
+          let difference =
+            null;
+
+
+          if (
+            previous !==
+            null
+          ) {
+
+            difference =
+              current -
+              Number(
+                previous
+              );
+
+          }
+
+
+
+          let differenceHtml =
+            "—";
+
+
+          if (
+            difference !==
+            null
+          ) {
+
+            if (
+              difference < 0
+            ) {
+
+              differenceHtml = `
+
+                <span class="history-negative">
+
+                  ↓ ${money(
+                    Math.abs(
+                      difference
+                    )
+                  )}
+
+                </span>
+
+              `;
+
+            }
+
+
+            else if (
+              difference > 0
+            ) {
+
+              differenceHtml = `
+
+                <span class="history-positive">
+
+                  ↑ ${money(
+                    difference
+                  )}
+
+                </span>
+
+              `;
+
+            }
+
+
+            else {
+
+              differenceHtml = `
+
+                <span class="history-neutral">
+                  No change
+                </span>
+
+              `;
+
+            }
+
+          }
+
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          row.innerHTML = `
+
+            <td>
+
+              ${prettyDate(
+                item.checkin_date
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${
+                previous ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      previous
+                    )
+              }
+
+            </td>
+
+
+            <td>
+
+              ${money(
+                current
+              )}
+
+            </td>
+
+
+            <td>
+
+              ${differenceHtml}
+
+            </td>
+
+
+            <td>
+
+              ${escapeHtml(
+                item.notes ||
+                ""
+              )}
+
+            </td>
+
+          `;
+
+
+          tbody.appendChild(
+            row
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // CLOSE HISTORY
+    // =====================================================
+
+    function closeHistory() {
+
+      document
+        .getElementById(
+          "historyModal"
+        )
+        .classList
+        .add(
+          "hidden"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "debtMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ?
+
+            "message-box error-message"
+
+          :
+
+            "message-box success-message";
+
+
+      box.scrollIntoView({
+
+        behavior:
+          "smooth",
+
+        block:
+          "nearest"
+
+      });
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        5000
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document.getElementById(
+      "addDebtBtn"
+    ).addEventListener(
+      "click",
+      newDebt
+    );
+
+
+    document.getElementById(
+      "saveDebtBtn"
+    ).addEventListener(
+      "click",
+      saveDebt
+    );
+
+
+    document.getElementById(
+      "cancelDebtBtn"
+    ).addEventListener(
+      "click",
+      closeModal
+    );
+
+
+    document.getElementById(
+      "closeModalBtn"
+    ).addEventListener(
+      "click",
+      closeModal
+    );
+
+
+    document.getElementById(
+      "debtType"
+    ).addEventListener(
+      "input",
+      updateBalanceRules
+    );
+
+
+    document.getElementById(
+      "debtModal"
+    ).addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.id ===
+          "debtModal"
+        ) {
+
+          closeModal();
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "closeHistoryBtn"
+    ).addEventListener(
+      "click",
+      closeHistory
+    );
+
+
+    document.getElementById(
+      "historyDoneBtn"
+    ).addEventListener(
+      "click",
+      closeHistory
+    );
+
+
+    document.getElementById(
+      "historyModal"
+    ).addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.id ===
+          "historyModal"
+        ) {
+
+          closeHistory();
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      const householdLoaded =
+        await loadHousehold();
+
+
+      if (!householdLoaded) {
+
+        return;
+
+      }
+
+
+      await loadDebts();
+
+
+
+      // DIRECT ADD LINK FROM MANAGE:
+      // debts.html?new=1
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+
+      if (
+        params.get(
+          "new"
+        ) ===
+        "1"
+      ) {
+
+        newDebt();
+
+      }
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
