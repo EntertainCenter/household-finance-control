@@ -1,0 +1,4518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Home Finance - Transfers & Activity
+  </title>
+
+
+  <!-- APP ICON -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="home-finance-icon.png"
+  />
+
+  <link
+    rel="apple-touch-icon"
+    href="home-finance-icon.png"
+  />
+
+  <meta
+    name="theme-color"
+    content="#1e3a8a"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Home Finance"
+  />
+
+
+  <!-- CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+  <style>
+
+    .transfer-summary-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(200px, 1fr)
+        );
+
+      gap: 16px;
+
+      margin-bottom: 24px;
+
+    }
+
+
+    .balance-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(180px, 1fr)
+        );
+
+      gap: 12px;
+
+      margin-top: 16px;
+
+    }
+
+
+    .balance-card {
+
+      background: #f7f9fb;
+
+      border-radius: 10px;
+
+      padding: 15px;
+
+    }
+
+
+    .balance-card h3 {
+
+      margin: 0 0 6px 0;
+
+      font-size: 15px;
+
+      color: #66737f;
+
+    }
+
+
+    .balance-value {
+
+      font-size: 24px;
+
+      font-weight: 700;
+
+    }
+
+
+    .small-detail {
+
+      margin-top: 6px;
+
+      color: #66737f;
+
+      font-size: 13px;
+
+      line-height: 1.4;
+
+    }
+
+
+    .envelope-balance-card {
+
+      border-left:
+        4px solid #7c3aed;
+
+    }
+
+
+    .transfer-in {
+
+      color: #287a46;
+
+      font-weight: 700;
+
+    }
+
+
+    .transfer-out {
+
+      color: #b93434;
+
+      font-weight: 700;
+
+    }
+
+
+    .status-planned {
+
+      color: #a36a00;
+
+      font-weight: 700;
+
+      text-transform: capitalize;
+
+    }
+
+
+    .status-completed {
+
+      color: #287a46;
+
+      font-weight: 700;
+
+      text-transform: capitalize;
+
+    }
+
+
+    .status-cancelled {
+
+      color: #6d7781;
+
+      font-weight: 700;
+
+      text-transform: capitalize;
+
+    }
+
+
+    .instruction-box {
+
+      border-left:
+        5px solid #2d7df6;
+
+      background: #f3f8ff;
+
+      padding: 16px 18px;
+
+      border-radius: 8px;
+
+      margin-bottom: 22px;
+
+      line-height: 1.5;
+
+    }
+
+
+    .envelope-info {
+
+      border-left:
+        5px solid #7c3aed;
+
+      background: #f7f3ff;
+
+      padding: 16px 18px;
+
+      border-radius: 8px;
+
+      margin-bottom: 22px;
+
+      line-height: 1.5;
+
+    }
+
+
+    .movement-preview {
+
+      background: #f7f9fb;
+
+      border-radius: 8px;
+
+      padding: 13px 15px;
+
+      margin-top: 14px;
+
+      line-height: 1.5;
+
+    }
+
+
+    .movement-preview strong {
+
+      display: block;
+
+      margin-bottom: 4px;
+
+    }
+
+
+    .virtual-label {
+
+      display: inline-block;
+
+      background: #f0e9ff;
+
+      color: #6d28d9;
+
+      border-radius: 999px;
+
+      padding: 3px 8px;
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+    }
+
+
+    .real-label {
+
+      display: inline-block;
+
+      background: #e8f3ff;
+
+      color: #1d5ea8;
+
+      border-radius: 999px;
+
+      padding: 3px 8px;
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+    }
+
+
+    .debt-label {
+
+      display: inline-block;
+
+      background: #fff1e6;
+
+      color: #a44b00;
+
+      border-radius: 999px;
+
+      padding: 3px 8px;
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+    }
+
+
+    .form-label {
+
+      display: block;
+
+      margin-top: 14px;
+
+      margin-bottom: 6px;
+
+      font-weight: 600;
+
+    }
+
+
+    .modal-card select,
+    .modal-card input,
+    .modal-card textarea {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+      .transfer-summary-grid,
+      .balance-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .modal-card {
+
+        max-height: 90vh;
+
+        overflow-y: auto;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="topbar">
+
+
+    <div>
+
+      <h1>
+        Home Finance Management
+      </h1>
+
+      <p>
+        Transfers, Envelopes & Activity
+      </p>
+
+    </div>
+
+
+    <div class="topbar-actions">
+
+
+      <a
+        href="index.html"
+        class="nav-btn"
+      >
+        Dashboard
+      </a>
+
+
+      <a
+        href="checkin.html"
+        class="nav-btn"
+      >
+        Check-In
+      </a>
+
+
+      <a
+        href="forecast.html"
+        class="nav-btn"
+      >
+        Forecast
+      </a>
+
+
+      <a
+        href="manage.html"
+        class="nav-btn"
+      >
+        Manage
+      </a>
+
+
+      <a
+        href="help.html"
+        class="nav-btn"
+      >
+        Help
+      </a>
+
+
+      <button
+        id="logoutBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main class="container">
+
+
+    <section class="page-heading">
+
+      <div>
+
+        <h2>
+          Money Movement
+        </h2>
+
+        <p>
+          Move real money between accounts or allocate money
+          to and from virtual envelopes.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <div
+      id="transferMessage"
+      class="message-box hidden"
+    ></div>
+
+
+
+    <div class="instruction-box">
+
+      <strong>
+        Real bank transfers
+      </strong>
+
+      should normally be created as
+      <strong>Planned</strong> first.
+
+      After the money has actually been moved at the bank,
+      return here and choose
+      <strong>Complete Transfer</strong>.
+
+    </div>
+
+
+
+    <div class="envelope-info">
+
+      <strong>
+        Envelope allocations are different.
+      </strong>
+
+      <br><br>
+
+      If the source and destination ultimately use the same real bank
+      account, no bank movement occurs.
+
+      For example:
+
+      <br><br>
+
+      <strong>
+        Savings → Christmas Envelope
+      </strong>
+
+      only earmarks some of the Savings balance.
+
+      <br><br>
+
+      The real Savings balance stays exactly the same.
+
+    </div>
+
+
+
+    <!-- ===================================================
+         SUMMARY
+    ==================================================== -->
+
+    <section class="transfer-summary-grid">
+
+
+      <div class="card highlight">
+
+        <h3>
+          Planned Movements
+        </h3>
+
+        <div
+          class="big-number"
+          id="plannedTotal"
+        >
+          $0
+        </div>
+
+        <p>
+          Planned but not yet completed.
+        </p>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <h3>
+          Completed This Month
+        </h3>
+
+        <div
+          class="big-number"
+          id="completedMonth"
+        >
+          $0
+        </div>
+
+        <p>
+          Completed transfers and allocations.
+        </p>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <h3>
+          Active Accounts
+        </h3>
+
+        <div
+          class="big-number"
+          id="activeAccountCount"
+        >
+          0
+        </div>
+
+        <p>
+          Real accounts currently active.
+        </p>
+
+      </div>
+
+
+
+      <div class="card">
+
+        <h3>
+          Active Envelopes
+        </h3>
+
+        <div
+          class="big-number"
+          id="activeEnvelopeCount"
+        >
+          0
+        </div>
+
+        <p>
+          Virtual savings goals currently active.
+        </p>
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         REAL ACCOUNT BALANCES
+    ==================================================== -->
+
+    <section class="card">
+
+      <h2>
+        Real Account Balances
+      </h2>
+
+      <p>
+        These are the actual account balances currently recorded
+        in Home Finance.
+      </p>
+
+      <div
+        id="accountBalanceGrid"
+        class="balance-grid"
+      ></div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         ENVELOPE BALANCES
+    ==================================================== -->
+
+    <section
+      class="card"
+      style="margin-top:22px;"
+    >
+
+      <h2>
+        Envelope Allocations
+      </h2>
+
+      <p>
+        These amounts are contained inside real accounts.
+        They are not additional bank balances.
+      </p>
+
+      <div
+        id="envelopeBalanceGrid"
+        class="balance-grid"
+      ></div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         TRANSFERS
+    ==================================================== -->
+
+    <section
+      class="section"
+      style="margin-top:28px;"
+    >
+
+
+      <div class="section-heading">
+
+        <h2>
+          Transfers & Allocations
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+
+        <div style="margin-bottom:18px;">
+
+          <button
+            id="addTransferBtn"
+            type="button"
+          >
+            New Transfer / Allocation
+          </button>
+
+        </div>
+
+
+        <div class="table-scroll">
+
+          <table class="finance-table">
+
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Date
+                </th>
+
+                <th>
+                  Type
+                </th>
+
+                <th>
+                  From
+                </th>
+
+                <th>
+                  To
+                </th>
+
+                <th>
+                  Amount
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                  Notes
+                </th>
+
+                <th>
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody
+              id="transferTableBody"
+            ></tbody>
+
+
+          </table>
+
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         ACTIVITY
+    ==================================================== -->
+
+    <section
+      class="section"
+      style="margin-top:28px;"
+    >
+
+
+      <div class="section-heading">
+
+        <h2>
+          Running Activity Log
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+
+        <div class="table-scroll">
+
+          <table class="finance-table">
+
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Date
+                </th>
+
+                <th>
+                  Account
+                </th>
+
+                <th>
+                  Activity
+                </th>
+
+                <th>
+                  Description
+                </th>
+
+                <th>
+                  Amount
+                </th>
+
+                <th>
+                  Before
+                </th>
+
+                <th>
+                  After
+                </th>
+
+                <th>
+                  Notes
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody
+              id="activityTableBody"
+            ></tbody>
+
+
+          </table>
+
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =====================================================
+       TRANSFER MODAL
+  ====================================================== -->
+
+  <div
+    id="transferModal"
+    class="modal hidden"
+  >
+
+
+    <div class="modal-card">
+
+
+      <div class="modal-header">
+
+
+        <h2 id="transferModalTitle">
+          New Transfer / Allocation
+        </h2>
+
+
+        <button
+          id="closeTransferModalBtn"
+          class="icon-btn"
+          type="button"
+        >
+          ×
+        </button>
+
+
+      </div>
+
+
+
+      <input
+        id="transferId"
+        type="hidden"
+      />
+
+
+
+      <label
+        class="form-label"
+        for="transferDate"
+      >
+        Date
+      </label>
+
+
+      <input
+        id="transferDate"
+        type="date"
+      />
+
+
+
+      <label
+        class="form-label"
+        for="fromLocation"
+      >
+        From
+      </label>
+
+
+      <select id="fromLocation">
+      </select>
+
+
+
+      <label
+        class="form-label"
+        for="toLocation"
+      >
+        To
+      </label>
+
+
+      <select id="toLocation">
+      </select>
+
+
+
+      <label
+        class="form-label"
+        for="transferAmount"
+      >
+        Amount
+      </label>
+
+
+      <input
+        id="transferAmount"
+        type="number"
+        min="0.01"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="0.00"
+      />
+
+
+
+      <div
+        id="movementPreview"
+        class="movement-preview"
+      >
+        Select a source and destination.
+      </div>
+
+
+
+      <label
+        class="form-label"
+        for="transferNotes"
+      >
+        Notes
+      </label>
+
+
+      <textarea
+        id="transferNotes"
+        rows="4"
+        placeholder="Optional note"
+      ></textarea>
+
+
+
+      <div class="modal-actions">
+
+
+        <button
+          id="completeTransferBtn"
+          class="hidden"
+          type="button"
+        >
+          Complete Transfer
+        </button>
+
+
+        <button
+          id="cancelPlannedTransferBtn"
+          class="secondary-btn hidden"
+          type="button"
+        >
+          Cancel
+        </button>
+
+
+        <button
+          id="closeModalBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Close
+        </button>
+
+
+        <button
+          id="saveTransferBtn"
+          type="button"
+        >
+          Save Planned Movement
+        </button>
+
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // SUPABASE
+    // =====================================================
+
+    const SUPABASE_URL =
+      "https://lypfuqoxqxtdocgmryiy.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_R81PDNKu5TIet3zO8Qj0cA_ON7fDWIA";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+
+    // =====================================================
+    // DATA
+    // =====================================================
+
+    let householdId =
+      null;
+
+
+    let accounts =
+      [];
+
+
+    let envelopes =
+      [];
+
+
+    let debts =
+      [];
+
+
+    let accountMap =
+      {};
+
+
+    let envelopeMap =
+      {};
+
+
+    let debtMap =
+      {};
+
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function money(value) {
+
+      return Number(
+        value || 0
+      ).toLocaleString(
+        "en-CA",
+        {
+          style: "currency",
+          currency: "CAD"
+        }
+      );
+
+    }
+
+
+
+    function localISO(date) {
+
+      const year =
+        date.getFullYear();
+
+
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      return `${year}-${month}-${day}`;
+
+    }
+
+
+
+    function todayISO() {
+
+      return localISO(
+        new Date()
+      );
+
+    }
+
+
+
+    function prettyDate(value) {
+
+      if (!value) {
+
+        return "—";
+
+      }
+
+
+      const date =
+        new Date(
+          value + "T00:00:00"
+        );
+
+
+      return date.toLocaleDateString(
+        "en-CA",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      );
+
+    }
+
+
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+
+    function parseLocation(value) {
+
+      if (!value) {
+
+        return {
+          type: null,
+          id: null
+        };
+
+      }
+
+
+      const firstColon =
+        value.indexOf(":");
+
+
+      if (
+        firstColon === -1
+      ) {
+
+        return {
+          type: null,
+          id: null
+        };
+
+      }
+
+
+      return {
+
+        type:
+          value.substring(
+            0,
+            firstColon
+          ),
+
+        id:
+          value.substring(
+            firstColon + 1
+          )
+
+      };
+
+    }
+
+
+
+    function accountAllocatedTotal(
+      accountId
+    ) {
+
+      return envelopes
+        .filter(
+          envelope =>
+            envelope.account_id ===
+              accountId
+            &&
+            envelope.active
+        )
+        .reduce(
+          (total, envelope) =>
+            total +
+            Number(
+              envelope.current_balance || 0
+            ),
+          0
+        );
+
+    }
+
+
+
+    function accountUnallocated(
+      accountId
+    ) {
+
+      const account =
+        accountMap[
+          accountId
+        ];
+
+
+      if (!account) {
+
+        return 0;
+
+      }
+
+
+      return (
+        Number(
+          account.current_balance || 0
+        )
+        -
+        accountAllocatedTotal(
+          accountId
+        )
+      );
+
+    }
+
+
+
+    function getPhysicalAccountId(
+      location
+    ) {
+
+      if (
+        location.type ===
+        "account"
+      ) {
+
+        return location.id;
+
+      }
+
+
+      if (
+        location.type ===
+        "envelope"
+      ) {
+
+        return envelopeMap[
+          location.id
+        ]
+          ?.account_id
+        ||
+        null;
+
+      }
+
+
+      return null;
+
+    }
+
+
+
+    function locationName(
+      type,
+      id
+    ) {
+
+      if (
+        type ===
+        "account"
+      ) {
+
+        return accountMap[
+          id
+        ]
+          ?.account_name
+        ||
+        "Unknown Account";
+
+      }
+
+
+      if (
+        type ===
+        "envelope"
+      ) {
+
+        return envelopeMap[
+          id
+        ]
+          ?.envelope_name
+        ||
+        "Unknown Envelope";
+
+      }
+
+
+      if (
+        type ===
+        "debt"
+      ) {
+
+        return debtMap[
+          id
+        ]
+          ?.debt_name
+        ||
+        "Debt";
+
+      }
+
+
+      return "Unknown";
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    async function checkLogin() {
+
+      const {
+        data: { session }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html";
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // HOUSEHOLD
+    // =====================================================
+
+    async function loadHousehold() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "households"
+          )
+          .select(
+            "id"
+          )
+          .eq(
+            "name",
+            "Feehan Household"
+          )
+          .single();
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      householdId =
+        data.id;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // ACCOUNTS
+    // =====================================================
+
+    async function loadAccounts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "accounts"
+          )
+          .select(`
+            id,
+            account_name,
+            account_type,
+            account_role,
+            current_balance,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .order(
+            "account_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      accounts =
+        data || [];
+
+
+      accountMap =
+        {};
+
+
+      accounts.forEach(
+        account => {
+
+          accountMap[
+            account.id
+          ] =
+            account;
+
+        }
+      );
+
+
+      document.getElementById(
+        "activeAccountCount"
+      ).textContent =
+        accounts.length;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // ENVELOPES
+    // =====================================================
+
+    async function loadEnvelopes() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "envelopes"
+          )
+          .select(`
+            id,
+            account_id,
+            envelope_name,
+            current_balance,
+            target_amount,
+            target_date,
+            priority,
+            active
+          `)
+          .eq(
+            "active",
+            true
+          )
+          .order(
+            "priority",
+            {
+              ascending: true
+            }
+          )
+          .order(
+            "envelope_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      envelopes =
+        data || [];
+
+
+      envelopeMap =
+        {};
+
+
+      envelopes.forEach(
+        envelope => {
+
+          envelopeMap[
+            envelope.id
+          ] =
+            envelope;
+
+        }
+      );
+
+
+      document.getElementById(
+        "activeEnvelopeCount"
+      ).textContent =
+        envelopes.length;
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // DEBTS
+    // Used to display existing historical debt payments.
+    // =====================================================
+
+    async function loadDebts() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "debts"
+          )
+          .select(`
+            id,
+            debt_name,
+            current_balance,
+            active
+          `)
+          .order(
+            "debt_name",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return false;
+
+      }
+
+
+      debts =
+        data || [];
+
+
+      debtMap =
+        {};
+
+
+      debts.forEach(
+        debt => {
+
+          debtMap[
+            debt.id
+          ] =
+            debt;
+
+        }
+      );
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // BALANCE CARDS
+    // =====================================================
+
+    function renderBalances() {
+
+
+      // REAL ACCOUNTS
+
+      const accountGrid =
+        document.getElementById(
+          "accountBalanceGrid"
+        );
+
+
+      accountGrid.innerHTML =
+        "";
+
+
+      accounts.forEach(
+        account => {
+
+
+          const allocated =
+            accountAllocatedTotal(
+              account.id
+            );
+
+
+          const unallocated =
+            Number(
+              account.current_balance || 0
+            )
+            -
+            allocated;
+
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "balance-card";
+
+
+          card.innerHTML = `
+
+            <h3>
+              ${escapeHtml(
+                account.account_name
+              )}
+            </h3>
+
+            <div class="balance-value">
+
+              ${money(
+                account.current_balance
+              )}
+
+            </div>
+
+            <div class="small-detail">
+
+              Envelope allocations:
+              ${money(allocated)}
+
+              <br>
+
+              Unallocated:
+              <strong>
+                ${money(unallocated)}
+              </strong>
+
+            </div>
+
+          `;
+
+
+          accountGrid.appendChild(
+            card
+          );
+
+
+        }
+      );
+
+
+
+      // ENVELOPES
+
+      const envelopeGrid =
+        document.getElementById(
+          "envelopeBalanceGrid"
+        );
+
+
+      envelopeGrid.innerHTML =
+        "";
+
+
+      if (
+        envelopes.length ===
+        0
+      ) {
+
+        envelopeGrid.innerHTML = `
+
+          <div class="balance-card">
+
+            <h3>
+              No active envelopes
+            </h3>
+
+            <div class="small-detail">
+              Add envelopes from Manage when needed.
+            </div>
+
+          </div>
+
+        `;
+
+
+        return;
+
+      }
+
+
+
+      envelopes.forEach(
+        envelope => {
+
+
+          const parent =
+            accountMap[
+              envelope.account_id
+            ];
+
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "balance-card envelope-balance-card";
+
+
+          card.innerHTML = `
+
+            <h3>
+              ${escapeHtml(
+                envelope.envelope_name
+              )}
+            </h3>
+
+            <div class="balance-value">
+
+              ${money(
+                envelope.current_balance
+              )}
+
+            </div>
+
+            <div class="small-detail">
+
+              Inside:
+              ${escapeHtml(
+                parent
+                  ?.account_name
+                ||
+                "Unknown Account"
+              )}
+
+              ${
+                envelope.target_amount !==
+                null
+
+                  ? `<br>Target: ${money(envelope.target_amount)}`
+
+                  : ""
+              }
+
+            </div>
+
+          `;
+
+
+          envelopeGrid.appendChild(
+            card
+          );
+
+
+        }
+      );
+
+    }
+
+
+
+    // =====================================================
+    // LOCATION DROPDOWNS
+    // =====================================================
+
+    function populateLocationDropdowns() {
+
+      const from =
+        document.getElementById(
+          "fromLocation"
+        );
+
+
+      const to =
+        document.getElementById(
+          "toLocation"
+        );
+
+
+      from.innerHTML =
+        "";
+
+
+      to.innerHTML =
+        "";
+
+
+      const blankFrom =
+        document.createElement(
+          "option"
+        );
+
+
+      blankFrom.value =
+        "";
+
+
+      blankFrom.textContent =
+        "Select source";
+
+
+      from.appendChild(
+        blankFrom
+      );
+
+
+      const blankTo =
+        document.createElement(
+          "option"
+        );
+
+
+      blankTo.value =
+        "";
+
+
+      blankTo.textContent =
+        "Select destination";
+
+
+      to.appendChild(
+        blankTo
+      );
+
+
+
+      // ACCOUNTS
+
+      const fromAccounts =
+        document.createElement(
+          "optgroup"
+        );
+
+
+      fromAccounts.label =
+        "Real Accounts";
+
+
+      const toAccounts =
+        document.createElement(
+          "optgroup"
+        );
+
+
+      toAccounts.label =
+        "Real Accounts";
+
+
+      accounts.forEach(
+        account => {
+
+
+          const fromOption =
+            document.createElement(
+              "option"
+            );
+
+
+          fromOption.value =
+            `account:${account.id}`;
+
+
+          fromOption.textContent =
+            `${account.account_name} — ${money(account.current_balance)}`;
+
+
+          fromAccounts.appendChild(
+            fromOption
+          );
+
+
+
+          const toOption =
+            document.createElement(
+              "option"
+            );
+
+
+          toOption.value =
+            `account:${account.id}`;
+
+
+          toOption.textContent =
+            `${account.account_name} — ${money(account.current_balance)}`;
+
+
+          toAccounts.appendChild(
+            toOption
+          );
+
+
+        }
+      );
+
+
+      from.appendChild(
+        fromAccounts
+      );
+
+
+      to.appendChild(
+        toAccounts
+      );
+
+
+
+      // ENVELOPES
+
+      if (
+        envelopes.length > 0
+      ) {
+
+
+        const fromEnvelopes =
+          document.createElement(
+            "optgroup"
+          );
+
+
+        fromEnvelopes.label =
+          "Envelopes";
+
+
+        const toEnvelopes =
+          document.createElement(
+            "optgroup"
+          );
+
+
+        toEnvelopes.label =
+          "Envelopes";
+
+
+        envelopes.forEach(
+          envelope => {
+
+
+            const parentName =
+              accountMap[
+                envelope.account_id
+              ]
+                ?.account_name
+              ||
+              "Account";
+
+
+            const fromOption =
+              document.createElement(
+                "option"
+              );
+
+
+            fromOption.value =
+              `envelope:${envelope.id}`;
+
+
+            fromOption.textContent =
+              `${envelope.envelope_name} — ${money(envelope.current_balance)} (${parentName})`;
+
+
+            fromEnvelopes.appendChild(
+              fromOption
+            );
+
+
+
+            const toOption =
+              document.createElement(
+                "option"
+              );
+
+
+            toOption.value =
+              `envelope:${envelope.id}`;
+
+
+            toOption.textContent =
+              `${envelope.envelope_name} (${parentName})`;
+
+
+            toEnvelopes.appendChild(
+              toOption
+            );
+
+
+          }
+        );
+
+
+        from.appendChild(
+          fromEnvelopes
+        );
+
+
+        to.appendChild(
+          toEnvelopes
+        );
+
+
+      }
+
+
+      setDefaultLocations();
+
+    }
+
+
+
+    function setDefaultLocations() {
+
+      const bills =
+        accounts.find(
+          account =>
+            account.account_role ===
+            "bills"
+        );
+
+
+      const spending =
+        accounts.find(
+          account =>
+            account.account_role ===
+            "spending"
+        );
+
+
+      if (bills) {
+
+        document.getElementById(
+          "fromLocation"
+        ).value =
+          `account:${bills.id}`;
+
+      }
+
+
+      if (spending) {
+
+        document.getElementById(
+          "toLocation"
+        ).value =
+          `account:${spending.id}`;
+
+      }
+
+
+      updateMovementPreview();
+
+    }
+
+
+
+    // =====================================================
+    // MOVEMENT TYPE
+    // =====================================================
+
+    function determineMovementType(
+      from,
+      to
+    ) {
+
+      if (
+        from.type === "account"
+        &&
+        to.type === "account"
+      ) {
+
+        return "transfer";
+
+      }
+
+
+      if (
+        from.type === "account"
+        &&
+        to.type === "envelope"
+      ) {
+
+        return "envelope_allocation";
+
+      }
+
+
+      if (
+        from.type === "envelope"
+        &&
+        to.type === "account"
+      ) {
+
+        return "envelope_release";
+
+      }
+
+
+      if (
+        from.type === "envelope"
+        &&
+        to.type === "envelope"
+      ) {
+
+        return "envelope_transfer";
+
+      }
+
+
+      return "transfer";
+
+    }
+
+
+
+    function movementTypeLabel(
+      type
+    ) {
+
+      const labels = {
+
+        transfer:
+          "Bank Transfer",
+
+        envelope_allocation:
+          "Envelope Allocation",
+
+        envelope_release:
+          "Envelope Release",
+
+        envelope_transfer:
+          "Envelope Transfer",
+
+        debt_payment:
+          "Debt Payment"
+
+      };
+
+
+      return labels[type]
+        ||
+        type
+        ||
+        "Transfer";
+
+    }
+
+
+
+    // =====================================================
+    // MOVEMENT PREVIEW
+    // =====================================================
+
+    function updateMovementPreview() {
+
+      const from =
+        parseLocation(
+          document.getElementById(
+            "fromLocation"
+          ).value
+        );
+
+
+      const to =
+        parseLocation(
+          document.getElementById(
+            "toLocation"
+          ).value
+        );
+
+
+      const box =
+        document.getElementById(
+          "movementPreview"
+        );
+
+
+      if (
+        !from.type
+        ||
+        !to.type
+      ) {
+
+        box.innerHTML =
+          "Select a source and destination.";
+
+
+        return;
+
+      }
+
+
+      const fromPhysical =
+        getPhysicalAccountId(
+          from
+        );
+
+
+      const toPhysical =
+        getPhysicalAccountId(
+          to
+        );
+
+
+      const type =
+        determineMovementType(
+          from,
+          to
+        );
+
+
+      const fromName =
+        locationName(
+          from.type,
+          from.id
+        );
+
+
+      const toName =
+        locationName(
+          to.type,
+          to.id
+        );
+
+
+      const requiresBankMove =
+        fromPhysical !==
+        toPhysical;
+
+
+      let extra =
+        "";
+
+
+      if (
+        from.type ===
+        "envelope"
+      ) {
+
+        extra += `
+
+          <br>
+
+          Source envelope balance:
+          <strong style="display:inline;">
+            ${money(
+              envelopeMap[
+                from.id
+              ]
+                ?.current_balance
+            )}
+          </strong>
+
+        `;
+
+      }
+
+
+      if (
+        from.type ===
+        "account"
+      ) {
+
+        extra += `
+
+          <br>
+
+          Unallocated in source:
+          <strong style="display:inline;">
+            ${money(
+              accountUnallocated(
+                from.id
+              )
+            )}
+          </strong>
+
+        `;
+
+      }
+
+
+      box.innerHTML = `
+
+        <strong>
+          ${escapeHtml(
+            movementTypeLabel(type)
+          )}
+        </strong>
+
+        ${escapeHtml(fromName)}
+        →
+        ${escapeHtml(toName)}
+
+        <br>
+
+        ${
+          requiresBankMove
+
+            ? '<span class="real-label">Real bank movement required</span>'
+
+            : '<span class="virtual-label">Virtual allocation only — no bank movement</span>'
+        }
+
+        ${extra}
+
+      `;
+
+    }
+
+
+
+    // =====================================================
+    // LOAD TRANSFERS
+    // =====================================================
+
+    async function loadTransfers() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_transfers"
+          )
+          .select(`
+            id,
+            transfer_date,
+            from_account_id,
+            to_account_id,
+            from_envelope_id,
+            to_envelope_id,
+            transaction_type,
+            debt_id,
+            amount,
+            status,
+            notes,
+            completed_at,
+            created_at
+          `)
+          .order(
+            "transfer_date",
+            {
+              ascending: false
+            }
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const rows =
+        data || [];
+
+
+      const tbody =
+        document.getElementById(
+          "transferTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      let plannedTotal =
+        0;
+
+
+      let completedMonth =
+        0;
+
+
+      const now =
+        new Date();
+
+
+      const currentYear =
+        now.getFullYear();
+
+
+      const currentMonth =
+        now.getMonth();
+
+
+
+      rows.forEach(
+        transfer => {
+
+
+          if (
+            transfer.status ===
+            "planned"
+          ) {
+
+            plannedTotal +=
+              Number(
+                transfer.amount || 0
+              );
+
+          }
+
+
+
+          if (
+            transfer.status ===
+            "completed"
+          ) {
+
+            const date =
+              new Date(
+                transfer.transfer_date +
+                "T00:00:00"
+              );
+
+
+            if (
+              date.getFullYear() ===
+                currentYear
+              &&
+              date.getMonth() ===
+                currentMonth
+            ) {
+
+              completedMonth +=
+                Number(
+                  transfer.amount || 0
+                );
+
+            }
+
+          }
+
+
+
+          const fromInfo =
+            getTransferFromInfo(
+              transfer
+            );
+
+
+          const toInfo =
+            getTransferToInfo(
+              transfer
+            );
+
+
+          let statusClass =
+            "status-planned";
+
+
+          if (
+            transfer.status ===
+            "completed"
+          ) {
+
+            statusClass =
+              "status-completed";
+
+          }
+
+
+          if (
+            transfer.status ===
+            "cancelled"
+          ) {
+
+            statusClass =
+              "status-cancelled";
+
+          }
+
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          row.innerHTML = `
+
+            <td>
+              ${prettyDate(
+                transfer.transfer_date
+              )}
+            </td>
+
+            <td>
+              ${movementBadge(
+                transfer.transaction_type
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                fromInfo.name
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                toInfo.name
+              )}
+            </td>
+
+            <td>
+              ${money(
+                transfer.amount
+              )}
+            </td>
+
+            <td>
+              <span
+                class="${statusClass}"
+              >
+                ${escapeHtml(
+                  transfer.status
+                )}
+              </span>
+            </td>
+
+            <td>
+              ${escapeHtml(
+                transfer.notes || ""
+              )}
+            </td>
+
+            <td>
+            </td>
+
+          `;
+
+
+
+          const button =
+            document.createElement(
+              "button"
+            );
+
+
+          button.type =
+            "button";
+
+
+          button.className =
+            "small-btn";
+
+
+          button.textContent =
+            "View / Edit";
+
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              editTransfer(
+                transfer
+              );
+
+            }
+          );
+
+
+          row
+            .lastElementChild
+            .appendChild(
+              button
+            );
+
+
+          tbody.appendChild(
+            row
+          );
+
+
+        }
+      );
+
+
+
+      if (
+        rows.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="8">
+              No transfers or allocations recorded yet.
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+
+      document.getElementById(
+        "plannedTotal"
+      ).textContent =
+        money(
+          plannedTotal
+        );
+
+
+      document.getElementById(
+        "completedMonth"
+      ).textContent =
+        money(
+          completedMonth
+        );
+
+    }
+
+
+
+    function getTransferFromInfo(
+      transfer
+    ) {
+
+      if (
+        transfer.from_envelope_id
+      ) {
+
+        return {
+          type: "envelope",
+          name:
+            envelopeMap[
+              transfer.from_envelope_id
+            ]
+              ?.envelope_name
+            ||
+            "Envelope"
+        };
+
+      }
+
+
+      if (
+        transfer.from_account_id
+      ) {
+
+        return {
+          type: "account",
+          name:
+            accountMap[
+              transfer.from_account_id
+            ]
+              ?.account_name
+            ||
+            "Account"
+        };
+
+      }
+
+
+      return {
+        type: "unknown",
+        name: "Unknown"
+      };
+
+    }
+
+
+
+    function getTransferToInfo(
+      transfer
+    ) {
+
+      if (
+        transfer.transaction_type ===
+          "debt_payment"
+        &&
+        transfer.debt_id
+      ) {
+
+        return {
+          type: "debt",
+          name:
+            debtMap[
+              transfer.debt_id
+            ]
+              ?.debt_name
+            ||
+            "Debt"
+        };
+
+      }
+
+
+      if (
+        transfer.to_envelope_id
+      ) {
+
+        return {
+          type: "envelope",
+          name:
+            envelopeMap[
+              transfer.to_envelope_id
+            ]
+              ?.envelope_name
+            ||
+            "Envelope"
+        };
+
+      }
+
+
+      if (
+        transfer.to_account_id
+      ) {
+
+        return {
+          type: "account",
+          name:
+            accountMap[
+              transfer.to_account_id
+            ]
+              ?.account_name
+            ||
+            "Account"
+        };
+
+      }
+
+
+      return {
+        type: "unknown",
+        name: "Unknown"
+      };
+
+    }
+
+
+
+    function movementBadge(
+      type
+    ) {
+
+      if (
+        type ===
+        "debt_payment"
+      ) {
+
+        return `
+
+          <span class="debt-label">
+            Debt Payment
+          </span>
+
+        `;
+
+      }
+
+
+      if (
+        type ===
+        "envelope_allocation"
+        ||
+        type ===
+        "envelope_release"
+        ||
+        type ===
+        "envelope_transfer"
+      ) {
+
+        return `
+
+          <span class="virtual-label">
+
+            ${escapeHtml(
+              movementTypeLabel(type)
+            )}
+
+          </span>
+
+        `;
+
+      }
+
+
+      return `
+
+        <span class="real-label">
+          Bank Transfer
+        </span>
+
+      `;
+
+    }
+
+
+
+    // =====================================================
+    // ACTIVITY
+    // =====================================================
+
+    async function loadActivity() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_activity"
+          )
+          .select(`
+            id,
+            account_id,
+            activity_date,
+            activity_type,
+            description,
+            amount,
+            balance_before,
+            balance_after,
+            notes,
+            created_at
+          `)
+          .order(
+            "activity_date",
+            {
+              ascending: false
+            }
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          )
+          .limit(
+            150
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          "activityTableBody"
+        );
+
+
+      tbody.innerHTML =
+        "";
+
+
+      const activity =
+        data || [];
+
+
+      activity.forEach(
+        item => {
+
+
+          const accountName =
+            accountMap[
+              item.account_id
+            ]
+              ?.account_name
+            ||
+            "Account";
+
+
+          let amountClass =
+            "";
+
+
+          if (
+            Number(
+              item.amount
+            ) > 0
+          ) {
+
+            amountClass =
+              "transfer-in";
+
+          }
+
+
+          else if (
+            Number(
+              item.amount
+            ) < 0
+          ) {
+
+            amountClass =
+              "transfer-out";
+
+          }
+
+
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          row.innerHTML = `
+
+            <td>
+              ${prettyDate(
+                item.activity_date
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                accountName
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                item.activity_type || ""
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                item.description || ""
+              )}
+            </td>
+
+            <td
+              class="${amountClass}"
+            >
+
+              ${
+                item.amount ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      item.amount
+                    )
+              }
+
+            </td>
+
+            <td>
+
+              ${
+                item.balance_before ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      item.balance_before
+                    )
+              }
+
+            </td>
+
+            <td>
+
+              ${
+                item.balance_after ===
+                null
+
+                  ? "—"
+
+                  : money(
+                      item.balance_after
+                    )
+              }
+
+            </td>
+
+            <td>
+              ${escapeHtml(
+                item.notes || ""
+              )}
+            </td>
+
+          `;
+
+
+          tbody.appendChild(
+            row
+          );
+
+
+        }
+      );
+
+
+      if (
+        activity.length ===
+        0
+      ) {
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td colspan="8">
+              No account activity has been recorded yet.
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // NEW MOVEMENT
+    // =====================================================
+
+    function openAddTransfer() {
+
+      document.getElementById(
+        "transferModalTitle"
+      ).textContent =
+        "New Transfer / Allocation";
+
+
+      document.getElementById(
+        "transferId"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "transferDate"
+      ).value =
+        todayISO();
+
+
+      document.getElementById(
+        "transferAmount"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "transferNotes"
+      ).value =
+        "";
+
+
+      populateLocationDropdowns();
+
+
+      setFieldsDisabled(
+        false
+      );
+
+
+      document.getElementById(
+        "saveTransferBtn"
+      ).classList.remove(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "completeTransferBtn"
+      ).classList.add(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "cancelPlannedTransferBtn"
+      ).classList.add(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "transferModal"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+
+    // =====================================================
+    // EDIT
+    // =====================================================
+
+    function editTransfer(
+      transfer
+    ) {
+
+      document.getElementById(
+        "transferId"
+      ).value =
+        transfer.id;
+
+
+      document.getElementById(
+        "transferDate"
+      ).value =
+        transfer.transfer_date;
+
+
+      document.getElementById(
+        "transferAmount"
+      ).value =
+        transfer.amount;
+
+
+      document.getElementById(
+        "transferNotes"
+      ).value =
+        transfer.notes || "";
+
+
+      populateLocationDropdowns();
+
+
+
+      // Existing debt-payment records are retained for history
+      // but are not editable through this new allocation form.
+
+      if (
+        transfer.transaction_type ===
+        "debt_payment"
+      ) {
+
+        document.getElementById(
+          "transferModalTitle"
+        ).textContent =
+          "Debt Payment Details";
+
+
+        const fromValue =
+          transfer.from_account_id
+
+            ? `account:${transfer.from_account_id}`
+
+            : "";
+
+
+        document.getElementById(
+          "fromLocation"
+        ).value =
+          fromValue;
+
+
+        document.getElementById(
+          "toLocation"
+        ).innerHTML = `
+
+          <option value="">
+            ${
+              escapeHtml(
+                debtMap[
+                  transfer.debt_id
+                ]
+                  ?.debt_name
+                ||
+                "Debt"
+              )
+            }
+          </option>
+
+        `;
+
+
+        setFieldsDisabled(
+          true
+        );
+
+
+        document.getElementById(
+          "saveTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "completeTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "cancelPlannedTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "movementPreview"
+        ).innerHTML = `
+
+          <strong>
+            Existing Debt Payment
+          </strong>
+
+          Debt-payment handling will be upgraded in the
+          upcoming credit-card/debt phase.
+
+        `;
+
+
+        document.getElementById(
+          "transferModal"
+        ).classList.remove(
+          "hidden"
+        );
+
+
+        return;
+
+      }
+
+
+
+      const fromValue =
+        transfer.from_envelope_id
+
+          ? `envelope:${transfer.from_envelope_id}`
+
+          : transfer.from_account_id
+
+            ? `account:${transfer.from_account_id}`
+
+            : "";
+
+
+      const toValue =
+        transfer.to_envelope_id
+
+          ? `envelope:${transfer.to_envelope_id}`
+
+          : transfer.to_account_id
+
+            ? `account:${transfer.to_account_id}`
+
+            : "";
+
+
+      document.getElementById(
+        "fromLocation"
+      ).value =
+        fromValue;
+
+
+      document.getElementById(
+        "toLocation"
+      ).value =
+        toValue;
+
+
+      document.getElementById(
+        "transferModalTitle"
+      ).textContent =
+        transfer.status ===
+        "planned"
+
+          ? "Edit Planned Movement"
+
+          : "Movement Details";
+
+
+      updateMovementPreview();
+
+
+
+      if (
+        transfer.status ===
+        "planned"
+      ) {
+
+        setFieldsDisabled(
+          false
+        );
+
+
+        document.getElementById(
+          "saveTransferBtn"
+        ).classList.remove(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "completeTransferBtn"
+        ).classList.remove(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "cancelPlannedTransferBtn"
+        ).classList.remove(
+          "hidden"
+        );
+
+      }
+
+
+      else {
+
+        setFieldsDisabled(
+          true
+        );
+
+
+        document.getElementById(
+          "saveTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "completeTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+
+        document.getElementById(
+          "cancelPlannedTransferBtn"
+        ).classList.add(
+          "hidden"
+        );
+
+      }
+
+
+      document.getElementById(
+        "transferModal"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+
+    function setFieldsDisabled(
+      disabled
+    ) {
+
+      document.getElementById(
+        "transferDate"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "fromLocation"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "toLocation"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "transferAmount"
+      ).disabled =
+        disabled;
+
+
+      document.getElementById(
+        "transferNotes"
+      ).disabled =
+        disabled;
+
+    }
+
+
+
+    // =====================================================
+    // VALIDATE MOVEMENT
+    // =====================================================
+
+    function validateMovement(
+      from,
+      to,
+      amount
+    ) {
+
+      if (
+        !from.type
+        ||
+        !to.type
+      ) {
+
+        throw new Error(
+          "Please select both a source and destination."
+        );
+
+      }
+
+
+      if (
+        from.type ===
+          to.type
+        &&
+        from.id ===
+          to.id
+      ) {
+
+        throw new Error(
+          "The source and destination must be different."
+        );
+
+      }
+
+
+      if (
+        !Number.isFinite(
+          amount
+        )
+        ||
+        amount <= 0
+      ) {
+
+        throw new Error(
+          "Please enter a valid amount."
+        );
+
+      }
+
+
+
+      // ENVELOPE SOURCE MUST HAVE ENOUGH
+
+      if (
+        from.type ===
+        "envelope"
+      ) {
+
+        const balance =
+          Number(
+            envelopeMap[
+              from.id
+            ]
+              ?.current_balance
+            ||
+            0
+          );
+
+
+        if (
+          amount >
+          balance
+        ) {
+
+          throw new Error(
+            `That envelope contains only ${money(balance)}.`
+          );
+
+        }
+
+      }
+
+
+
+      // ACCOUNT -> ENVELOPE IN SAME PHYSICAL ACCOUNT:
+      // only unallocated money may be earmarked.
+
+      if (
+        from.type ===
+          "account"
+        &&
+        to.type ===
+          "envelope"
+      ) {
+
+        const destinationEnvelope =
+          envelopeMap[
+            to.id
+          ];
+
+
+        if (
+          destinationEnvelope
+          &&
+          destinationEnvelope.account_id ===
+            from.id
+        ) {
+
+          const available =
+            accountUnallocated(
+              from.id
+            );
+
+
+          if (
+            amount >
+            available
+          ) {
+
+            throw new Error(
+              `Only ${money(available)} is currently unallocated in this account.`
+            );
+
+          }
+
+        }
+
+      }
+
+
+      return true;
+
+    }
+
+
+
+    // =====================================================
+    // BUILD RECORD
+    // =====================================================
+
+    function buildTransferRecord() {
+
+      const transferDate =
+        document.getElementById(
+          "transferDate"
+        ).value;
+
+
+      const from =
+        parseLocation(
+          document.getElementById(
+            "fromLocation"
+          ).value
+        );
+
+
+      const to =
+        parseLocation(
+          document.getElementById(
+            "toLocation"
+          ).value
+        );
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "transferAmount"
+          ).value
+        );
+
+
+      const notes =
+        document.getElementById(
+          "transferNotes"
+        ).value.trim();
+
+
+      if (!transferDate) {
+
+        throw new Error(
+          "Please enter a date."
+        );
+
+      }
+
+
+      validateMovement(
+        from,
+        to,
+        amount
+      );
+
+
+      const movementType =
+        determineMovementType(
+          from,
+          to
+        );
+
+
+      return {
+
+        household_id:
+          householdId,
+
+        transfer_date:
+          transferDate,
+
+        from_account_id:
+          from.type ===
+            "account"
+
+            ? from.id
+
+            : null,
+
+        from_envelope_id:
+          from.type ===
+            "envelope"
+
+            ? from.id
+
+            : null,
+
+        to_account_id:
+          to.type ===
+            "account"
+
+            ? to.id
+
+            : null,
+
+        to_envelope_id:
+          to.type ===
+            "envelope"
+
+            ? to.id
+
+            : null,
+
+        transaction_type:
+          movementType,
+
+        debt_id:
+          null,
+
+        amount:
+          amount,
+
+        status:
+          "planned",
+
+        notes:
+          notes || null
+
+      };
+
+    }
+
+
+
+    // =====================================================
+    // SAVE PLANNED
+    // =====================================================
+
+    async function saveTransfer() {
+
+      try {
+
+
+        const id =
+          document.getElementById(
+            "transferId"
+          ).value;
+
+
+        const record =
+          buildTransferRecord();
+
+
+        let result;
+
+
+        if (id) {
+
+          result =
+            await supabaseClient
+              .from(
+                "account_transfers"
+              )
+              .update(
+                record
+              )
+              .eq(
+                "id",
+                id
+              )
+              .eq(
+                "status",
+                "planned"
+              );
+
+        }
+
+
+        else {
+
+          result =
+            await supabaseClient
+              .from(
+                "account_transfers"
+              )
+              .insert(
+                record
+              );
+
+        }
+
+
+        if (
+          result.error
+        ) {
+
+          throw new Error(
+            result.error.message
+          );
+
+        }
+
+
+        closeTransferModal();
+
+
+        showMessage(
+          "Planned movement saved.",
+          false
+        );
+
+
+        await refreshPage();
+
+
+      }
+
+
+      catch (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // SAVE EDITS BEFORE COMPLETION
+    // =====================================================
+
+    async function saveTransferBeforeCompletion(
+      id
+    ) {
+
+      const record =
+        buildTransferRecord();
+
+
+      delete record.household_id;
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_transfers"
+          )
+          .update(
+            record
+          )
+          .eq(
+            "id",
+            id
+          )
+          .eq(
+            "status",
+            "planned"
+          );
+
+
+      if (error) {
+
+        throw new Error(
+          error.message
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // COMPLETE
+    // =====================================================
+
+    async function completeTransfer() {
+
+      try {
+
+
+        const id =
+          document.getElementById(
+            "transferId"
+          ).value;
+
+
+        if (!id) {
+
+          throw new Error(
+            "Save the movement before completing it."
+          );
+
+        }
+
+
+        const from =
+          parseLocation(
+            document.getElementById(
+              "fromLocation"
+            ).value
+          );
+
+
+        const to =
+          parseLocation(
+            document.getElementById(
+              "toLocation"
+            ).value
+          );
+
+
+        const amount =
+          Number(
+            document.getElementById(
+              "transferAmount"
+            ).value
+          );
+
+
+        validateMovement(
+          from,
+          to,
+          amount
+        );
+
+
+        const fromName =
+          locationName(
+            from.type,
+            from.id
+          );
+
+
+        const toName =
+          locationName(
+            to.type,
+            to.id
+          );
+
+
+        const fromPhysical =
+          getPhysicalAccountId(
+            from
+          );
+
+
+        const toPhysical =
+          getPhysicalAccountId(
+            to
+          );
+
+
+        const realBankMove =
+          fromPhysical !==
+          toPhysical;
+
+
+        let question;
+
+
+        if (
+          realBankMove
+        ) {
+
+          const physicalFromName =
+            accountMap[
+              fromPhysical
+            ]
+              ?.account_name
+            ||
+            "source account";
+
+
+          const physicalToName =
+            accountMap[
+              toPhysical
+            ]
+              ?.account_name
+            ||
+            "destination account";
+
+
+          question =
+
+            `Have you actually moved ${money(amount)} at the bank from ${physicalFromName} to ${physicalToName}?\n\n` +
+
+            `Home Finance will also record:\n${fromName} → ${toName}`;
+
+        }
+
+
+        else {
+
+          question =
+
+            `Allocate ${money(amount)} from ${fromName} to ${toName}?\n\n` +
+
+            `No bank transfer is required because both are inside the same real account.`;
+
+        }
+
+
+        const confirmed =
+          confirm(
+            question
+          );
+
+
+        if (!confirmed) {
+
+          return;
+
+        }
+
+
+        await saveTransferBeforeCompletion(
+          id
+        );
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .rpc(
+              "complete_flexible_transfer",
+              {
+                p_transfer_id:
+                  id
+              }
+            );
+
+
+        if (error) {
+
+          throw new Error(
+            error.message
+          );
+
+        }
+
+
+        closeTransferModal();
+
+
+        showMessage(
+          `${money(amount)} completed: ${fromName} → ${toName}.`,
+          false
+        );
+
+
+        await refreshPage();
+
+
+      }
+
+
+      catch (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // CANCEL
+    // =====================================================
+
+    async function cancelTransfer() {
+
+      const id =
+        document.getElementById(
+          "transferId"
+        ).value;
+
+
+      if (!id) {
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          "Cancel this planned movement?"
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "account_transfers"
+          )
+          .update({
+            status:
+              "cancelled"
+          })
+          .eq(
+            "id",
+            id
+          )
+          .eq(
+            "status",
+            "planned"
+          );
+
+
+      if (error) {
+
+        showMessage(
+          error.message,
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      closeTransferModal();
+
+
+      showMessage(
+        "Planned movement cancelled.",
+        false
+      );
+
+
+      await refreshPage();
+
+    }
+
+
+
+    // =====================================================
+    // MODAL
+    // =====================================================
+
+    function closeTransferModal() {
+
+      document.getElementById(
+        "transferModal"
+      ).classList.add(
+        "hidden"
+      );
+
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+      text,
+      isError
+    ) {
+
+      const box =
+        document.getElementById(
+          "transferMessage"
+        );
+
+
+      box.textContent =
+        text;
+
+
+      box.className =
+        isError
+
+          ? "message-box error-message"
+
+          : "message-box success-message";
+
+
+      box.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+
+
+      setTimeout(
+        () => {
+
+          box.classList.add(
+            "hidden"
+          );
+
+        },
+        5000
+      );
+
+    }
+
+
+
+    // =====================================================
+    // REFRESH
+    // =====================================================
+
+    async function refreshPage() {
+
+      const accountsLoaded =
+        await loadAccounts();
+
+
+      if (!accountsLoaded) {
+
+        return;
+
+      }
+
+
+      const envelopesLoaded =
+        await loadEnvelopes();
+
+
+      if (!envelopesLoaded) {
+
+        return;
+
+      }
+
+
+      await loadDebts();
+
+
+      renderBalances();
+
+
+      populateLocationDropdowns();
+
+
+      await loadTransfers();
+
+
+      await loadActivity();
+
+    }
+
+
+
+    // =====================================================
+    // EVENTS
+    // =====================================================
+
+    document.getElementById(
+      "addTransferBtn"
+    ).addEventListener(
+      "click",
+      openAddTransfer
+    );
+
+
+    document.getElementById(
+      "saveTransferBtn"
+    ).addEventListener(
+      "click",
+      saveTransfer
+    );
+
+
+    document.getElementById(
+      "completeTransferBtn"
+    ).addEventListener(
+      "click",
+      completeTransfer
+    );
+
+
+    document.getElementById(
+      "cancelPlannedTransferBtn"
+    ).addEventListener(
+      "click",
+      cancelTransfer
+    );
+
+
+    document.getElementById(
+      "closeModalBtn"
+    ).addEventListener(
+      "click",
+      closeTransferModal
+    );
+
+
+    document.getElementById(
+      "closeTransferModalBtn"
+    ).addEventListener(
+      "click",
+      closeTransferModal
+    );
+
+
+    document.getElementById(
+      "fromLocation"
+    ).addEventListener(
+      "change",
+      updateMovementPreview
+    );
+
+
+    document.getElementById(
+      "toLocation"
+    ).addEventListener(
+      "change",
+      updateMovementPreview
+    );
+
+
+    document.getElementById(
+      "transferModal"
+    ).addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.id ===
+          "transferModal"
+        ) {
+
+          closeTransferModal();
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "login.html";
+
+      }
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    async function start() {
+
+      const loggedIn =
+        await checkLogin();
+
+
+      if (!loggedIn) {
+
+        return;
+
+      }
+
+
+      const householdLoaded =
+        await loadHousehold();
+
+
+      if (!householdLoaded) {
+
+        return;
+
+      }
+
+
+      await refreshPage();
+
+    }
+
+
+    start();
+
+
+  </script>
+
+
+</body>
+
+</html>
